@@ -15,8 +15,8 @@ return new class extends Migration
             //
             $table->string('email')->nullable()->default(null)->change();
             $table->string('mobile', 13)->after('remember_token');
-            $table->string('name_in_hindi')->after('mobile');
-            $table->string('name_in_telugu')->after('name_in_hindi');
+            $table->string('name_in_hindi')->after('mobile')->nullable();
+            $table->string('name_in_telugu')->after('name_in_hindi')->nullable();
             $table->integer('otp')->after('name_in_telugu')->nullable();
             $table->timestamp('expires_at')->after('otp')->nullable();
             $table->enum('role', ['admin', 'manager', 'user'])->after('expires_at');
