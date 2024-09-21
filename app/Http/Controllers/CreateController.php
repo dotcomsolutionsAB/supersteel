@@ -439,7 +439,6 @@ class CreateController extends Controller
             // Add invoices to the $data array under a specific key
             $data['invoices'] = $invoices;
 
-            print_r($data);
 
             return response()->json([
                 'message' => 'Order created and Invoice generated successfully!',
@@ -484,18 +483,9 @@ class CreateController extends Controller
             ]);
 
 
-        if (isset($create_order_items)) {
-            return response()->json([
-                'message' => 'Order Items created successfully!',
-                'data' => $create_order_items
-            ], 201);
-        }
-
-        else {
-            return response()->json([
-                'message' => 'Failed to create order items successfully!'
-            ], 400);
-        }    
+        return isset($create_order_items) && $create_order_items !== null
+        ? response()->json(['Order Items created successfully!', 'data' => $create_order_items], 201)
+        : response()->json(['Failed to create order items'], 400); 
     }
 
     public function cart(Request $request)

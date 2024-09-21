@@ -470,19 +470,17 @@ class ViewController extends Controller
     {
         $get_all_orders = OrderModel::with('user')->get();
         
+        $formatted_order = $get_all_orders->map(function ($order_rec)
+        {
+            $order_rec_arr = $order_rec->toArray();
+            unset($order_rec_arr['created_at'], $order_rec_arr['updated_at']);
+            return $order_rec_arr;
+        });
 
-        if (isset($get_all_orders)) {
-            return response()->json([
-                'message' => 'Fetch data successfully!',
-                'data' => $get_all_orders
-            ], 201);
-        }
+        return isset($formatted_order) && $formatted_order !== null
+        ? response()->json(['Fetch data successfully!', 'data' => $formatted_order], 200)
+        : response()->json(['Failed get data successfully!'], 400);
 
-        else {
-            return response()->json([
-                'message' => 'Failed get data successfully!',
-            ], 400);
-        }    
     }
 
     public function orders_user_id($id = null)
@@ -495,18 +493,16 @@ class ViewController extends Controller
             
         })->get();   
 
-        if($get_user_orders->isEmpty()) {
-            return response()->json([
-                'message' => 'Sorry, no data available!',
-            ], 400);
-        }
+        $formatted_user_order = $get_user_orders->map(function ($order_user_rec)
+        {
+            $order_user_rec_arr = $order_user_rec->toArray();
+            unset($order_user_rec_arr['created_at'], $order_user_rec_arr['updated_at']);
+            return $order_user_rec_arr;
+        });
 
-        else {
-            return response()->json([
-                'message' => 'Fetch data successfully!',
-                'data' => $get_user_orders
-            ], 201);
-        }    
+        return isset($order_user_rec_arr) && $order_user_rec_arr !== null
+        ? response()->json(['Fetch data successfully!', 'data' => $order_user_rec_arr, 'fetch_records' => count($order_user_rec_arr)], 200)
+        : response()->json(['Failed get data successfully!'], 400);
     }
 
     public function order_items()
@@ -672,11 +668,9 @@ class ViewController extends Controller
 
     public function return_order($orderId)
     {
-        // \DB::enableQueryLog();
         $get_order_details = OrderModel::with('order_items')
                                         ->where('id', $orderId)
                                         ->get();
-                                        // dd(\DB::getQueryLog());
 
 
         if ($get_order_details) 
@@ -716,31 +710,10 @@ class ViewController extends Controller
                     ];
                 })->toArray()
             ];
-        }                                                                    
+        }   
         
-
-        if (empty($formatted_order_record)) 
-        {
-            return response()->json(['message' => 'Failed to get order records!'], 400);
-        } 
-        else 
-        {
-            return response()->json([
-                'message' => 'Fetch records successfully!',
-                'data' => $formatted_order_record
-            ], 200);
-        }
-    }
-
-    // return blade file
-    
-    public function login_view()
-    {
-        return view('login');
-    }
-
-    public function user_view()
-    {
-        return view('view_user');
+        return isset($formatted_order_record) && $formatted_order_record !== null
+        ? response()->json(['Fetch records successfully!', 'data' => $formatted_order_record, 'fetch_records' => count($formatted_order_record)], 200)
+        : response()->json(['Failed to get order records!'], 400);
     }
 }
