@@ -24,7 +24,7 @@ class CsvImportController extends Controller
     public function importProduct()
     {
         // URL of the CSV file from Google Sheets
-        $get_product_csv_url = 'https://docs.google.com/spreadsheets/d/1oF0yBLb2GjMhBep8ZpmmTYjJoW8d6AcajGDATEvqZaU/pub?gid=0&single=true&output=csv';
+        $get_product_csv_url = 'https://docs.google.com/spreadsheets/d/1_4XMqLfR7EqOWMxrilnCZq5-YuYn1dRLlPbFIl41OsU/pub?gid=0&single=true&output=csv';
 
         // Fetch the CSV content using file_get_contents
         $csvContent_product = file_get_contents($get_product_csv_url);
@@ -42,96 +42,112 @@ class CsvImportController extends Controller
 
         // Iterate through each record and create or update the product
         foreach ($records_csv as $record_csv) {
-            $product_csv = ProductModel::where('sku', $record_csv['SKU'])->first();
+            $product_csv = ProductModel::where('product_code', $record_csv['Product Code'])->first();
 
-            $basicPrice_product = $record_csv['Basic Price'] !== '' ? $record_csv['Basic Price'] : 0;
-            $gstPrice_prduct = $record_csv['GST Price'] !== '' ? $record_csv['GST Price'] : 0;
-            $filename = $record_csv['Product Code'];
+            // $basicPrice_product = $record_csv['Basic Price'] !== '' ? $record_csv['Basic Price'] : 0;
+            // $gstPrice_prduct = $record_csv['GST Price'] !== '' ? $record_csv['GST Price'] : 0;
+            // $filename = $record_csv['Product Code'];
 
-            $category = $record_csv['Category'];
-            $sub_category = $record_csv['Sub Category'];
+            // $category = $record_csv['Category'];
+            // $sub_category = $record_csv['Sub Category'];
 
-            // $categoryModel = CategoryModel::firstOrCreate(['name' => $category]);
+            // // $categoryModel = CategoryModel::firstOrCreate(['name' => $category]);
 
-            $categoryNameSanitized = str_replace([' ', '/', '\\', ':', '*'], '_', strtolower($category));
-            $imagePath = "/storage/uploads/category/{$categoryNameSanitized}.jpg";
-            $category_imagePath_for_not_avaliable = "/storage/uploads/category/placeholder.jpg";
+            // $categoryNameSanitized = str_replace([' ', '/', '\\', ':', '*'], '_', strtolower($category));
+            // $imagePath = "/storage/uploads/category/{$categoryNameSanitized}.jpg";
+            // $category_imagePath_for_not_avaliable = "/storage/uploads/category/placeholder.jpg";
 
-            if (file_exists(public_path($imagePath))) 
-            {
-                $categoryModel = CategoryModel::updateOrCreate([
-                    'name' => $category,
-                ], [
-                    'image' => $imagePath,
-                ]);
-            }
-            else 
-            {
-                $categoryModel = CategoryModel::updateOrCreate([
-                    'name' => $category,
-                ], [
-                    'image' => $category_imagePath_for_not_avaliable,
-                ]);
-            }
+            // if (file_exists(public_path($imagePath))) 
+            // {
+            //     $categoryModel = CategoryModel::updateOrCreate([
+            //         'name' => $category,
+            //     ], [
+            //         'image' => $imagePath,
+            //     ]);
+            // }
+            // else 
+            // {
+            //     $categoryModel = CategoryModel::updateOrCreate([
+            //         'name' => $category,
+            //     ], [
+            //         'image' => $category_imagePath_for_not_avaliable,
+            //     ]);
+            // }
 
-            // Get the category ID for future use
-            $category_id = $categoryModel->id;
+            // // Get the category ID for future use
+            // $category_id = $categoryModel->id;
 
-            if (($sub_category != '')) 
-            {
-                // $subCategoryModel = SubCategoryModel::firstOrCreate([
+            // if (($sub_category != '')) 
+            // {
+            //     // $subCategoryModel = SubCategoryModel::firstOrCreate([
 
-                $subcategoryNameSanitized = str_replace([' ', '/', '\\', ':', '*'], '_', strtolower($sub_category));
-                $subCategoryImagePath  = "/storage/uploads/category/{$subcategoryNameSanitized}.jpg";
-                $sub_category_imagePath_for_not_avaliable = "/storage/uploads/sub_category/placeholder.jpg";
+            //     $subcategoryNameSanitized = str_replace([' ', '/', '\\', ':', '*'], '_', strtolower($sub_category));
+            //     $subCategoryImagePath  = "/storage/uploads/category/{$subcategoryNameSanitized}.jpg";
+            //     $sub_category_imagePath_for_not_avaliable = "/storage/uploads/sub_category/placeholder.jpg";
 
-                if (file_exists(public_path($subCategoryImagePath))) 
-                {
-                    $subCategoryModel = SubCategoryModel::updateOrCreate([
-                        'name' => $sub_category,
-                        'category_id' => $category_id, // Include category_id in the search/creation criteria
-                        'image' => $imagePath,
-                    ]);
-                }
-                else 
-                {
-                    // Optionally continue without setting the image
-                    $subCategoryModel = SubCategoryModel::updateOrCreate([
-                        'name' => $sub_category,
-                        'category_id' => $category_id,
-                    ], [
-                        'image' => $sub_category_imagePath_for_not_avaliable,
-                    ]);
-                }
-            }
-
+            //     if (file_exists(public_path($subCategoryImagePath))) 
+            //     {
+            //         $subCategoryModel = SubCategoryModel::updateOrCreate([
+            //             'name' => $sub_category,
+            //             'category_id' => $category_id, // Include category_id in the search/creation criteria
+            //             'image' => $imagePath,
+            //         ]);
+            //     }
+            //     else 
+            //     {
+            //         // Optionally continue without setting the image
+            //         $subCategoryModel = SubCategoryModel::updateOrCreate([
+            //             'name' => $sub_category,
+            //             'category_id' => $category_id,
+            //         ], [
+            //             'image' => $sub_category_imagePath_for_not_avaliable,
+            //         ]);
+            //     }
+            // }
             if ($product_csv) 
             {
                 // If product exists, update it
                 $product_update_response = $product_csv->update([
                     'product_code' => $record_csv['Product Code'],
                     'product_name' => $record_csv['Product Name'],
+                    'print_name' => $record_csv['Print Name'],
+                    'brand' => $record_csv['Brand'],
                     'category' => $record_csv['Category'],
-                    'sub_category' => $record_csv['Sub Category'],
-                    'basic' => $basicPrice_product, // Ensure this is a valid number
-                    'gst' => $gstPrice_prduct,     // Ensure this is a valid number
-                    // 'product_image' => null, // Set this if you have the image URL or path
-                    'product_image' => ('/storage/uploads/products/' . $filename . '.jpg'),
+                    'category_lvl2' => $record_csv['Category Lvl 2'],
+                    'category_lvl3' => $record_csv['Category Lvl 3'],
+                    'category_lvl4' => $record_csv['Category Lvl 4'],
+                    'category_lvl5' => $record_csv['Category Lvl 5'],
+                    'category_lvl6' => $record_csv['Category Lvl 6'],
+                    'type' => $record_csv['Type'],
+                    'machine_part_no' => $record_csv['Machine Part No.'],
+                    'price_a' => $record_csv['Price A'],
+                    'price_b' => $record_csv['Price B'],
+                    'price_c' => $record_csv['Price C'],
+                    'price_d' => $record_csv['Price D'],
+                    'price_i' => $record_csv['Price I'],
                 ]);
             } 
             else 
             {
                 // If product does not exist, create a new one
                 $product_insert_response = ProductModel::create([
-                    'sku' => $record_csv['SKU'],
                     'product_code' => $record_csv['Product Code'],
                     'product_name' => $record_csv['Product Name'],
+                    'print_name' => $record_csv['Print Name'],
+                    'brand' => $record_csv['Brand'],
                     'category' => $record_csv['Category'],
-                    'sub_category' => $record_csv['Sub Category'],
-                    'basic' => $basicPrice_product, // Ensure this is a valid number
-                    'gst' => $gstPrice_prduct,     // Ensure this is a valid number
-                    // 'product_image' => null, // Set this if you have the image URL or path
-                    'product_image' => ('/storage/uploads/products/' . $filename. '.jpg'),
+                    'category_lvl2' => $record_csv['Category Lvl 2'],
+                    'category_lvl3' => $record_csv['Category Lvl 3'],
+                    'category_lvl4' => $record_csv['Category Lvl 4'],
+                    'category_lvl5' => $record_csv['Category Lvl 5'],
+                    'category_lvl6' => $record_csv['Category Lvl 6'],
+                    'type' => $record_csv['Type'],
+                    'machine_part_no' => $record_csv['Machine Part No.'],
+                    'price_a' => $record_csv['Price A'],
+                    'price_b' => $record_csv['Price B'],
+                    'price_c' => $record_csv['Price C'],
+                    'price_d' => $record_csv['Price D'],
+                    'price_i' => $record_csv['Price I'],
                 ]);
             }
         }   
@@ -146,7 +162,7 @@ class CsvImportController extends Controller
     public function importUser()
     {
         // URL of the CSV file from Google Sheets
-        $get_product_user_url = 'https://docs.google.com/spreadsheets/d/1oF0yBLb2GjMhBep8ZpmmTYjJoW8d6AcajGDATEvqZaU/pub?gid=1797389278&single=true&output=csv';
+        $get_product_user_url = 'https://docs.google.com/spreadsheets/d/1_4XMqLfR7EqOWMxrilnCZq5-YuYn1dRLlPbFIl41OsU/pub?gid=1797389278&single=true&output=csv';
 
         // Fetch the CSV content using file_get_contents
         $csvContent_user = file_get_contents($get_product_user_url);
@@ -155,7 +171,6 @@ class CsvImportController extends Controller
         $csv_user = Reader::createFromString($csvContent_user);
 
         $csv_user->setHeaderOffset(0); // Set the header offset
-        
 
         $records_user = (new Statement())->process($csv_user);
 
@@ -180,7 +195,6 @@ class CsvImportController extends Controller
             // Handle potential empty values for email, pincode, and markup
             $email_user = !empty($record_user['Email']) ? $record_user['Email'] : null;
             $pincode_user = $record_user['Pincode'] !== '' ? $record_user['Pincode'] : 0;
-            $markup_user = $record_user['Mark Up'] !== '' ? $record_user['Mark Up'] : 0;
 
             if ($user_csv) 
             {
@@ -189,8 +203,6 @@ class CsvImportController extends Controller
                     'name' => $record_user['Name'],
                     'email' => $email_user,
                     'password' => bcrypt($mobile),
-                    'otp' => null,
-                    'expires_at' => null,
                     'address_line_1' => $record_user['Address Line 1'],
                     'address_line_2' => $record_user['Address Line 2'],
                     'city' => $record_user['City'],
@@ -198,7 +210,6 @@ class CsvImportController extends Controller
                     'gstin' => $record_user['GSTIN'],
                     'state' => $record_user['State'],
                     'country' => $record_user['Country'],
-                    'markup' => $markup_user, // Ensure this is a valid number
                 ]);
             } 
             else 
@@ -209,8 +220,6 @@ class CsvImportController extends Controller
                     'name' => $record_user['Name'],
                     'email' => $email_user,
                     'password' => bcrypt($mobile),
-                    'otp' => null,
-                    'expires_at' => null,
                     'address_line_1' => $record_user['Address Line 1'],
                     'address_line_2' => $record_user['Address Line 2'],
                     'city' => $record_user['City'],
@@ -218,7 +227,6 @@ class CsvImportController extends Controller
                     'gstin' => $record_user['GSTIN'],
                     'state' => $record_user['State'],
                     'country' => $record_user['Country'],
-                    'markup' => $markup_user, // Ensure this is a valid number
                 ]);
             }
         }   

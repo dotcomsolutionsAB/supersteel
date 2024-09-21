@@ -303,7 +303,6 @@ class CreateController extends Controller
         else 
         {
             $request->validate([
-                // 'client_id' => 'required',
                 'user_id' => 'required',
             ]);
             $userId = $request->input('user_id');
@@ -521,18 +520,19 @@ class CreateController extends Controller
         if($get_user->role == 'admin')
         {
             $request->validate([
-                // 'mobile' => 'required',
                 'user_id' => 'required',
-                // 'products_id' => 'required',
                 'product_code' => 'required',
                 'product_name' => 'required',
                 'rate' => 'required',
                 'quantity' => 'required',
-                'amount' => 'required',
                 'type' => 'required',
             ]);
+        }
 
-            // $get_user_id = User::select('id')->where('mobile', $request->input('mobile'))->get();
+        else
+        {
+            $request->merge(['user_id' => $get_user->id]);
+        }
     
             $create_cart = CartModel::updateOrCreate(
 				[
@@ -543,66 +543,18 @@ class CreateController extends Controller
 					'product_name' => $request->input('product_name'),
 					'rate' => $request->input('rate'),
 					'quantity' => $request->input('quantity'),
-					'amount' => $request->input('amount'),
+					'amount' => ($request->input('rate')) * ($request->input('quantity')),
 					'type' => $request->input('type'),
 				]
 			);
 
-        }
-
-    else {
-        $request->validate([
-            // 'user_id' => 'required',
-            // 'products_id' => 'required',
-            'product_code' => 'required',
-            'product_name' => 'required',
-            'rate' => 'required',
-            'quantity' => 'required',
-            'amount' => 'required',
-            'type' => 'required',
-        ]);
-
-        /*$create_cart = CartModel::create([
-            'user_id' => Auth::id(),
-            // 'products_id' => $request->input('products_id'),
-            'product_code' => $request->input('product_code'),
-            'product_name' => $request->input('product_name'),
-            'rate' => $request->input('rate'),
-            'quantity' => $request->input('quantity'),
-            'amount' => $request->input('amount'),
-            'type' => $request->input('type'),
-        ]);*/
-		
-		$create_cart = CartModel::updateOrCreate(
-			[
-				'user_id' => $request->input('user_id'),
-				'product_code' => $request->input('product_code'),
-			], 
-			[
-				'product_name' => $request->input('product_name'),
-				'rate' => $request->input('rate'),
-				'quantity' => $request->input('quantity'),
-				'amount' => $request->input('amount'),
-				'type' => $request->input('type'),
-			]
-		);
-
-    }
-        
+            unset($create_cart['id'], $create_cart['created_at'], $create_cart['updated_at']);
 
 
-        if (isset($create_cart)) {
-            return response()->json([
-                'message' => 'Cart created successfully!',
-                'data' => $create_cart
-            ], 201);
-        }
+        return isset($create_cart) && $create_cart !== null
+        ? response()->json(['Cart created successfully!', 'data' => $create_cart], 201)
+        : response()->json(['Failed to create cart successfully!'], 400);
 
-        else {
-            return response()->json([
-                'message' => 'Failed to create order successfully!'
-            ], 400);
-        }    
     }
 
     public function counter(Request $request)
@@ -619,20 +571,11 @@ class CreateController extends Controller
                 'postfix' => $request->input('postfix'),
             ]);
 
+        unset($create_counter['id'], $create_counter['created_at'], $create_counter['updated_at']);
 
-        if (isset($create_counter)) {
-            return response()->json([
-                'message' => 'Counter record created successfully!',
-                'data' => $create_counter
-            ], 201);
-        }
-
-        else {
-            return response()->json([
-                'message' => 'Failed to create counter record successfully!',
-                'data' => $create_counter
-            ], 400);
-        }    
+        return isset($create_counter) && $create_counter !== null
+        ? response()->json(['Counter record created successfully!', 'data' => $create_counter], 201)
+        : response()->json(['Failed to create counter record'], 400); 
     }
 
     public function make_invoice(Request $request)

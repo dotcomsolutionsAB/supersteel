@@ -10,15 +10,24 @@ class ProductModel extends Model
     use HasFactory;
     protected $table = "t_products";
     protected $fillable = [
-        'sku',
         'product_code',
         'product_name',
-        'product_image',
+        'print_name',
+        'name_in_hindi',
+        'name_in_telugu',
+        'brand',
         'category',
-        'sub_category',
-        'basic',
-        'gst',
-        'mark_up',
+        'category_lvl2',
+        'category_lvl3',
+        'category_lvl4',
+        'category_lvl5',
+        'type',
+        'machine_part_no',
+        'price_a',
+        'price_b',
+        'price_c',
+        'price_d',
+        'price_e',
     ];
 
     public function transactions()
