@@ -14,15 +14,12 @@ return new class extends Migration
         Schema::create('t_orders', function (Blueprint $table) {
             $table->id();
             $table->string('order_id');
-            // $table->foreignId('client_id')->references('id')->on('users');
             $table->foreignId('user_id')->references('id')->on('users');
             $table->date('order_date');
             $table->float('amount');
-            // $table->date('log_date');
-            // $table->date('log_user');
             $table->enum('status', ['pending', 'partial', 'paid']);
             $table->enum('type', ['basic', 'gst']);
-            $table->string('order_invoice')->unique();
+            $table->string('order_invoice')->nullable();
             $table->timestamps();
         });
     }

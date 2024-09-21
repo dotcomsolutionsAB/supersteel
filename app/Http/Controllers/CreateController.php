@@ -41,7 +41,6 @@ class CreateController extends Controller
             'name' => 'required',
             'password' => 'required',
             'role' => 'required',
-            // 'category_discount' => 'required',
             'address_line_1' => 'required',
             'city' => 'required',
             'pincode' => 'required',
@@ -60,8 +59,9 @@ class CreateController extends Controller
                 'gstin' => $request->input('gstin'),
                 'state' => $request->input('state'),
                 'country' => $request->input('country'),
-                // 'category_discount' => $request->input('category_discount'),
             ]);
+
+        unset($create_user['id'], $create_user['created_at'], $create_user['updated_at']);
 
 
         if (isset($create_user)) {
@@ -166,7 +166,6 @@ class CreateController extends Controller
         else
         {
             $request->validate([
-                // 'email' => 'required|email',
                 'mobile' => 'required',
                 'password' => 'required',
             ]);
@@ -175,7 +174,6 @@ class CreateController extends Controller
                 $user = Auth::user(); 
     
                 // Check the user's role
-                // if ($user->role !== 'admin' && $user->role !== 'user') {
                 if ($user->verified == '0') {
                     return response()->json([
                         'success' => false,
@@ -191,7 +189,6 @@ class CreateController extends Controller
                     'success' => true,
                     'data' => [
                         'token' => $token,
-                        // 'id' => $user->id,
                         'name' => $user->name,
                         'role' => $user->role,
                     ],
@@ -225,20 +222,6 @@ class CreateController extends Controller
             'success' => true,
             'message' => 'Logged out successfully.',
         ], 204);
-    }
-
-    public function webLogout(Request $request)
-    {
-        // Log the user out of the session
-        Auth::logout();
-
-        // Invalidate the user's session
-        $request->session()->invalidate();
-
-        // Regenerate the session token to prevent CSRF attacks
-        $request->session()->regenerateToken();
-
-        return redirect('/login')->with('success', 'Logged out successfully.');
     }
     
     public function product(Request $request)
@@ -456,6 +439,8 @@ class CreateController extends Controller
             // Add invoices to the $data array under a specific key
             $data['invoices'] = $invoices;
 
+            print_r($data);
+
             return response()->json([
                 'message' => 'Order created and Invoice generated successfully!',
                 'data' => $data
@@ -561,7 +546,9 @@ class CreateController extends Controller
     {
         $request->validate([
             'name' => 'required',
+            'prefix' => 'required',
             'counter' => 'required',
+            'postfix' => 'required',
         ]);
 
             $create_counter = CounterModel::create([
