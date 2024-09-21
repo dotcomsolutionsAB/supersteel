@@ -33,6 +33,8 @@ Route::prefix('admin')->middleware(['auth:sanctum', GetUserRole::class . ':admin
 
     Route::post('/update_user', [UpdateController::class, 'user']);
 
+    Route::post('/update_password', [UpdateController::class, 'user_password']);
+
     // Route::get('/logout', [CreateController::class, 'webLogout']);
     Route::post('/logout', [CreateController::class, 'logout']);
 
@@ -98,6 +100,8 @@ Route::prefix('user')->middleware(['auth:sanctum', GetUserRole::class . ':user']
     Route::get('/get_details', [ViewController::class, 'user_details']);
 
     Route::post('/update_user', [UpdateController::class, 'user']);
+
+    Route::post('/update_password', [UpdateController::class, 'user_password']);
 
     Route::get('/logout', [CreateController::class, 'logout']);
 

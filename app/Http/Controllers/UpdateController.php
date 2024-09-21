@@ -22,43 +22,49 @@ class UpdateController extends Controller
         $request->validate([
             'mobile' => ['required', 'string'],
             'password' => 'required',
-            // 'name' => ['required', 'string'],
+            'name' => ['required', 'string'],
             
         ]);
 
         $update_user_record = User::where('id', $get_user)
         ->update([
             'password' => bcrypt($request->input('password')),
-            // 'email' => strtolower($request->input('email')),
-            // 'mobile' => $request->input('mobile'),
-            // 'role' => $request->input('role'),
-            // 'address_line_1' => $request->input('address_line_1'),
-            // 'address_line_2' => $request->input('address_line_2'),
-            // 'city' => $request->input('city'),
-            // 'pincode' => $request->input('pincode'),
-            // 'gstin' => $request->input('gstin'),
-            // 'state' => $request->input('state'),
-            // 'country' => $request->input('country'),
+            'email' => strtolower($request->input('email')),
+            'mobile' => $request->input('mobile'),
+            'role' => $request->input('role'),
+            'address_line_1' => $request->input('address_line_1'),
+            'address_line_2' => $request->input('address_line_2'),
+            'city' => $request->input('city'),
+            'pincode' => $request->input('pincode'),
+            'gstin' => $request->input('gstin'),
+            'state' => $request->input('state'),
+            'country' => $request->input('country'),
         ]);
 
-        if ($update_user_record == 1) {
-            return response()->json([
-                'message' => 'User record updated successfully!',
-                'data' => $update_user_record
-            ], 200);
-        }
-        
-        else {
-            return response()->json([
-                'message' => 'Failed to user record successfully'
-            ], 400);
-        }
+        return isset($update_user_record) && $update_user_record !== null
+        ? response()->json(['User record updated successfully!', 'data' => $update_user_record], 201)
+        : response()->json(['Failed to user record'], 400);
     }
 
-    // public function __construct(sendWhatsAppUtility $whatsapputility)
-    // {
-    //     $this->whatsapputility = $whatsapputility;
-    // }
+    public function user_password(Request $request)
+    {
+        $get_user = Auth::id();
+
+        $request->validate([
+            'mobile' => ['required', 'string'],
+            
+        ]);
+
+        $update_user_password = User::where('id', $get_user)
+        ->update([
+            'password' => bcrypt($request->input('password')),
+        ]);
+
+        return isset($update_user_password) && $update_user_password !== null
+        ? response()->json(['User password updated successfully!', 'data' => $update_user_password], 201)
+        : response()->json(['Failed to user password'], 400);
+    }
+
 
     public function generate_otp(Request $request)
     {
@@ -86,28 +92,6 @@ class UpdateController extends Controller
             
             if ($store_otp) {
 
-                // $templateParams = [
-                //     'name' => 'ace_otp', // Replace with your WhatsApp template name
-                //     'language' => ['code' => 'en'],
-                //     'components' => [
-                //         [
-                //             'type' => 'body',
-                //             'parameters' => [
-                //                 [
-                //                     'type' => 'text',
-                //                     'text' => $six_digit_otp_number,
-                //                 ],
-                //             ],
-                //         ],
-                //     ],
-                // ];
-
-                // // Directly create an instance of SendWhatsAppUtility
-                // $whatsAppUtility = new sendWhatsAppUtility();
-
-                // // Send OTP via WhatsApp
-                // // $whatsAppUtility->sendOtp("+918961043773", $templateParams);
-                // $response = $whatsAppUtility->sendWhatsApp("+918961043773", $templateParams, "+918961043773", 'OTP Campaign');
                 $templateParams = [
                     'name' => 'ace_otp', // Replace with your WhatsApp template name
                     'language' => ['code' => 'en'],
@@ -139,14 +123,8 @@ class UpdateController extends Controller
                 $whatsAppUtility = new sendWhatsAppUtility();
                 
                 // Send OTP via WhatsApp
-                // $response = $whatsAppUtility->sendWhatsApp("+918961043773", $templateParams, "+918961043773", 'OTP Campaign');
                 $response = $whatsAppUtility->sendWhatsApp($mobile, $templateParams, $mobile, 'OTP Campaign');
                 
-                // Send OTP via WhatsApp
-                // $response = $this->whatsAppService->sendOtp("+918961043773", $templateParams);
-
-                // dd($response);
-
                 return response()->json([
                     'message' => 'Otp store successfully!',
                     'data' => $store_otp
@@ -176,17 +154,13 @@ class UpdateController extends Controller
         {
             $request->validate([
                 'user_id' => 'required',
-                // 'products_id' => 'required',
                 'product_code' => 'required',
-                // 'rate' => 'required',
                 'quantity' => 'required',
-                // 'amount' => 'required',
                 'type' => 'required',
             ]);
     
                 $update_cart = CartModel::where('id', $id)
                 ->update([
-                    // 'products_id' => $request->input('products_id'),
                     'product_code' => $request->input('product_code'),
                     'quantity' => $request->input('quantity'),
                     'type' => $request->input('type'),
@@ -194,35 +168,22 @@ class UpdateController extends Controller
         }
         else {
             $request->validate([
-                // 'products_id' => 'required',
                 'product_code' => 'required',
-                // 'rate' => 'required',
                 'quantity' => 'required',
-                // 'amount' => 'required',
                 'type' => 'required',
             ]);
     
                 $update_cart = CartModel::where('id', $id)
                 ->update([
-                    // 'products_id' => $request->input('products_id'),
                     'product_code' => $request->input('product_code'),
                     'quantity' => $request->input('quantity'),
                     'type' => $request->input('type'),
                 ]);
         }
-
-        if ($update_cart == 1) {
-            return response()->json([
-                'message' => 'Cart updated successfully!',
-                'data' => $update_cart
-            ], 200);
-        }
-
-        else {
-            return response()->json([
-                'message' => 'Failed to update cart successfully!'
-            ], 400);
-        }    
+ 
+        return isset($update_cart) && $update_cart !== null
+        ? response()->json(['Cart updated successfully!', 'data' => $update_cart], 201)
+        : response()->json(['Failed to update cart'], 400); 
     }
 
     public function verify_user($get_id)
@@ -262,7 +223,6 @@ class UpdateController extends Controller
                 $whatsAppUtility = new sendWhatsAppUtility();
                 
                 // Send OTP via WhatsApp
-                // $response = $whatsAppUtility->sendWhatsApp("+918961043773", $templateParams, "+918961043773", 'OTP Campaign');
                 $response = $whatsAppUtility->sendWhatsApp('+918961043773', $templateParams, '', 'Approve Client');
                 
                 return response()->json([
