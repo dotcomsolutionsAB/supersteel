@@ -711,9 +711,8 @@ class ViewController extends Controller
                 })->toArray()
             ];
         }   
-       print_r(count($formatted_order_record)); 
         return isset($formatted_order_record) && $formatted_order_record !== null
-        ? response()->json(['Fetch records successfully!', 'data' => $formatted_order_record, 'fetch_records' => count($formatted_order_record)], 200)
+        ? response()->json(['Fetch records successfully!', 'data' => $formatted_order_record], 200)
         : response()->json(['Failed to get order records!'], 400);
     }
 }
