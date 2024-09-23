@@ -54,9 +54,21 @@
         .value {
             width: 35%; /* Wider values */
         }
+        .order-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
+
+    <!-- Order Title -->
+    <div class="order-title">
+        Order
+    </div>
 
     <!-- Header Section -->
     <div class="header">
@@ -108,7 +120,7 @@
                 <tr>
                     <td class="center-align">{{ $index + 1 }}</td>
                     <td><img src="{{ Storage::url('uploads/products_pdf/' . $item->product_code . '.jpg') }}" alt="" style="height: 60px; width: 60px;"></td>
-                    <td>{{ $item->product_name }}<br>SKU: {{ $item->product->sku }}</td>
+                    <td>{{ $item->product_name }}<br>Part No: {{ $item->product->product_code }}</td>
                     <td class="center-align">{{ $item->quantity }}</td>
                     <td class="right-align">₹ {{ $item->rate }}</td>
                     <td class="right-align">₹ {{ $item->total }}</td>
