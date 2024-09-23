@@ -38,11 +38,11 @@ Route::prefix('admin')->middleware(['auth:sanctum', GetUserRole::class . ':admin
     // Route::get('/logout', [CreateController::class, 'webLogout']);
     Route::post('/logout', [CreateController::class, 'logout']);
 
-    Route::post('/add_product', [CreateController::class, 'product']);
+    // Route::post('/add_product', [CreateController::class, 'product']);
 
-    Route::get('/view_product/{lang?}', [ViewController::class, 'lng_product']);
+    Route::get('/view_product', [ViewController::class, 'product']);
 
-    Route::get('/lng_product', [ViewController::class, 'product']);
+    Route::get('/lng_product/{lang?}', [ViewController::class, 'lng_product']);
 
     Route::post('/get_product', [ViewController::class, 'get_product']);
 

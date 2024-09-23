@@ -27,27 +27,17 @@ class ViewController extends Controller
     //
     public function product()
     {
-        // $get_product_details = ProductModel::select('SKU','product_code','product_name','category','sub_category','product_image','basic','gst','mark_up')->get();
-        $get_product_details = ProductModel::select('SKU','product_code','product_name','category','sub_category','product_image','basic','gst')->get();
+        $get_product_details = ProductModel::select('product_code','product_name', 'print_name', 'brand', 'category', 'category_lvl2', 'category_lvl3', 'category_lvl4', 'category_lvl5', 'category_lvl6', 'type', 'machine_part_no', 'price_a','price_b','price_c', 'price_d', 'price_e')->get();
         
 
-        if (isset($get_product_details)) {
-            return response()->json([
-                'message' => 'Fetch data successfully!',
-                'data' => $get_product_details
-            ], 201);
-        }
-
-        else {
-            return response()->json([
-                'message' => 'Failed get data successfully!',
-            ], 400);
-        }    
+        return isset($get_product_details) && $get_product_details !== null
+        ? response()->json(['Cart updated successfully!', 'data' => $get_product_details], 201)
+        : response()->json(['Failed get data'], 400); 
     }
 
     public function lng_product($lang = 'eng')
     {
-        $get_product_details = ProductModel::select('product_code','product_name', 'name_in_hindi','name_in_telugu','category','sub_category','product_image','basic','gst')->get();
+        $get_product_details = ProductModel::select('product_code','product_name', 'print_name', 'name_in_hindi','name_in_telugu', 'brand', 'category', 'category_lvl2', 'category_lvl3', 'category_lvl4', 'category_lvl5', 'category_lvl6', 'type', 'machine_part_no', 'price_a','price_b','price_c', 'price_d', 'price_e')->get();
         
         $processed_prd_rec = $get_product_details->map(function($prd_rec) use ($lang)
         {
@@ -63,30 +53,29 @@ class ViewController extends Controller
             }
 
             return [
-                'SKU' => $prd_rec->SKU,
-                'SKU' => $prd_rec->product_code,
+                'product_code' => $prd_rec->product_code,
                 'product_name' => $product_name,
+                'print_name' => $prd_rec->print_name,
+                'brand' => $prd_rec->brand,
                 'category' => $prd_rec->category,
-                'sub_category' => $prd_rec->sub_category,
-                'product_image' => $prd_rec->product_image,
-                'basic' => $prd_rec->basic,
-                'gst' => $prd_rec->gst,
+                'category_lvl2' => $prd_rec->category_lvl2,
+                'category_lvl3' => $prd_rec->category_lvl3,
+                'category_lvl4' => $prd_rec->category_lvl4,
+                'category_lvl5' => $prd_rec->category_lvl5,
+                'type' => $prd_rec->type,
+                'machine_part_no' => $prd_rec->machine_part_no,
+                'price_a' => $prd_rec->price_a,
+                'price_b' => $prd_rec->price_b,
+                'price_c' => $prd_rec->price_c,
+                'price_d' => $prd_rec->price_d,
+                'price_e' => $prd_rec->price_e,
             ];
         });
 
 
-        if (isset($get_product_details)) {
-            return response()->json([
-                'message' => 'Fetch data successfully!',
-                'data' => $processed_prd_rec
-            ], 201);
-        }
-
-        else {
-            return response()->json([
-                'message' => 'Failed get data successfully!',
-            ], 400);
-        }    
+        return isset($processed_prd_rec) && $processed_prd_rec !== null
+        ? response()->json(['Fetch data successfully!', 'data' => $processed_prd_rec], 201)
+        : response()->json(['Failed to get data'], 400);     
     }
 
     public function get_product(Request $request)
@@ -106,7 +95,7 @@ class ViewController extends Controller
         $subCategory = $request->input('sub_category', null);
 
         // Build the query for products
-        $query = ProductModel::select('SKU', 'product_code', 'product_name', 'category', 'sub_category', 'product_image', 'basic', 'gst');
+        $query = ProductModel::select('product_code', 'product_name', 'print_name', 'brand', 'category', 'category_lvl2', 'category_lvl3', 'category_lvl4', 'category_lvl5', 'category_lvl6', 'type', 'machine_part_no', 'price_a','price_b','price_c', 'price_d', 'price_e');
 
         // Apply search filter if provided
         if ($search) {
@@ -431,18 +420,9 @@ class ViewController extends Controller
                                 ->get();     
         }
 
-        if (isset($get_user_details) && (!$get_user_details->isEmpty())) {
-            return response()->json([
-                'message' => 'Fetch record successfully!',
-                'data' => $get_user_details
-            ], 201);
-        }
-
-        else {
-            return response()->json([
-                'message' => 'Failed get data successfully!',
-            ], 400);
-        }    
+        return isset($get_user_details) && $get_user_details !== null
+        ? response()->json(['Fetch record successfully!', 'data' => $get_user_details], 201)
+        : response()->json(['Failed to get data'], 400); 
     }
 
     public function user_details()
@@ -452,18 +432,9 @@ class ViewController extends Controller
         $get_user_details = User::select('id','name','email','mobile','address_line_1','address_line_2','city','pincode','gstin','state','country')->where('id', $get_user_id)->get();
         
 
-        if (isset($get_user_details)) {
-            return response()->json([
-                'message' => 'Fetch data successfully!',
-                'data' => $get_user_details
-            ], 201);
-        }
-
-        else {
-            return response()->json([
-                'message' => 'Failed get data successfully!',
-            ], 400);
-        }    
+        return isset($get_user_details) && $get_user_details !== null
+        ? response()->json(['Fetch data successfully!', 'data' => $get_user_details], 201)
+        : response()->json(['Failed to get data'], 400); 
     }
 
     public function orders()
@@ -527,23 +498,10 @@ class ViewController extends Controller
     public function orders_items_order_id($id)
     {
         $get_items_for_orders = OrderItemsModel::where('orderID', $id)->get();
-        // $get_items_for_orders = OrderItemsModel::where('order_id', $id)
-        // ->join()
-        // ->get();
-        
 
-        if (isset($get_items_for_orders)) {
-            return response()->json([
-                'message' => 'Fetch data successfully!',
-                'data' => $get_items_for_orders
-            ], 201);
-        }
-
-        else {
-            return response()->json([
-                'message' => 'Failed get data successfully!',
-            ], 400);
-        }    
+        return isset($get_items_for_orders) && $get_items_for_orders !== null
+        ? response()->json(['Fetch data successfully!', 'data' => $get_items_for_orders], 201)
+        : response()->json(['Failed to get data'], 400);  
     }
 
     public function cart()

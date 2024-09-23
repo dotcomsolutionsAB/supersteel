@@ -51,8 +51,7 @@ class UpdateController extends Controller
         $get_user = Auth::id();
 
         $request->validate([
-            'mobile' => ['required', 'string'],
-            
+            'password' => ['required', 'string'],  
         ]);
 
         $update_user_password = User::where('id', $get_user)

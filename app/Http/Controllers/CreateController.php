@@ -103,8 +103,7 @@ class CreateController extends Controller
 
         else {
             return response()->json([
-                'message' => 'Failed to create successfully!',
-                'data' => $create_user
+                'message' => 'Failed to create record'
             ], 400);
         }    
     }
@@ -224,56 +223,45 @@ class CreateController extends Controller
         ], 204);
     }
     
-    public function product(Request $request)
-    {
-        $request->validate([
-            'sku' => 'required|unique:t_products,sku',
-            'product_code' => 'required|unique:t_products,product_code',
-            'product_name' => 'required',
-            'product_image'=> 'required',
-            'basic'=>'required',
-            'gst'=>'required',
-            // 'mark_up'=>'required',
-        ]);
+    // public function product(Request $request)
+    // {
+    //     $request->validate([
+    //         'sku' => 'required|unique:t_products,sku',
+    //         'product_code' => 'required|unique:t_products,product_code',
+    //         'product_name' => 'required',
+    //         'product_image'=> 'required',
+    //         'basic'=>'required',
+    //         'gst'=>'required',
+    //         // 'mark_up'=>'required',
+    //     ]);
 
-        if($request->hasFile('product_image'))
-        {
-            $file = $request->file('product_image');
-            // $filename = time().'_'. $file->getClientOriginalName();
-            $filename = $file->getClientOriginalName();
-            $path = $file->storeAs('uploads/products', $filename, 'public');
-            $fileUrl = ('storage/uploads/products' . $filename); 
-            $get_file_name = $filename;
-
-
-            $create_order = ProductModel::create([
-                'sku' => $request->input('sku'),
-                'product_code' => $request->input('product_code'),
-                'product_name' => $request->input('product_name'),
-                'category' => $request->input('category'),
-                'sub_category' => $request->input('sub_category'),
-                'product_image' => $fileUrl,
-                'basic' => $request->input('basic'),
-                'gst' => $request->input('gst'),
-                // 'mark_up' => $request->input('mark_up'),
-            ]);
-        }
+    //     if($request->hasFile('product_image'))
+    //     {
+    //         $file = $request->file('product_image');
+    //         // $filename = time().'_'. $file->getClientOriginalName();
+    //         $filename = $file->getClientOriginalName();
+    //         $path = $file->storeAs('uploads/products', $filename, 'public');
+    //         $fileUrl = ('storage/uploads/products' . $filename); 
+    //         $get_file_name = $filename;
 
 
-        if (isset($create_order)) {
-            return response()->json([
-                'message' => 'Customer created successfully!',
-                'data' => $create_order
-            ], 201);
-        }
+    //         $create_order = ProductModel::create([
+    //             'sku' => $request->input('sku'),
+    //             'product_code' => $request->input('product_code'),
+    //             'product_name' => $request->input('product_name'),
+    //             'category' => $request->input('category'),
+    //             'sub_category' => $request->input('sub_category'),
+    //             'product_image' => $fileUrl,
+    //             'basic' => $request->input('basic'),
+    //             'gst' => $request->input('gst'),
+    //         ]);
+    //     }
 
-        else {
-            return response()->json([
-                'message' => 'Failed created successfully!',
-                'data' => $create_order
-            ], 400);
-        }    
-    }
+
+    //     return isset($create_order) && $create_order !== null
+    //     ? response()->json(['Customer created successfully!', 'data' => $create_order], 201)
+    //     : response()->json(['Sorry, Failed to create'], 400);   
+    // }
 
     public function orders(Request $request)
     {
