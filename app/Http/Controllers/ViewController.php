@@ -595,8 +595,6 @@ class ViewController extends Controller
 					// 't_products.product_image'
 				)
 				->get();
-
-            $cart_data_count = count($get_items_for_user);
         }
 
         else {
@@ -618,14 +616,12 @@ class ViewController extends Controller
 				)
 				->get();
 
-
-            $cart_data_count = count($get_items_for_user);
         }
         
 
-        return isset($get_items_for_user) && $get_counter_data->isNotEmpty()
-        ? response()->json(['Fetch data successfully!', 'data' => $get_items_for_user, 'record count' => $cart_data_count], 201)
-        : response()->json(['Failed to get data'], 400);  
+        return isset($get_items_for_user) && $get_items_for_user->isNotEmpty()
+        ? response()->json(['Fetch data successfully!', 'data' => $get_items_for_user, 'record count' => count($get_items_for_user)], 201)
+        : response()->json(['Sorry, your cart is empty'], 400);  
     }
 
     public function counter()
