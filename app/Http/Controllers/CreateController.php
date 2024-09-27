@@ -239,9 +239,6 @@ class CreateController extends Controller
             $userId = $request->input('user_id');
         }
 
-        // $create_order_basic = null;
-        // $create_order_gst = null;
-
         $get_product = CartModel::select('amount', 'quantity', 'product_code', 'product_name', 'rate', 'type')
                                        ->where('user_id', $userId)
                                        ->get();
@@ -302,7 +299,7 @@ class CreateController extends Controller
                     unset($create_order['id'], $create_order['created_at'], $create_order['updated_at']);
 
                     return response()->json([
-                        'message' => 'Order created and Invoice generated successfully!',
+                        'message' => 'Order created and Order invoice generated successfully!',
                         'data' => $create_order
                     ], 201);
 
@@ -320,9 +317,6 @@ class CreateController extends Controller
             else {
                 return response()->json(['Sorry, no product available!', 'data' => 'Error'], 500);
             }
-            dd("mmm");
-
-
         }
         
         else {

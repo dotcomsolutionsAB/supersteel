@@ -623,7 +623,7 @@ class ViewController extends Controller
         }
         
 
-        return isset($get_items_for_user) && $get_items_for_user !== null
+        return isset($get_items_for_user) && $get_counter_data->isNotEmpty()
         ? response()->json(['Fetch data successfully!', 'data' => $get_items_for_user, 'record count' => $cart_data_count], 201)
         : response()->json(['Failed to get data'], 400);  
     }
