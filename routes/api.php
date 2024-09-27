@@ -42,7 +42,7 @@ Route::prefix('admin')->middleware(['auth:sanctum', GetUserRole::class . ':admin
 
     Route::get('/view_product', [ViewController::class, 'product']);
 
-    Route::get('/lng_product/{lang?}', [ViewController::class, 'lng_product']);
+    // Route::get('/lng_product/{lang?}', [ViewController::class, 'lng_product']);
 
     Route::post('/get_product', [ViewController::class, 'get_product']);
 

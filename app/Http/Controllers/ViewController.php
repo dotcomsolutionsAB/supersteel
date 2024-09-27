@@ -31,52 +31,52 @@ class ViewController extends Controller
         
 
         return isset($get_product_details) && $get_product_details !== null
-        ? response()->json(['Cart updated successfully!', 'data' => $get_product_details], 201)
-        : response()->json(['Failed get data'], 400); 
+        ? response()->json(['Fetch records successfully!', 'data' => $get_product_details, 'fetch_records' => count($get_product_details)], 200)
+        : response()->json(['Failed get data'], 404); 
     }
 
-    public function lng_product($lang = 'eng')
-    {
-        $get_product_details = ProductModel::select('product_code','product_name', 'print_name', 'name_in_hindi','name_in_telugu', 'brand', 'category', 'category_lvl2', 'category_lvl3', 'category_lvl4', 'category_lvl5', 'category_lvl6', 'type', 'machine_part_no', 'price_a','price_b','price_c', 'price_d', 'price_e')->get();
+    // public function lng_product($lang = 'eng')
+    // {
+    //     $get_product_details = ProductModel::select('product_code','product_name', 'print_name', 'name_in_hindi','name_in_telugu', 'brand', 'category', 'category_lvl2', 'category_lvl3', 'category_lvl4', 'category_lvl5', 'category_lvl6', 'type', 'machine_part_no', 'price_a','price_b','price_c', 'price_d', 'price_e')->get();
         
-        $processed_prd_rec = $get_product_details->map(function($prd_rec) use ($lang)
-        {
-            $product_name = $prd_rec->product_name;
+    //     $processed_prd_rec = $get_product_details->map(function($prd_rec) use ($lang)
+    //     {
+    //         $product_name = $prd_rec->product_name;
 
-            if($lang === 'hin' && !empty($prd_rec->name_in_hindi))
-            {
-                $product_name = $prd_rec->name_in_hindi;
-            }
+    //         if($lang === 'hin' && !empty($prd_rec->name_in_hindi))
+    //         {
+    //             $product_name = $prd_rec->name_in_hindi;
+    //         }
 
-            elseif ($lang === 'tlg' && !empty($prd_rec->name_in_telugu)) {
-                $product_name = $prd_rec->name_in_telugu;
-            }
+    //         elseif ($lang === 'tlg' && !empty($prd_rec->name_in_telugu)) {
+    //             $product_name = $prd_rec->name_in_telugu;
+    //         }
 
-            return [
-                'product_code' => $prd_rec->product_code,
-                'product_name' => $product_name,
-                'print_name' => $prd_rec->print_name,
-                'brand' => $prd_rec->brand,
-                'category' => $prd_rec->category,
-                'category_lvl2' => $prd_rec->category_lvl2,
-                'category_lvl3' => $prd_rec->category_lvl3,
-                'category_lvl4' => $prd_rec->category_lvl4,
-                'category_lvl5' => $prd_rec->category_lvl5,
-                'type' => $prd_rec->type,
-                'machine_part_no' => $prd_rec->machine_part_no,
-                'price_a' => $prd_rec->price_a,
-                'price_b' => $prd_rec->price_b,
-                'price_c' => $prd_rec->price_c,
-                'price_d' => $prd_rec->price_d,
-                'price_e' => $prd_rec->price_e,
-            ];
-        });
+    //         return [
+    //             'product_code' => $prd_rec->product_code,
+    //             'product_name' => $product_name,
+    //             'print_name' => $prd_rec->print_name,
+    //             'brand' => $prd_rec->brand,
+    //             'category' => $prd_rec->category,
+    //             'category_lvl2' => $prd_rec->category_lvl2,
+    //             'category_lvl3' => $prd_rec->category_lvl3,
+    //             'category_lvl4' => $prd_rec->category_lvl4,
+    //             'category_lvl5' => $prd_rec->category_lvl5,
+    //             'type' => $prd_rec->type,
+    //             'machine_part_no' => $prd_rec->machine_part_no,
+    //             'price_a' => $prd_rec->price_a,
+    //             'price_b' => $prd_rec->price_b,
+    //             'price_c' => $prd_rec->price_c,
+    //             'price_d' => $prd_rec->price_d,
+    //             'price_e' => $prd_rec->price_e,
+    //         ];
+    //     });
 
 
-        return isset($processed_prd_rec) && $processed_prd_rec !== null
-        ? response()->json(['Fetch data successfully!', 'data' => $processed_prd_rec], 201)
-        : response()->json(['Failed to get data'], 400);     
-    }
+    //     return isset($processed_prd_rec) && $processed_prd_rec !== null
+    //     ? response()->json(['Fetch data successfully!', 'data' => $processed_prd_rec], 201)
+    //     : response()->json(['Failed to get data'], 400);     
+    // }
 
     public function get_product(Request $request)
     {

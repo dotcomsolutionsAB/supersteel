@@ -28,6 +28,7 @@ class ProductModel extends Model
         'price_c',
         'price_d',
         'price_e',
+        'product_image',
     ];
 
     public function transactions()
