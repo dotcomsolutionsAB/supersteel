@@ -298,7 +298,7 @@ class CreateController extends Controller
                     $get_invoice = $generate_invoice->generateInvoice($create_order->id);
 
                     // Add invoices to the $data array under a specific key
-                    $create_order['invoices'] = $invoices;
+                    $create_order['invoices'] = $get_invoice;
                     unset($create_order['id'], $create_order['created_at'], $create_order['updated_at']);
 
                     return response()->json([
