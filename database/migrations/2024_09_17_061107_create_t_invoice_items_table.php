@@ -19,7 +19,6 @@ return new class extends Migration
             $table->float('rate');
             $table->float('quantity');
             $table->float('total');
-            $table->enum('type', ['basic', 'gst']);
             $table->timestamps();
         });
     }

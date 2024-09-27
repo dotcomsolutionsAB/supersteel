@@ -222,46 +222,6 @@ class CreateController extends Controller
             'message' => 'Logged out successfully.',
         ], 204);
     }
-    
-    // public function product(Request $request)
-    // {
-    //     $request->validate([
-    //         'sku' => 'required|unique:t_products,sku',
-    //         'product_code' => 'required|unique:t_products,product_code',
-    //         'product_name' => 'required',
-    //         'product_image'=> 'required',
-    //         'basic'=>'required',
-    //         'gst'=>'required',
-    //         // 'mark_up'=>'required',
-    //     ]);
-
-    //     if($request->hasFile('product_image'))
-    //     {
-    //         $file = $request->file('product_image');
-    //         // $filename = time().'_'. $file->getClientOriginalName();
-    //         $filename = $file->getClientOriginalName();
-    //         $path = $file->storeAs('uploads/products', $filename, 'public');
-    //         $fileUrl = ('storage/uploads/products' . $filename); 
-    //         $get_file_name = $filename;
-
-
-    //         $create_order = ProductModel::create([
-    //             'sku' => $request->input('sku'),
-    //             'product_code' => $request->input('product_code'),
-    //             'product_name' => $request->input('product_name'),
-    //             'category' => $request->input('category'),
-    //             'sub_category' => $request->input('sub_category'),
-    //             'product_image' => $fileUrl,
-    //             'basic' => $request->input('basic'),
-    //             'gst' => $request->input('gst'),
-    //         ]);
-    //     }
-
-
-    //     return isset($create_order) && $create_order !== null
-    //     ? response()->json(['Customer created successfully!', 'data' => $create_order], 201)
-    //     : response()->json(['Sorry, Failed to create'], 400);   
-    // }
 
     public function orders(Request $request)
     {
@@ -279,167 +239,89 @@ class CreateController extends Controller
             $userId = $request->input('user_id');
         }
 
-        $create_order_basic = null;
-        $create_order_gst = null;
+        // $create_order_basic = null;
+        // $create_order_gst = null;
 
-        $get_basic_product = CartModel::select('amount', 'quantity', 'product_code', 'product_name', 'rate', 'type')
+        $get_product = CartModel::select('amount', 'quantity', 'product_code', 'product_name', 'rate', 'type')
                                        ->where('user_id', $userId)
-                                       ->where('type', 'basic')
                                        ->get();
 
-        $get_counter_data = CounterModel::select('prefix', 'counter', 'postfix')->where('name', 'order_basic')->get();
+        $get_counter_data = CounterModel::select('prefix', 'counter', 'postfix')->where('name', 'order')->get();
 
         if ($get_counter_data) 
         {
             $get_order_id = $get_counter_data[0]->prefix.$get_counter_data[0]->counter.$get_counter_data[0]->postfix;
     
-            // for `basic` product
-            if ((count($get_basic_product)) > 0) 
+            if ((count($get_product)) > 0) 
             {
-                $product_basic_amount = 0;
-                foreach ($get_basic_product as $basic_product) 
+                $product_amount = 0;
+                foreach ($get_product as $order) 
                 {
-                    $product_basic_amount += (($basic_product->amount) * ($basic_product->quantity));
+                    $product_amount += (($order->amount) * ($order->quantity));
                 }
                 
-                $create_order_basic = OrderModel::create([
+                $create_order = OrderModel::create([
                     'user_id' => $userId,
                     'order_id' => $get_order_id,
                     'order_date' => Carbon::now(),
-                    'amount' => $product_basic_amount,
-                    'type' => 'basic',
+                    'amount' => $product_amount,
                 ]);
                 //order_table_id
 
-                foreach ($get_basic_product as $basic_product) 
+                if (!is_null($create_order) && isset($create_order->id)) 
                 {
-                    // save every item in order_items with order_table_id
-                    $create_order_items = OrderItemsModel::create([
-                        'order_id' => $create_order_basic->id,
-                        'product_code' => $basic_product->product_code,
-                        'product_name' => $basic_product->product_name,
-                        'rate' => $basic_product->rate,
-                        'quantity' => $basic_product->quantity,
-                        'total' => $product_basic_amount,
-                        'type' => $basic_product->type,
-                    ]);
+                    foreach ($get_order as $order) 
+                    {
+                        // save every item in order_items with order_table_id
+                        $create_order_items = OrderItemsModel::create([
+                            'order_id' => $create_order->id,
+                            'product_code' => $order->product_code,
+                            'product_name' => $order->product_name,
+                            'rate' => $order->rate,
+                            'quantity' => $order->quantity,
+                            'total' => $product_amount,
+                        ]);
+                    }
+
+                    $update_cart = CounterModel::where('name', 'order_basic')
+                                                ->update(['counter' => (($get_counter_data[0]->counter)+1),
+                                                ]);
+                    
+                    $generate_invoice = new InvoiceController();
+
+
+                    // Generate invoice for $create_order_basic
+                    $get_invoice = $generate_invoice->generateInvoice($create_order->id);
+
+                    // Add invoices to the $data array under a specific key
+                    $create_order['invoices'] = $invoices;
+
+                    return response()->json([
+                        'message' => 'Order created and Invoice generated successfully!',
+                        'data' => $create_order
+                    ], 201);
+
                 }
-            }
 
-        }
-
-        $get_gst_product = CartModel::select('amount', 'quantity', 'product_code', 'product_name', 'rate', 'type')
-                                      ->where('user_id', $userId)
-                                      ->where('type', 'gst')
-                                      ->get();
-
-        $get_counter_data = CounterModel::select('prefix', 'counter', 'postfix')->where('name', 'order_gst')->get();
-
-        if ($get_counter_data) 
-        {
-            $get_order_id = $get_counter_data[0]->prefix.$get_counter_data[0]->counter.$get_counter_data[0]->postfix;
-
-            // for `gst` product    
-            if ((count($get_gst_product)) > 0) 
-            {
-                $product_gst_amount = 0;
-                foreach ($get_gst_product as $gst_product) {
-                    $product_gst_amount += (($gst_product->amount) * ($gst_product->quantity));
-                }
-
-                $create_order_gst = OrderModel::create([
-                    'user_id' => $userId,
-                    'order_id' => $get_order_id,
-                    'order_date' => Carbon::now(),
-                    'amount' => $product_gst_amount,
-                    'type' => 'gst',
-                ]);
-
-                 //order_table_id
-                 foreach ($get_gst_product as $gst_product) {
-                    // save every item in order_items with order_table_id
-                    $create_order_items = OrderItemsModel::create([
-                        'order_id' => $create_order_gst->id,
-                        'product_code' => $gst_product->product_code,
-                        'product_name' => $gst_product->product_name,
-                        'rate' => $gst_product->rate,
-                        'quantity' => $gst_product->quantity,
-                        'total' => $product_gst_amount,
-                        'type' => $gst_product->type,
-                    ]);
+                else {
+                    return response()->json([
+                        'message' => 'Sorry, failed to place order!',
+                        'data' => 'Error!'
+                    ], 400);
                 }
                 
             }
-        }
 
-        if ($create_order_basic != null) {
-            $update_cart = CounterModel::where('name', 'order_basic')
-            ->update([
-                'counter' => (($get_counter_data[0]->counter)+1),
-            ]);
-        }
-
-        if($create_order_gst != null)
-        {
-            $update_cart = CounterModel::where('name', 'order_gst')
-                                        ->update([
-                                         'counter' => (($get_counter_data[0]->counter)+1),
-            ]);
-        }
-
-        $data = [];
-
-        // Check if data_basic exists and is not null, then add it to the array
-        if(!empty($create_order_basic))
-        {
-            $data[] = $create_order_basic;
-        }
-
-        // Check if data_gst exists and is not null, then add it to the array
-        if(!empty($create_order_gst))
-        {
-            $data[] = $create_order_gst;
-        }
-
-        // $get_remove_items = CartModel::where('user_id', $userId)->delete();
-
-        if ($create_order_basic !== null || $create_order_gst !== null) {
-
-            $generate_invoice = new InvoiceController();
-
-             // This will store the invoices generated for display or further processing
-            $invoices = [];
-
-            // Check if $create_order_basic is not null and has an id
-            if (!is_null($create_order_basic) && isset($create_order_basic->id)) 
-            {
-                // Generate invoice for $create_order_basic
-                $invoices['basic'] = $generate_invoice->generateInvoice($create_order_basic->id);
+            else {
+                return response()->json(['Sorry, no product available!', 'data' => 'Error'], 500);
             }
 
-            // Check if $create_order_gst is not null and has an id
-            if (!is_null($create_order_gst) && isset($create_order_gst->id)) 
-            {
-                // Generate invoice for $create_order_gst
-                $invoices['gst'] = $generate_invoice->generateInvoice($create_order_gst->id);
-            }
 
-            // Add invoices to the $data array under a specific key
-            $data['invoices'] = $invoices;
-
-
-            return response()->json([
-                'message' => 'Order created and Invoice generated successfully!',
-                'data' => $data
-            ], 201);
         }
-
+        
         else {
-            return response()->json([
-                'message' => 'Sorry, failed to create order!',
-                'data' => 'Error!'
-            ], 400);
-        }    
+            return response()->json(['Sorry, something went wrong!', 'data' => 'Error'], 500);
+        }   
     }
 
     public function orders_items(Request $request)
@@ -488,28 +370,29 @@ class CreateController extends Controller
                 'product_name' => 'required',
                 'rate' => 'required',
                 'quantity' => 'required',
-                'type' => 'required',
             ]);
         }
 
         else
         {
+            $request->validate([
+                'product_code' => 'required',
+                'product_name' => 'required',
+                'rate' => 'required',
+                'quantity' => 'required',
+            ]);
+
             $request->merge(['user_id' => $get_user->id]);
         }
     
-            $create_cart = CartModel::updateOrCreate(
-				[
+            $create_cart = CartModel::create([
 					'user_id' => $request->input('user_id'),
 					'product_code' => $request->input('product_code'),
-				], 
-				[
 					'product_name' => $request->input('product_name'),
 					'rate' => $request->input('rate'),
 					'quantity' => $request->input('quantity'),
 					'amount' => ($request->input('rate')) * ($request->input('quantity')),
-					'type' => $request->input('type'),
-				]
-			);
+				]);
 
             unset($create_cart['id'], $create_cart['created_at'], $create_cart['updated_at']);
 

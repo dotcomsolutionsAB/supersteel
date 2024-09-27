@@ -18,7 +18,6 @@ return new class extends Migration
             $table->date('order_date');
             $table->float('amount');
             $table->enum('status', ['pending', 'partial', 'paid']);
-            $table->enum('type', ['basic', 'gst']);
             $table->string('order_invoice')->nullable();
             $table->timestamps();
         });

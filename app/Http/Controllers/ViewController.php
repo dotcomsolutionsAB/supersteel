@@ -228,7 +228,7 @@ class ViewController extends Controller
 
     public function get_spares($lang = 'eng', $code = null)
     {
-        $productQuery = ProductModel::select('product_code','product_name', 'name_in_hindi','name_in_telugu','category','sub_category','product_image','basic','gst')
+        $productQuery = ProductModel::select('product_code','product_name', 'name_in_hindi','name_in_telugu','category','sub_category','product_image')
                                             ->where('type', 'SPARE');
         
 
@@ -258,8 +258,6 @@ class ViewController extends Controller
                 'category' => $spare_prd_rec->category,
                 'sub_category' => $spare_prd_rec->sub_category,
                 'product_image' => $spare_prd_rec->product_image,
-                'basic' => $spare_prd_rec->basic,
-                'gst' => $spare_prd_rec->gst,
             ];
         });
 
@@ -590,7 +588,6 @@ class ViewController extends Controller
 					't_cart.rate',
 					't_cart.quantity',
 					't_cart.amount',
-					't_cart.type',
 					// 't_cart.created_at',
 					// 't_cart.updated_at',
 					// 't_products.basic',
@@ -613,7 +610,6 @@ class ViewController extends Controller
 					't_cart.rate',
 					't_cart.quantity',
 					't_cart.amount',
-					't_cart.type',
 					// 't_cart.created_at',
 					// 't_cart.updated_at',
 					// 't_products.basic',
@@ -675,18 +671,10 @@ class ViewController extends Controller
 
         if ($get_order_details) 
         {
-            if ($get_order_details[0]->type == 'Basic') {
-                $get_invoice_id = CounterModel::where('name', 'invoice_basic')
+                $get_invoice_id = CounterModel::where('name', 'invoice')
                                                 ->get();
 
                 $return_invoice_id = $get_invoice_id[0]->prefix.$get_invoice_id[0]->counter.$get_invoice_id[0]->postfix;
-            }
-            else {
-                $get_invoice_id = CounterModel::where('name', 'invoice_basic')
-                ->get();
-
-                $return_invoice_id = $get_invoice_id[0]->prefix.$get_invoice_id[0]->counter.$get_invoice_id[0]->postfix;
-            }
 
             $formatted_order_record = 
             [

@@ -147,42 +147,27 @@ class UpdateController extends Controller
 
     public function cart(Request $request, $id)
     {
-        $get_user = Auth::User();
-        
-        if($get_user->role == 'admin')
-        {
-            $request->validate([
-                'user_id' => 'required',
-                'product_code' => 'required',
-                'quantity' => 'required',
-                'type' => 'required',
+        $request->validate([
+            'user_id' => 'required',
+            'product_code' => 'required',
+            'product_name' => 'required',
+            'rate' => 'required',
+            'quantity' => 'required',
+        ]);
+
+        $update_cart = CartModel::where('id', $id)
+                                ->update([
+                'user_id' => $request->input('user_id'),
+                'product_code' => $request->input('product_code'), 
+                'product_name' => $request->input('product_name'),
+                'rate' => $request->input('rate'),
+                'quantity' => $request->input('quantity'),
+                'amount' => ($request->input('rate')) * ($request->input('quantity')),
             ]);
-    
-                $update_cart = CartModel::where('id', $id)
-                ->update([
-                    'product_code' => $request->input('product_code'),
-                    'quantity' => $request->input('quantity'),
-                    'type' => $request->input('type'),
-                ]);
-        }
-        else {
-            $request->validate([
-                'product_code' => 'required',
-                'quantity' => 'required',
-                'type' => 'required',
-            ]);
-    
-                $update_cart = CartModel::where('id', $id)
-                ->update([
-                    'product_code' => $request->input('product_code'),
-                    'quantity' => $request->input('quantity'),
-                    'type' => $request->input('type'),
-                ]);
-        }
  
         return isset($update_cart) && $update_cart !== null
-        ? response()->json(['Cart updated successfully!', 'data' => $update_cart], 201)
-        : response()->json(['Failed to update cart'], 400); 
+        ? response()->json(['Cart updated successfully!', 'data' => $update_cart], 200)
+        : response()->json(['Failed to update cart'], 404); 
     }
 
     public function verify_user($get_id)

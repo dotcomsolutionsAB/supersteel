@@ -18,8 +18,6 @@ return new class extends Migration
             $table->string('invoice_number');
             $table->date('date');
             $table->float('amount');
-            // $table->string('attachment');
-            $table->enum('type', ['basic', 'gst']);
             $table->timestamps();
         });
     }
