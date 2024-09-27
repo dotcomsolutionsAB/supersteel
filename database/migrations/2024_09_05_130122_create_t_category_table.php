@@ -15,8 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('image')->nullable();
-            $table->string('name_in_hindi')->nullable();
-            $table->string('name_in_telugu')->nullable();
             $table->timestamps();
         });
     }

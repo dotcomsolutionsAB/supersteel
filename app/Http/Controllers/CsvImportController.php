@@ -44,6 +44,8 @@ class CsvImportController extends Controller
         foreach ($records_csv as $record_csv) {
             $product_csv = ProductModel::where('product_code', $record_csv['Product Code'])->first();
 
+            $filename = $record_csv['Product Code'];
+
             // $basicPrice_product = $record_csv['Basic Price'] !== '' ? $record_csv['Basic Price'] : 0;
             // $gstPrice_prduct = $record_csv['GST Price'] !== '' ? $record_csv['GST Price'] : 0;
             // $filename = $record_csv['Product Code'];
@@ -104,6 +106,15 @@ class CsvImportController extends Controller
             //         ]);
             //     }
             // }
+
+            // Define the product image path and check if the image exists
+            $productImagePath = "/storage/uploads/products/{$filename}.jpg";
+            $product_imagePath_for_not_available = "/storage/uploads/products/placeholder.jpg";
+
+            if (!file_exists(public_path($productImagePath))) {
+                $productImagePath = $product_imagePath_for_not_available; // Use placeholder if image not found
+            }
+
             if ($product_csv) 
             {
                 // If product exists, update it
@@ -125,6 +136,7 @@ class CsvImportController extends Controller
                     'price_c' => $record_csv['Price C'],
                     'price_d' => $record_csv['Price D'],
                     'price_i' => $record_csv['Price I'],
+                    'product_image' => $productImagePath,
                 ]);
             } 
             else 
@@ -148,6 +160,7 @@ class CsvImportController extends Controller
                     'price_c' => $record_csv['Price C'],
                     'price_d' => $record_csv['Price D'],
                     'price_i' => $record_csv['Price I'],
+                    'product_image' => $productImagePath,
                 ]);
             }
         }   

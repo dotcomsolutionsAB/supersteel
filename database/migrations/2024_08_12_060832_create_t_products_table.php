@@ -16,8 +16,6 @@ return new class extends Migration
             $table->string('product_code');
             $table->string('product_name');
             $table->string('print_name');
-            $table->string('name_in_hindi')->nullable();
-            $table->string('name_in_telugu')->nullable();
             $table->string('brand')->nullable();
             $table->string('category')->nullable();
             $table->string('category_lvl2')->nullable();
@@ -32,6 +30,7 @@ return new class extends Migration
             $table->string('price_c')->nullable();
             $table->string('price_d')->nullable();
             $table->string('price_e')->nullable();
+            $table->longText('product_image')->nullable();
             $table->timestamps();
         });
     }

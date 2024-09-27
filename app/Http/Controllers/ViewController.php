@@ -151,84 +151,84 @@ class ViewController extends Controller
         }
     }
 
-    public function lng_get_product(Request $request, $lang = 'eng')
+    // public function lng_get_product(Request $request, $lang = 'eng')
+    // {
+    //     // Retrieve input parameters with defaults
+    //     $offset = max(0, (int) $request->input('offset', 0));
+    //     $limit = max(1, (int) $request->input('limit', 10));
+    //     $user_id = $request->input('user_id');
+    //     $search = $request->input('search', null);
+    //     $category = $request->input('category', null);
+    //     // $subCategory = $request->input('sub_category', null);
+
+    //     // Build the query for products
+    //     $query = ProductModel::select(
+    //         'product_code', 'product_name', 'name_in_hindi', 'name_in_telugu', 'brand', 'category', 'category_lvl2', 'category_lvl3', 'category_lvl3', 'category_lvl4', 'category_lvl5','type','machine_part_no', 'price_a', 'price_b', 'price_c', 'price_d', 'price_e'
+    //     );
+
+    //     // Apply filters
+    //     if ($search) {
+    //         $query->where('product_name', 'like', "%{$search}%");
+    //     }
+    //     if ($category) {
+    //         $query->where('category', $category);
+    //     }
+    //     // if ($subCategory) {
+    //     //     $query->where('sub_category', $subCategory);
+    //     // }
+
+    //     // Apply pagination and get products
+    //     $get_products = $query->skip($offset)->take($limit)->get();
+
+    //     // Process products for language and cart details
+    //     $processed_prd_lang_rec = $get_products->map(function ($prd_rec) use ($lang, $user_id) {
+    //         // Set product name based on the selected language
+    //         $product_name = $prd_rec->product_name;
+    //         if ($lang === 'hin' && !empty($prd_rec->name_in_hindi)) {
+    //             $product_name = $prd_rec->name_in_hindi;
+    //         } elseif ($lang === 'tlg' && !empty($prd_rec->name_in_telugu)) {
+    //             $product_name = $prd_rec->name_in_telugu;
+    //         }
+
+    //         // Check if the product is in the user's cart
+    //         $cart_item = CartModel::where('user_id', $user_id)
+    //             ->where('product_code', $prd_rec->product_code)
+    //             ->first();
+
+    //         // Return processed product data
+    //         return [
+    //             'product_code' => $prd_rec->product_code,
+    //             'product_name' => $product_name,
+    //             'brand' => $prd_rec->brand,
+    //             'category' => $prd_rec->category,
+    //             'category_lvl2' => $prd_rec->category_lvl2,
+    //             'category_lvl3' => $prd_rec->category_lvl3,
+    //             'category_lvl4' => $prd_rec->category_lvl4,
+    //             'category_lvl5' => $prd_rec->category_lvl5,
+    //             'type' => $prd_rec->type,
+    //             'machine_part_no' => $prd_rec->machine_part_no,
+    //             'price_a' => $prd_rec->price_a,
+    //             'price_b' => $prd_rec->price_b,
+    //             'price_c' => $prd_rec->price_c,
+    //             'price_d' => $prd_rec->price_d,
+    //             'price_e' => $prd_rec->price_e,
+    //             'in_cart' => $cart_item ? true : false,
+    //             'cart_quantity' => $cart_item->quantity ?? null,
+    //             'cart_type' => $cart_item->type ?? null,
+    //         ];
+    //     });
+
+    //     // Return response based on the result
+    //     return $processed_prd_lang_rec->isEmpty()
+    //     ? response()->json(['Failed to fetch data!'], 400)
+    //     : response()->json(['message' => 'Fetch data successfully!',
+    //             'data' => $processed_prd_lang_rec,
+    //             'count' => count($processed_prd_lang_rec)], 201);
+    // }
+
+    public function get_spares($code = null)
     {
-        // Retrieve input parameters with defaults
-        $offset = max(0, (int) $request->input('offset', 0));
-        $limit = max(1, (int) $request->input('limit', 10));
-        $user_id = $request->input('user_id');
-        $search = $request->input('search', null);
-        $category = $request->input('category', null);
-        // $subCategory = $request->input('sub_category', null);
-
-        // Build the query for products
-        $query = ProductModel::select(
-            'product_code', 'product_name', 'name_in_hindi', 'name_in_telugu', 'brand', 'category', 'category_lvl2', 'category_lvl3', 'category_lvl3', 'category_lvl4', 'category_lvl5','type','machine_part_no', 'price_a', 'price_b', 'price_c', 'price_d', 'price_e'
-        );
-
-        // Apply filters
-        if ($search) {
-            $query->where('product_name', 'like', "%{$search}%");
-        }
-        if ($category) {
-            $query->where('category', $category);
-        }
-        // if ($subCategory) {
-        //     $query->where('sub_category', $subCategory);
-        // }
-
-        // Apply pagination and get products
-        $get_products = $query->skip($offset)->take($limit)->get();
-
-        // Process products for language and cart details
-        $processed_prd_lang_rec = $get_products->map(function ($prd_rec) use ($lang, $user_id) {
-            // Set product name based on the selected language
-            $product_name = $prd_rec->product_name;
-            if ($lang === 'hin' && !empty($prd_rec->name_in_hindi)) {
-                $product_name = $prd_rec->name_in_hindi;
-            } elseif ($lang === 'tlg' && !empty($prd_rec->name_in_telugu)) {
-                $product_name = $prd_rec->name_in_telugu;
-            }
-
-            // Check if the product is in the user's cart
-            $cart_item = CartModel::where('user_id', $user_id)
-                ->where('product_code', $prd_rec->product_code)
-                ->first();
-
-            // Return processed product data
-            return [
-                'product_code' => $prd_rec->product_code,
-                'product_name' => $product_name,
-                'brand' => $prd_rec->brand,
-                'category' => $prd_rec->category,
-                'category_lvl2' => $prd_rec->category_lvl2,
-                'category_lvl3' => $prd_rec->category_lvl3,
-                'category_lvl4' => $prd_rec->category_lvl4,
-                'category_lvl5' => $prd_rec->category_lvl5,
-                'type' => $prd_rec->type,
-                'machine_part_no' => $prd_rec->machine_part_no,
-                'price_a' => $prd_rec->price_a,
-                'price_b' => $prd_rec->price_b,
-                'price_c' => $prd_rec->price_c,
-                'price_d' => $prd_rec->price_d,
-                'price_e' => $prd_rec->price_e,
-                'in_cart' => $cart_item ? true : false,
-                'cart_quantity' => $cart_item->quantity ?? null,
-                'cart_type' => $cart_item->type ?? null,
-            ];
-        });
-
-        // Return response based on the result
-        return $processed_prd_lang_rec->isEmpty()
-        ? response()->json(['Failed to fetch data!'], 400)
-        : response()->json(['message' => 'Fetch data successfully!',
-                'data' => $processed_prd_lang_rec,
-                'count' => count($processed_prd_lang_rec)], 201);
-    }
-
-    public function get_spares($lang = 'eng', $code = null)
-    {
-        $productQuery = ProductModel::select('product_code','product_name', 'name_in_hindi','name_in_telugu','category','sub_category','product_image')
+        $productQuery = ProductModel::select('product_code','product_name','category','product_image')
                                             ->where('type', 'SPARE');
         
 
@@ -238,32 +238,8 @@ class ViewController extends Controller
 
         $get_spare_product = $productQuery->get();
 
-        $spare_prd_rec = $get_spare_product->map(function($spare_prd_rec) use ($lang)
-        {
-            $product_name = $spare_prd_rec->product_name;
-
-            if($lang === 'hin' && !empty($spare_prd_rec->name_in_hindi))
-            {
-                $product_name = $spare_prd_rec->name_in_hindi;
-            }
-
-            elseif ($lang === 'tlg' && !empty($spare_prd_rec->name_in_telugu)) {
-                $product_name = $spare_prd_rec->name_in_telugu;
-            }
-
-            return [
-                // 'SKU' => $prd_rec->SKU,
-                'product_code' => $spare_prd_rec->product_code,
-                'product_name' => $product_name,
-                'category' => $spare_prd_rec->category,
-                'sub_category' => $spare_prd_rec->sub_category,
-                'product_image' => $spare_prd_rec->product_image,
-            ];
-        });
-
-
-        return isset($spare_prd_rec) && $spare_prd_rec !== null
-        ? response()->json(['Fetch data successfully!', 'data' => $spare_prd_rec, 'fetch_records' => count($spare_prd_rec)], 200)
+        return isset($get_spare_product) && $get_spare_product !== null
+        ? response()->json(['Fetch data successfully!', 'data' => $get_spare_product, 'fetch_records' => count($get_spare_product)], 200)
         : response()->json(['Failed get data'], 404); 
     }
     // public function categories()
@@ -412,39 +388,14 @@ class ViewController extends Controller
     //             'count' => count($formattedCategories)], 201);
     // }
 
-    public function user($lang = 'eng')
+    public function user()
     {
-        $get_user_details = User::select('id','name', 'name_in_hindi', 'name_in_telugu', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country')->get();
-
-        $processed_rec_user = $get_user_details->map(function ($record) use ($lang)
-        {
-            $name = $record->name;
-
-            if($lang == 'hin' && !empty($record->name_in_hindi))
-            {
-                $name = $record->name_in_hindi;
-            }
-            elseif ($lang == 'tlg' && !empty($record->name_in_telugu)) 
-            {
-                $name = $record->name_in_telugu;
-            }
-
-                return [
-                    'id' => $record->id,
-                    'name' => $name,
-                    'email' => $record->email,
-                    'mobile' => $record->mobile,
-                    'role' => ucfirst($record->role),
-                    'address' => implode(', ', array_filter([$record->address_line_1, $record->address_line_2, $record->city, $record->state, $record->pincode, $record->country])),
-                    'gstin' => $record->gstin,
-                    'verified' => $record->verified,
-                ];  
-        }) ;
+        $get_user_details = User::select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country')->get();
            
 
         return $processed_rec_user->isEmpty()
         ? response()->json(['Failed get data successfully!'], 400)
-        : response()->json(['Fetch data successfully!', 'data' => $processed_rec_user], 201);
+        : response()->json(['Fetch data successfully!', 'data' => $get_user_details], 201);
     }
 
     public function find_user($search = null)
@@ -615,7 +566,6 @@ class ViewController extends Controller
 					// 't_products.product_image'
 				)
 				->get();
-
         }
         
 

@@ -25,7 +25,7 @@ Route::prefix('admin')->middleware(['auth:sanctum', GetUserRole::class . ':admin
 
     Route::post('/add_user', [CreateController::class, 'user']);
 
-    Route::get('/view_user/{lang?}', [ViewController::class, 'user']);
+    Route::get('/view_user', [ViewController::class, 'user']);
 
     Route::get('/fetch_user/{search?}', [ViewController::class, 'find_user']);
 
@@ -46,7 +46,9 @@ Route::prefix('admin')->middleware(['auth:sanctum', GetUserRole::class . ':admin
 
     Route::post('/get_product', [ViewController::class, 'get_product']);
 
-    Route::post('/lng_get_product/{lang?}', [ViewController::class, 'lng_get_product']);
+    // Route::get('/category', [ViewController::class, 'categories']);
+
+    // Route::post('/lng_get_product/{lang?}', [ViewController::class, 'lng_get_product']);
 
     // Route::get('/category/{lang?}', [ViewController::class, 'lng_categories']);
 
@@ -94,7 +96,7 @@ Route::prefix('admin')->middleware(['auth:sanctum', GetUserRole::class . ':admin
 
     Route::post('/add_invoice', [CreateController::class, 'make_invoice']);
 
-    Route::get('/spare_product/{lang?}/{code?}', [ViewController::class, 'get_spares']);
+    Route::get('/spare_product/{code?}', [ViewController::class, 'get_spares']);
 });
 
 Route::prefix('user')->middleware(['auth:sanctum', GetUserRole::class . ':user'])->group(function () {
