@@ -247,10 +247,9 @@ class CreateController extends Controller
                                        ->get();
 
         $get_counter_data = CounterModel::select('prefix', 'counter', 'postfix')->where('name', 'order')->get();
+       
 
-        print_r($get_counter_data);
-
-        if ($get_counter_data) 
+        if ($get_counter_data->isNotEmpty()) 
         {
             $get_order_id = $get_counter_data[0]->prefix.$get_counter_data[0]->counter.$get_counter_data[0]->postfix;
     
@@ -265,14 +264,14 @@ class CreateController extends Controller
                 $create_order = OrderModel::create([
                     'user_id' => $userId,
                     'order_id' => $get_order_id,
-                    'order_date' => Carbon::now(),
+                    'order_date' => Carbon::now()->toDateString(),
                     'amount' => $product_amount,
                 ]);
                 //order_table_id
 
                 if (!is_null($create_order) && isset($create_order->id)) 
                 {
-                    foreach ($get_order as $order) 
+                    foreach ($get_product as $order) 
                     {
                         // save every item in order_items with order_table_id
                         $create_order_items = OrderItemsModel::create([
@@ -288,6 +287,9 @@ class CreateController extends Controller
                     $update_cart = CounterModel::where('name', 'order_basic')
                                                 ->update(['counter' => (($get_counter_data[0]->counter)+1),
                                                 ]);
+
+                    // Remove items from the cart for the user
+                    $get_remove_items = CartModel::where('user_id', $userId)->delete();
                     
                     $generate_invoice = new InvoiceController();
 
@@ -297,6 +299,7 @@ class CreateController extends Controller
 
                     // Add invoices to the $data array under a specific key
                     $create_order['invoices'] = $invoices;
+                    unset($create_order['id'], $create_order['created_at'], $create_order['updated_at']);
 
                     return response()->json([
                         'message' => 'Order created and Invoice generated successfully!',
@@ -317,6 +320,7 @@ class CreateController extends Controller
             else {
                 return response()->json(['Sorry, no product available!', 'data' => 'Error'], 500);
             }
+            dd("mmm");
 
 
         }

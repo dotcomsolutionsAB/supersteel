@@ -81,7 +81,7 @@
             <td class="label">GSTIN:</td>
             <td class="value">{{ $user->gstin }}</td>
             <td class="label">Order Type:</td>
-            <td class="value">{{ $order->type }}</td>
+            <td class="value">"GST"</td>
         </tr>
         <tr>
             <td class="label">Mobile:</td>

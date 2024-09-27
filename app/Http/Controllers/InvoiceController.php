@@ -25,7 +25,7 @@ class InvoiceController extends Controller
                     ->where('id', $get_user)
                     ->first();
         
-        $order = OrderModel::select('order_id', 'amount', 'type', 'order_date')
+        $order = OrderModel::select('order_id', 'amount', 'order_date')
                             ->where('id', $orderId)
                             ->first();
 
