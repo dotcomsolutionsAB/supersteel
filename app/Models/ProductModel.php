@@ -17,6 +17,7 @@ class ProductModel extends Model
         'name_in_telugu',
         'brand',
         'category',
+        'category_lvl1',
         'category_lvl2',
         'category_lvl3',
         'category_lvl4',

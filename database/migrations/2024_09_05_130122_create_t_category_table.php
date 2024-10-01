@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('t_category', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('image')->nullable();
+            $table->integer('code');
+            $table->string('product_code');
+            $table->integer('level');
+            $table->string('category_image')->nullable();
             $table->timestamps();
         });
     }

@@ -16,8 +16,6 @@ use Hash;
 
 use App\Models\CategoryModel;
 
-use App\Models\SubCategoryModel;
-
 class CsvImportController extends Controller
 {
     //
@@ -46,67 +44,6 @@ class CsvImportController extends Controller
 
             $filename = $record_csv['Product Code'];
 
-            // $basicPrice_product = $record_csv['Basic Price'] !== '' ? $record_csv['Basic Price'] : 0;
-            // $gstPrice_prduct = $record_csv['GST Price'] !== '' ? $record_csv['GST Price'] : 0;
-            // $filename = $record_csv['Product Code'];
-
-            // $category = $record_csv['Category'];
-            // $sub_category = $record_csv['Sub Category'];
-
-            // // $categoryModel = CategoryModel::firstOrCreate(['name' => $category]);
-
-            // $categoryNameSanitized = str_replace([' ', '/', '\\', ':', '*'], '_', strtolower($category));
-            // $imagePath = "/storage/uploads/category/{$categoryNameSanitized}.jpg";
-            // $category_imagePath_for_not_avaliable = "/storage/uploads/category/placeholder.jpg";
-
-            // if (file_exists(public_path($imagePath))) 
-            // {
-            //     $categoryModel = CategoryModel::updateOrCreate([
-            //         'name' => $category,
-            //     ], [
-            //         'image' => $imagePath,
-            //     ]);
-            // }
-            // else 
-            // {
-            //     $categoryModel = CategoryModel::updateOrCreate([
-            //         'name' => $category,
-            //     ], [
-            //         'image' => $category_imagePath_for_not_avaliable,
-            //     ]);
-            // }
-
-            // // Get the category ID for future use
-            // $category_id = $categoryModel->id;
-
-            // if (($sub_category != '')) 
-            // {
-            //     // $subCategoryModel = SubCategoryModel::firstOrCreate([
-
-            //     $subcategoryNameSanitized = str_replace([' ', '/', '\\', ':', '*'], '_', strtolower($sub_category));
-            //     $subCategoryImagePath  = "/storage/uploads/category/{$subcategoryNameSanitized}.jpg";
-            //     $sub_category_imagePath_for_not_avaliable = "/storage/uploads/sub_category/placeholder.jpg";
-
-            //     if (file_exists(public_path($subCategoryImagePath))) 
-            //     {
-            //         $subCategoryModel = SubCategoryModel::updateOrCreate([
-            //             'name' => $sub_category,
-            //             'category_id' => $category_id, // Include category_id in the search/creation criteria
-            //             'image' => $imagePath,
-            //         ]);
-            //     }
-            //     else 
-            //     {
-            //         // Optionally continue without setting the image
-            //         $subCategoryModel = SubCategoryModel::updateOrCreate([
-            //             'name' => $sub_category,
-            //             'category_id' => $category_id,
-            //         ], [
-            //             'image' => $sub_category_imagePath_for_not_avaliable,
-            //         ]);
-            //     }
-            // }
-
             // Define the product image path and check if the image exists
             $productImagePath = "/storage/uploads/products/{$filename}.jpg";
             $product_imagePath_for_not_available = "/storage/uploads/products/placeholder.jpg";
@@ -114,6 +51,20 @@ class CsvImportController extends Controller
             if (!file_exists(public_path($productImagePath))) {
                 $productImagePath = $product_imagePath_for_not_available; // Use placeholder if image not found
             }
+
+            // Step 1: Convert the string into an array, and remove empty values (caused by trailing commas)
+            $cat_array = array_filter(explode(',', $record_csv['Category']));
+
+            // Step 2: Check if the array has elements
+            if (count($cat_array) > 1)
+            {
+                // Reverse the remaining array elements (except the last one) to complete the rotation
+                $cat_array = array_reverse($cat_array);
+            }
+
+            // Step 4: Convert the array into JSON format
+            $jsonArray = json_encode($cat_array);
+
 
             if ($product_csv) 
             {
@@ -123,13 +74,14 @@ class CsvImportController extends Controller
                     'product_name' => $record_csv['Product Name'],
                     'print_name' => $record_csv['Print Name'],
                     'brand' => $record_csv['Brand'],
-                    'category' => $record_csv['Category'],
+                    'category' => $jsonArray,
+                    'category_lvl1' => $record_csv['Category Lvl 1'],
                     'category_lvl2' => $record_csv['Category Lvl 2'],
                     'category_lvl3' => $record_csv['Category Lvl 3'],
                     'category_lvl4' => $record_csv['Category Lvl 4'],
                     'category_lvl5' => $record_csv['Category Lvl 5'],
                     'category_lvl6' => $record_csv['Category Lvl 6'],
-                    'type' => $record_csv['Type'],
+                    // 'type' => $record_csv['Type'],
                     'machine_part_no' => $record_csv['Machine Part No.'],
                     'price_a' => $record_csv['Price A'],
                     'price_b' => $record_csv['Price B'],
@@ -147,13 +99,15 @@ class CsvImportController extends Controller
                     'product_name' => $record_csv['Product Name'],
                     'print_name' => $record_csv['Print Name'],
                     'brand' => $record_csv['Brand'],
-                    'category' => $record_csv['Category'],
+                    // 'category' => $record_csv['Category'],
+                    'category' => $jsonArray,
+                    'category_lvl1' => $record_csv['Category Lvl 1'],
                     'category_lvl2' => $record_csv['Category Lvl 2'],
                     'category_lvl3' => $record_csv['Category Lvl 3'],
                     'category_lvl4' => $record_csv['Category Lvl 4'],
                     'category_lvl5' => $record_csv['Category Lvl 5'],
                     'category_lvl6' => $record_csv['Category Lvl 6'],
-                    'type' => $record_csv['Type'],
+                    // 'type' => $record_csv['Type'],
                     'machine_part_no' => $record_csv['Machine Part No.'],
                     'price_a' => $record_csv['Price A'],
                     'price_b' => $record_csv['Price B'],
@@ -168,14 +122,15 @@ class CsvImportController extends Controller
             return response()->json(['message' => 'Products imported successfully'], 200);
         }
         else {
-            return response()->json(['message' => 'Sorry, failed to imported successfully'], 400);
+            return response()->json(['message' => 'Sorry, failed to imported successfully'], 404);
         }
     }
 
     public function importUser()
     {
         // URL of the CSV file from Google Sheets
-        $get_product_user_url = 'https://docs.google.com/spreadsheets/d/1_4XMqLfR7EqOWMxrilnCZq5-YuYn1dRLlPbFIl41OsU/pub?gid=1797389278&single=true&output=csv';
+        // $get_product_user_url = 'https://docs.google.com/spreadsheets/d/1_4XMqLfR7EqOWMxrilnCZq5-YuYn1dRLlPbFIl41OsU/pub?gid=1797389278&single=true&output=csv';
+        $get_product_user_url = 'C:\Users\Dot com\Downloads\dummy_invoice_data.csv';
 
         // Fetch the CSV content using file_get_contents
         $csvContent_user = file_get_contents($get_product_user_url);
@@ -248,7 +203,71 @@ class CsvImportController extends Controller
             return response()->json(['message' => 'Users imported successfully'], 200);
         }
         else {
-            return response()->json(['message' => 'Sorry, failed to imported successfully'], 400);
+            return response()->json(['message' => 'Sorry, failed to imported successfully'], 404);
+        }
+    }
+
+    public function importCategory()
+    {
+        // URL of the CSV file from Google Sheets
+        $get_category_csv_url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSoVot_t3TuRNSNBnz_vCeeeKpMXSap3pPvoers6QuVAIp3Gr32EbE56GSZitCrdGTLudR4vvATlPnD/pub?gid=1216834895&single=true&output=csv';
+
+        // Fetch the CSV content using file_get_contents
+        $csvContent_category = file_get_contents($get_category_csv_url);
+
+        // Fetch and parse the CSV
+        $csv_category = Reader::createFromString($csvContent_category);
+
+        $csv_category->setHeaderOffset(0); // Set the header offset
+        
+
+        $category_records_csv = (new Statement())->process($csv_category);
+
+        $category_insert_response = null;
+        $category_update_response = null;
+
+        // Iterate through each record and create or update the product
+        foreach ($category_records_csv as $category_records_csv) {
+            $category_csv = CategoryModel::where('code', $category_records_csv['Product Code'])->first();
+
+            $filename = $category_records_csv['Product Code'];
+
+            $level = !empty($category_records_csv['Lvl']) ? $category_records_csv['Lvl'] : 0;
+
+            // Define the product image path and check if the image exists
+            $categoryImagePath = "/storage/uploads/category/{$filename}.jpg";
+            $category_imagePath_for_not_available = "/storage/uploads/category/placeholder.jpg";
+
+            if (!file_exists(public_path($categoryImagePath))) {
+                $categoryImagePath = $category_imagePath_for_not_available; // Use placeholder if image not found
+            }
+
+            if ($category_csv) 
+            {
+                // If category exists, update it
+                $category_update_response = $product_csv->update([
+                    'code' => $category_records_csv['CODE'],
+                    'product_code' => $category_records_csv['Product Code'],
+                    'level' => $level,
+                    'category_image' => $categoryImagePath,
+                ]);
+            } 
+            else 
+            {
+                // If category does not exist, create a new one
+                $category_insert_response = CategoryModel::create([
+                    'code' => $category_records_csv['CODE'],
+                    'product_code' => $category_records_csv['Product Code'],
+                    'level' => $level,
+                    'category_image' => $categoryImagePath,
+                ]);
+            }
+        }   
+        if ($category_update_response == 1 || isset($category_insert_response)) {
+            return response()->json(['message' => 'Category imported successfully'], 200);
+        }
+        else {
+            return response()->json(['message' => 'Sorry, failed to import'], 404);
         }
     }
 }

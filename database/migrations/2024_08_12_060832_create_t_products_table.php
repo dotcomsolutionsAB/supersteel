@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('print_name');
             $table->string('brand')->nullable();
             $table->string('category')->nullable();
+            $table->string('category_lvl1')->nullable();
             $table->string('category_lvl2')->nullable();
             $table->string('category_lvl3')->nullable();
             $table->string('category_lvl4')->nullable();
