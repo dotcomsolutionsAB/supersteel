@@ -18,7 +18,8 @@ return new class extends Migration
             $table->integer('otp')->after('mobile')->nullable();
             $table->timestamp('expires_at')->after('otp')->nullable();
             $table->enum('role', ['admin', 'manager', 'user'])->after('expires_at');
-            $table->string('address_line_1')->nullable()->after('role')->nullable(); 
+            $table->integer('manager')->after('role');
+            $table->string('address_line_1')->nullable()->after('manager')->nullable(); 
             $table->string('address_line_2')->nullable()->after('address_line_1')->nullable(); 
             $table->string('city')->nullable()->after('address_line_2')->nullable(); 
             $table->integer('pincode')->nullable()->after('city')->nullable(); 
