@@ -272,88 +272,6 @@ class ViewController extends Controller
     //     }    
     // }
 
-    // public function sub_categories($category = null)
-    // {
-    //     // Convert the string of category IDs to an array, e.g., '1,2' -> [1, 2]
-    //     $categoryIds = $category ? explode(',', $category) : [];
-
-    //     // // Fetch subcategories filtered by category_id if provided
-    //     // $sub_categories = SubCategoryModel::withCount('products')
-    //     // ->when($category, function ($query, $category) {
-    //     //     // Filter subcategories by the category_id if a category is provided
-    //     //     return $query->where('category_id', $category);
-    //     // })->get();
-
-    //     // Fetch subcategories filtered by multiple category_ids if provided
-    //     $sub_categories = SubCategoryModel::withCount('products')
-    //     ->when(!empty($categoryIds), function ($query) use ($categoryIds) {
-    //         // Filter subcategories by multiple category_ids using whereIn
-    //         return $query->whereIn('category_id', $categoryIds);
-    //     })->get();
-
-    //     // Format the categories data for a JSON response
-    //     $formattedSubCategories = $sub_categories->map(function ($sub_category) {
-    //         return [
-    //             'sub_category_name' => $sub_category->name,
-    //             'sub_category_image' => $sub_category->image,
-    //             'sub_products_count' => $sub_category->products_count,
-    //         ];
-    //     });
-        
-    //     if (isset($formattedSubCategories)) {
-    //         return response()->json([
-    //             'message' => 'Fetch data successfully!',
-    //             'data' => $formattedSubCategories,
-    //             'count' => count($formattedSubCategories),
-    //         ], 201);
-    //     }
-
-    //     else {
-    //         return response()->json([
-    //             'message' => 'Failed get data successfully!',
-    //         ], 400);
-    //     }    
-    // }
-
-    // public function lng_sub_categories($category = null, $lang = 'eng')
-    // {
-    //     $categoryIds = $category ? explode(',', $category) : [];
-
-    //     // Fetch subcategories filtered by multiple category_ids if provided
-    //     $sub_categories = SubCategoryModel::withCount('products')
-    //     ->when(!empty($categoryIds), function ($query) use ($categoryIds) 
-    //     {
-    //         // Filter subcategories by multiple category_ids using whereIn
-    //         return $query->whereIn('category_id', $categoryIds);
-    //     })
-    //     ->get();
-
-    //     // Format the subcategories data for a JSON response
-    //     $formattedSubCategories = $sub_categories->map(function ($sub_category) use ($lang) 
-    //     {
-    //         // Set the sub-category name based on the selected language
-    //         $sub_category_name = $sub_category->name; // Default to English
-
-    //         if ($lang === 'hin' && !empty($sub_category->name_in_hindi)) {
-    //             $sub_category_name = $sub_category->name_in_hindi;
-    //         } elseif ($lang === 'tlg' && !empty($sub_category->name_in_telugu)) {
-    //             $sub_category_name = $sub_category->name_in_telugu;
-    //         }
-
-    //         return [
-    //             'sub_category_name' => $sub_category_name,
-    //             'sub_category_image' => $sub_category->image,
-    //             'sub_products_count' => $sub_category->products_count,
-    //         ];
-    //     });
-        
-    //     return $formattedSubCategories->isEmpty()
-    //     ? response()->json(['Failed get data successfully!'], 400)
-    //     : response()->json(['message' => 'Fetch data successfully!',
-    //             'data' => $formattedSubCategories,
-    //             'count' => count($formattedSubCategories)], 201);
-    // }
-
     // public function lng_categories($lang = 'eng')
     // {
     //     // Fetch all categories with their product count
@@ -392,7 +310,8 @@ class ViewController extends Controller
     {
         $userRole = (Auth::user())->role;
 
-        if ($userRole == 'admin') {
+        if ($userRole == 'admin') 
+        {
         
             $get_user_details = User::with('manager:id,mobile')
                                 ->select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id')
@@ -439,12 +358,11 @@ class ViewController extends Controller
                     'country' => $user->country,
                 ];
             });
-
             
         }
 
         return empty($response)
-        ? response()->json(['Failed get data successfully!'], 404)
+        ? response()->json(['Sorry, Failed to get data'], 404)
         : response()->json(['Fetch data successfully!', 'data' => $response], 200);
     }
 
@@ -457,7 +375,7 @@ class ViewController extends Controller
 
         return isset($get_user_details) && $get_user_details !== null
         ? response()->json(['Fetch data successfully!', 'data' => $get_user_details], 201)
-        : response()->json(['Failed to get data'], 400); 
+        : response()->json(['Failed to fetch data'], 400); 
     }
 
     public function orders()
@@ -473,7 +391,7 @@ class ViewController extends Controller
 
         return isset($formatted_order) && $formatted_order !== null
         ? response()->json(['Fetch data successfully!', 'data' => $formatted_order], 200)
-        : response()->json(['Failed get data successfully!'], 400);
+        : response()->json(['Sorry, Failed to fetch data'], 404);
 
     }
 
