@@ -183,6 +183,9 @@ class CreateController extends Controller
                     ], 403);
                 }
     
+                // Load the user's manager information (id and mobile)
+                $user->load('manager:id,mobile');
+
                 // Generate a Sanctum token
                 $token = $user->createToken('API TOKEN')->plainTextToken;
        
@@ -192,6 +195,7 @@ class CreateController extends Controller
                         'token' => $token,
                         'name' => $user->name,
                         'role' => $user->role,
+                        'manager_mobile_number' => $user->manager ? $user->manager->mobile : null,
                     ],
                     'message' => 'User login successfully.',
                 ], 200);
