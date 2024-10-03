@@ -15,7 +15,10 @@ class GetUserRole
      */
     public function handle(Request $request, Closure $next, $role): Response
     {
-        if ($request->user() && $request->user()->role !== $role) {
+
+        $user = $request->user();
+
+        if (!$user || $user->role !== $role) {
             return response()->json(['error' => 'Unauthorized', 'status' => 403], 403);
         }
 

@@ -125,7 +125,7 @@ Route::prefix('user')->middleware(['auth:sanctum', GetUserRole::class . ':user']
 
 });
 
-Route::prefix('manager')->middleware(['auth:sanctum', GetUserRole::class . ':admin'])->group(function () {
+Route::prefix('manager')->middleware(['auth:sanctum', GetUserRole::class . ':manager'])->group(function () {
     Route::get('/view_user', [ViewController::class, 'user']);
 });
 Route::post('/login/{otp?}', [CreateController::class, 'login']);
