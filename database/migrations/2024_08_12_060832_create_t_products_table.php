@@ -18,12 +18,6 @@ return new class extends Migration
             $table->string('print_name');
             $table->string('brand')->nullable();
             $table->string('category')->nullable();
-            $table->string('category_lvl1')->nullable();
-            $table->string('category_lvl2')->nullable();
-            $table->string('category_lvl3')->nullable();
-            $table->string('category_lvl4')->nullable();
-            $table->string('category_lvl5')->nullable();
-            $table->string('category_lvl6')->nullable();
             $table->enum('type', ['machine', 'spare']);
             $table->string('machine_part_no')->nullable();
             $table->string('price_a')->nullable();
