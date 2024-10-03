@@ -67,4 +67,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(CartModel::class);
     }
+
+    public function manager()
+    {
+        return $this->belongsTo(User::class, 'manager_id');
+    }
+    
+    public function subordinates()
+    {
+        return $this->hasMany(User::class, 'manager_id');
+    }
 }

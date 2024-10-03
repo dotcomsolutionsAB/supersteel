@@ -390,12 +390,34 @@ class ViewController extends Controller
 
     public function user()
     {
-        $get_user_details = User::select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country')->get();
+        $get_user_details = User::with('manager:id,mobile')
+                                ->select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id')
+                                ->where('role', 'user')
+                                ->get();
+
+        $response = [];
+
+        foreach($get_user_details as $user)
+        {
+            $response[] = [
+                'name' => $user->name,
+                'email' => $user->email,
+                'mobile' => $user->mobile,
+                'address_line_1' => $user->address_line_1,
+                'address_line_2' => $user->address_line_2,
+                'city' => $user->city,
+                'pincode' => $user->pincode,
+                'gstin' => $user->gstin,
+                'state' => $user->state,
+                'country' => $user->country,
+                'manager_phone' => $user->manager ? $user->manager->mobile : null,
+            ];
+        }
            
 
-        return $get_user_details->isEmpty()
-        ? response()->json(['Failed get data successfully!'], 400)
-        : response()->json(['Fetch data successfully!', 'data' => $get_user_details], 201);
+        return empty($response)
+        ? response()->json(['Failed get data successfully!'], 404)
+        : response()->json(['Fetch data successfully!', 'data' => $response], 200);
     }
 
     public function find_user($search = null)
