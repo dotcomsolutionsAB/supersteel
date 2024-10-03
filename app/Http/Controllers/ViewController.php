@@ -419,19 +419,29 @@ class ViewController extends Controller
             }
         }
 
-        elseif ($userRole == 'manager') {
+        elseif ($userRole == 'manager') 
+        {
             $get_user_details = User::select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country')
-                                ->where('manager_id', Auth::id())
-                                ->get();
+                                    ->where('manager_id', Auth::id())
+                                    ->get();
 
-            $response = [];
+            $response = $get_user_details->map(function ($user) {
+                return [
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'mobile' => $user->mobile,
+                    'address_line_1' => $user->address_line_1,
+                    'address_line_2' => $user->address_line_2,
+                    'city' => $user->city,
+                    'pincode' => $user->pincode,
+                    'gstin' => $user->gstin,
+                    'state' => $user->state,
+                    'country' => $user->country,
+                ];
+            });
 
-            $response['user_details'] = $get_user_details;
-
+            
         }
-
-        
-           
 
         return empty($response)
         ? response()->json(['Failed get data successfully!'], 404)
