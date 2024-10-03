@@ -62,6 +62,20 @@ class CsvImportController extends Controller
                 $cat_array = array_reverse($cat_array);
             }
 
+            foreach($cat_array as $index => $category_value)
+            {
+
+                $category = CategoryModel::where('code', $category_value)->first();
+
+                // If category is found, update the level
+                if($category)
+                {
+                    $category->update([
+                        'level' => $index + 1 // Set the level based on the array position
+                    ]);
+                }
+            }
+
             // Step 4: Convert the array into JSON format
             $jsonArray = json_encode($cat_array);
 
@@ -220,8 +234,6 @@ class CsvImportController extends Controller
 
             $filename = $category_records_csv['Product Code'];
 
-            $level = !empty($category_records_csv['Lvl']) ? $category_records_csv['Lvl'] : 0;
-
             // Define the product image path and check if the image exists
             $categoryImagePath = "/storage/uploads/category/{$filename}.jpg";
             $category_imagePath_for_not_available = "/storage/uploads/category/placeholder.jpg";
@@ -236,7 +248,6 @@ class CsvImportController extends Controller
                 $category_update_response = $product_csv->update([
                     'code' => $category_records_csv['CODE'],
                     'product_code' => $category_records_csv['Product Code'],
-                    'level' => $level,
                     'category_image' => $categoryImagePath,
                 ]);
             } 
@@ -246,7 +257,6 @@ class CsvImportController extends Controller
                 $category_insert_response = CategoryModel::create([
                     'code' => $category_records_csv['CODE'],
                     'product_code' => $category_records_csv['Product Code'],
-                    'level' => $level,
                     'category_image' => $categoryImagePath,
                 ]);
             }
