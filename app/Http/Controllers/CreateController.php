@@ -137,7 +137,8 @@ class CreateController extends Controller
                     User::select('otp')->where('mobile', $request->mobile)->update(['otp' => null, 'expires_at' => null]);
 
                     // Retrieve the user
-                    $user = User::where('mobile', $request->mobile)->first();
+                    $user = User::with('manager:id,mobile')
+                                ->where('mobile', $request->mobile)->first();
 
                     // Generate a Sanctum token
                     $token = $user->createToken('API TOKEN')->plainTextToken;
@@ -148,6 +149,7 @@ class CreateController extends Controller
                             'token' => $token,
                             'name' => $user->name,
                             'role' => $user->role,
+                            'manager_mobile_number' => $user->manager ? $user->manager->mobile : null,
                         ],
                         'message' => 'User login successfully.',
                     ], 200);
