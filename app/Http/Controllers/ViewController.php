@@ -393,7 +393,7 @@ class ViewController extends Controller
         $get_user_details = User::select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country')->get();
            
 
-        return $processed_rec_user->isEmpty()
+        return $get_user_details->isEmpty()
         ? response()->json(['Failed get data successfully!'], 400)
         : response()->json(['Fetch data successfully!', 'data' => $get_user_details], 201);
     }
