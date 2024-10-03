@@ -390,52 +390,52 @@ class ViewController extends Controller
 
     public function user()
     {
-        $get_user_details = User::with('manager:id,mobile')
+        $userRole = (Auth::user())->role;
+
+        if ($userRole == 'admin') {
+        
+            $get_user_details = User::with('manager:id,mobile')
                                 ->select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id')
                                 ->where('role', 'user')
                                 ->get();
 
-        $response = [];
+            $response = [];
 
-        foreach($get_user_details as $user)
-        {
-            $response[] = [
-                'name' => $user->name,
-                'email' => $user->email,
-                'mobile' => $user->mobile,
-                'address_line_1' => $user->address_line_1,
-                'address_line_2' => $user->address_line_2,
-                'city' => $user->city,
-                'pincode' => $user->pincode,
-                'gstin' => $user->gstin,
-                'state' => $user->state,
-                'country' => $user->country,
-                'manager_phone' => $user->manager ? $user->manager->mobile : null,
-            ];
+            foreach($get_user_details as $user)
+            {
+                $response[] = [
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'mobile' => $user->mobile,
+                    'address_line_1' => $user->address_line_1,
+                    'address_line_2' => $user->address_line_2,
+                    'city' => $user->city,
+                    'pincode' => $user->pincode,
+                    'gstin' => $user->gstin,
+                    'state' => $user->state,
+                    'country' => $user->country,
+                    'manager_phone' => $user->manager ? $user->manager->mobile : null,
+                ];
+            }
         }
+
+        elseif ($userRole == 'manager') {
+            $get_user_details = User::select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country')
+                                ->where('manager_id', Auth::id())
+                                ->get();
+
+            $response = [];
+
+            $response['user_details'] = $get_user_details;
+
+        }
+
+        
            
 
         return empty($response)
         ? response()->json(['Failed get data successfully!'], 404)
         : response()->json(['Fetch data successfully!', 'data' => $response], 200);
-    }
-
-    public function find_user($search = null)
-    {   
-        if ($search == null) {
-            $get_user_details = User::select('id','name','email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country')
-                                ->get();     
-        }
-        else {
-            $get_user_details = User::select('id','name','email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country')
-                                ->where('name', $search)
-                                ->orWhere('mobile', $search)
-                                ->get();     
-        }
-
-        return isset($get_user_details) && $get_user_details !== null
-        ? response()->json(['Fetch record successfully!', 'data' => $get_user_details], 201)
-        : response()->json(['Failed to get data'], 400); 
     }
 
     public function user_details()

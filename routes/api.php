@@ -27,8 +27,6 @@ Route::prefix('admin')->middleware(['auth:sanctum', GetUserRole::class . ':admin
 
     Route::get('/view_user', [ViewController::class, 'user']);
 
-    Route::get('/fetch_user/{search?}', [ViewController::class, 'find_user']);
-
     Route::patch('/make_verify/{id}', [UpdateController::class, 'verify_user']);
 
     Route::post('/update_user', [UpdateController::class, 'user']);
@@ -125,6 +123,10 @@ Route::prefix('user')->middleware(['auth:sanctum', GetUserRole::class . ':user']
     // Route::get('/generate_invoice/{userId}/{orderId}', [InvoiceController::class, 'generateInvoice']);
     // Route::get('/generate_invoice/{orderId}', [InvoiceController::class, 'generateInvoice']);
 
+});
+
+Route::prefix('manager')->middleware(['auth:sanctum', GetUserRole::class . ':admin'])->group(function () {
+    Route::get('/view_user', [ViewController::class, 'user']);
 });
 Route::post('/login/{otp?}', [CreateController::class, 'login']);
 
