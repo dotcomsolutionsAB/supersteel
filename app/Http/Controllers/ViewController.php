@@ -242,6 +242,55 @@ class ViewController extends Controller
         ? response()->json(['Fetch data successfully!', 'data' => $get_spare_product, 'fetch_records' => count($get_spare_product)], 200)
         : response()->json(['Failed get data'], 404); 
     }
+
+    public function categories(Request $request)
+    {
+        $query = ProductModel::query();
+        
+        if(empty($request->c1) && empty($request->c2) && empty($request->c3))
+        {
+            $distinctValues = $query->get(); 
+                             
+        }
+        elseif (!empty($request->c1) && empty($request->c2) && empty($request->c3)) 
+        {
+            $distinctValues = $query
+                            ->where('c1', $request->c1)
+                            ->distinct()
+                            ->pluck('c2');                  
+        }
+        elseif (!empty($request->c1) && !empty($request->c2) && empty($request->c3)) 
+        {
+            $distinctValues = $query
+                            ->where('c1', $request->c1)
+                            ->where('c2', $request->c2)
+                            ->distinct()
+                            ->pluck('c3');                  
+        }
+        elseif (!empty($request->c1) && !empty($request->c2) && !empty($request->c3)) 
+        {
+            $distinctValues = $query
+                            ->where('c1', $request->c1)
+                            ->where('c2', $request->c2)
+                            ->where('c3', $request->c3)
+                            ->distinct()
+                            ->pluck('c4');                  
+        }
+        else
+        {
+            $distinctValues = $query
+                            ->where('c1', $request->c1)
+                            ->where('c2', $request->c2)
+                            ->where('c3', $request->c3)
+                            ->where('c4', $request->c4)
+                            ->distinct()
+                            ->pluck('c5');    
+        }
+
+        return $distinctValues->isEmpty() 
+        ? response()->json(['Sorry, Failed to get data'], 404)
+        : response()->json(['Fetch data successfully!', 'data' => $distinctValues], 200);
+    }
     // public function categories()
     // {
     //     // Fetch all categories with their product count
