@@ -19,7 +19,7 @@ return new class extends Migration
             $table->timestamp('expires_at')->after('otp')->nullable();
             $table->enum('role', ['admin', 'manager', 'user'])->after('expires_at');
             $table->integer('manager_id')->after('role')->nullable();
-            $table->string('address_line_1')->nullable()->after('manager')->nullable(); 
+            $table->string('address_line_1')->nullable()->after('manager_id')->nullable(); 
             $table->string('address_line_2')->nullable()->after('address_line_1')->nullable(); 
             $table->string('city')->nullable()->after('address_line_2')->nullable(); 
             $table->integer('pincode')->nullable()->after('city')->nullable(); 

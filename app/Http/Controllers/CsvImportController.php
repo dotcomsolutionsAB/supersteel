@@ -62,6 +62,16 @@ class CsvImportController extends Controller
                 $cat_array = array_reverse($cat_array);
             }
 
+            // Store categories into columns c1, c2, c3, c4, and c5
+            $category_column = [
+                'c1' => $cat_array[0] ?? null,
+                'c2' => $cat_array[1] ?? null,
+                'c3' => $cat_array[2] ?? null,
+                'c4' => $cat_array[3] ?? null,
+                'c5' => $cat_array[4] ?? null,
+            ];
+
+
             foreach($cat_array as $index => $category_value)
             {
 
@@ -77,18 +87,18 @@ class CsvImportController extends Controller
             }
 
             // Step 4: Convert the array into JSON format
-            $jsonArray = json_encode($cat_array);
+            // $jsonArray = json_encode($cat_array);
 
 
             if ($product_csv) 
             {
                 // If product exists, update it
-                $product_update_response = $product_csv->update([
+                $product_update_response = $product_csv->update(array_merge([
                     'product_code' => $record_csv['Product Code'],
                     'product_name' => $record_csv['Product Name'],
                     'print_name' => $record_csv['Print Name'],
                     'brand' => $record_csv['Brand'],
-                    'category' => $jsonArray,
+                    // 'category' => $jsonArray,
                     // 'type' => $record_csv['Type'],
                     'machine_part_no' => $record_csv['Machine Part No.'],
                     'price_a' => $record_csv['Price A'],
@@ -97,18 +107,18 @@ class CsvImportController extends Controller
                     'price_d' => $record_csv['Price D'],
                     'price_i' => $record_csv['Price I'],
                     'product_image' => $productImagePath,
-                ]);
+                ], $category_column));
             } 
             else 
             {
                 // If product does not exist, create a new one
-                $product_insert_response = ProductModel::create([
+                $product_insert_response = ProductModel::create(array_merge([
                     'product_code' => $record_csv['Product Code'],
                     'product_name' => $record_csv['Product Name'],
                     'print_name' => $record_csv['Print Name'],
                     'brand' => $record_csv['Brand'],
                     // 'category' => $record_csv['Category'],
-                    'category' => $jsonArray,
+                    // 'category' => $jsonArray,
                     // 'type' => $record_csv['Type'],
                     'machine_part_no' => $record_csv['Machine Part No.'],
                     'price_a' => $record_csv['Price A'],
@@ -117,7 +127,8 @@ class CsvImportController extends Controller
                     'price_d' => $record_csv['Price D'],
                     'price_i' => $record_csv['Price I'],
                     'product_image' => $productImagePath,
-                ]);
+                ], $category_column));
+
             }
         }   
         if ($product_update_response == 1 || isset($product_insert_response)) {

@@ -17,7 +17,13 @@ return new class extends Migration
             $table->string('product_name');
             $table->string('print_name');
             $table->string('brand')->nullable();
-            $table->string('category')->nullable();
+            // $table->string('category')->nullable();
+            $table->string('c1')->nullable();
+            $table->string('c2')->nullable();
+            $table->string('c3')->nullable();
+            $table->string('c4')->nullable();
+            $table->string('c5')->nullable();
+            $table->string('c6')->nullable();
             $table->enum('type', ['machine', 'spare']);
             $table->string('machine_part_no')->nullable();
             $table->string('price_a')->nullable();

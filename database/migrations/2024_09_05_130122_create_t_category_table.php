@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('code');
             $table->string('product_code');
-            $table->integer('level');
+            $table->integer('level')->nullable();
             $table->string('category_image')->nullable();
             $table->timestamps();
         });
