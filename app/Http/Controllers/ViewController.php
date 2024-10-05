@@ -27,7 +27,7 @@ class ViewController extends Controller
     //
     public function product()
     {
-        $get_product_details = ProductModel::select('product_code','product_name', 'print_name', 'brand', 'category', 'category_lvl2', 'category_lvl3', 'category_lvl4', 'category_lvl5', 'category_lvl6', 'type', 'machine_part_no', 'price_a','price_b','price_c', 'price_d', 'price_e')->get();
+        $get_product_details = ProductModel::select('product_code', 'product_name', 'print_name', 'brand', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'type', 'machine_part_no', 'price_a','price_b','price_c', 'price_d', 'price_e', 'product_image')->get();
         
 
         return isset($get_product_details) && $get_product_details !== null
@@ -91,11 +91,11 @@ class ViewController extends Controller
 
         // Retrieve filter parameters if provided
         $search = $request->input('search', null);
-        $category = $request->input('category', null);
-        $subCategory = $request->input('sub_category', null);
+        // $category = $request->input('category', null);
+        // $subCategory = $request->input('sub_category', null);
 
         // Build the query for products
-        $query = ProductModel::select('product_code', 'product_name', 'print_name', 'brand', 'category', 'category_lvl2', 'category_lvl3', 'category_lvl4', 'category_lvl5', 'category_lvl6', 'type', 'machine_part_no', 'price_a','price_b','price_c', 'price_d', 'price_e');
+        $query = ProductModel::select('product_code', 'product_name', 'print_name', 'brand', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'type', 'machine_part_no', 'price_a','price_b','price_c', 'price_d', 'price_e', 'product_image');
 
         // Apply search filter if provided
         if ($search) {
@@ -103,14 +103,14 @@ class ViewController extends Controller
         }
 
         // Apply category filter if provided
-        if ($category) {
-            $query->where('category', $category);
-        }
+        // if ($category) {
+        //     $query->where('category', $category);
+        // }
 
         // Apply sub-category filter if provided
-        if ($subCategory) {
-            $query->where('sub_category', $subCategory);
-        }
+        // if ($subCategory) {
+        //     $query->where('sub_category', $subCategory);
+        // }
 
         // Apply pagination
         $query->skip($offset)->take($limit);
@@ -127,16 +127,16 @@ class ViewController extends Controller
                     ->first();
 
                 // If the product is in the cart, set cart details
-                if ($cart_item) {
-                    $product->in_cart = true;
-                    $product->cart_quantity = $cart_item->quantity;
-                    $product->cart_type = $cart_item->type;
-                } else {
-                    // If the product is not in the cart
-                    $product->in_cart = false;
-                    $product->cart_quantity = null;  // or 0, depending on your preference
-                    $product->cart_type = null;
-                }
+                // if ($cart_item) {
+                //     $product->in_cart = true;
+                //     $product->cart_quantity = $cart_item->quantity;
+                //     $product->cart_type = $cart_item->type;
+                // } else {
+                //     // If the product is not in the cart
+                //     $product->in_cart = false;
+                //     $product->cart_quantity = null;  // or 0, depending on your preference
+                //     $product->cart_type = null;
+                // }
             }
 
             return response()->json([
