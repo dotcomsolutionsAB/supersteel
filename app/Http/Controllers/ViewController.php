@@ -142,7 +142,7 @@ class ViewController extends Controller
             return response()->json([
                 'message' => 'Fetch data successfully!',
                 'data' => $get_products
-            ], 201);
+            ], 200);
 
         } else {
             return response()->json([
