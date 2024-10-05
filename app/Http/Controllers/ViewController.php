@@ -22,6 +22,8 @@ use App\Models\CategoryModel;
 
 use App\Models\SubCategoryModel;
 
+use DB;
+
 class ViewController extends Controller
 {
     //
@@ -80,6 +82,9 @@ class ViewController extends Controller
 
     public function get_product(Request $request)
     {
+
+        $user_price = Auth::user()->price_type;
+
         // Retrieve offset and limit from the request with default values
         $offset = $request->input('offset', 0); // Default to 0 if not provided
         $limit = $request->input('limit', 10);  // Default to 10 if not provided
@@ -91,26 +96,48 @@ class ViewController extends Controller
 
         // Retrieve filter parameters if provided
         $search = $request->input('search', null);
-        // $category = $request->input('category', null);
-        // $subCategory = $request->input('sub_category', null);
+        
 
-        // Build the query for products
-        $query = ProductModel::select('product_code', 'product_name', 'print_name', 'brand', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'type', 'machine_part_no', 'price_a','price_b','price_c', 'price_d', 'price_e', 'product_image');
+        // Initialize the default query
+        $query = ProductModel::query();
+
+        // Determine the column to select based on the user's price type
+
+        $price_column = '';
+
+        switch($user_price)
+        {
+            case 'a':
+                $price_column = 'price_a';
+                break;
+            case 'b':
+                $price_column = 'price_b';
+                break;
+            case 'c':
+                $price_column = 'price_c';    
+                break;
+            case 'd':
+                $price_column = 'price_d';
+                break;
+            case 'e':
+                $price_column = 'price_e';
+            // Add more cases as needed
+            default:
+            // In case of no matching price type, select all price columns
+                $query->select('id', 'product_code', 'product_name', 'print_name', 'brand', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'type', 'machine_part_no', 'price_a','price_b','price_c', 'price_d', 'price_e', 'product_image');
+                break;
+        }
+
+        // If a valid price type is found, select that column as 'price'
+        if (!empty($price_column)) {
+            $query->select('id', 'product_code', 'product_name', 'print_name', 'brand', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'type', 'machine_part_no', DB::raw("$price_column as price"), 'product_image');
+        }
+
 
         // Apply search filter if provided
         if ($search) {
             $query->where('product_name', 'like', "%{$search}%");
         }
-
-        // Apply category filter if provided
-        // if ($category) {
-        //     $query->where('category', $category);
-        // }
-
-        // Apply sub-category filter if provided
-        // if ($subCategory) {
-        //     $query->where('sub_category', $subCategory);
-        // }
 
         // Apply pagination
         $query->skip($offset)->take($limit);
