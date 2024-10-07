@@ -7,12 +7,14 @@ use Illuminate\Http\Request;
 use App\Models\User;        
 use App\Models\OrderModel;    
 use App\Models\OrderItemsModel;
+use App\Models\ProductModel;
 use Mpdf\Mpdf;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use App\Utils\sendWhatsAppUtility;
 use Carbon\Carbon;
+use DB;
 
 class InvoiceController extends Controller
 {
@@ -162,5 +164,44 @@ class InvoiceController extends Controller
         // // Assuming additional functionality such as WhatsApp integration etc.
         // return $mpdf->Output('invoice.pdf', 'I');
         return $fileUrl;
+    }
+
+    public function price_spares($code)
+    {
+        // initialize the query
+        $query = ProductModel::query();
+
+        $user_price = Auth::user()->price_type;
+
+        $price_column = '';
+
+        switch($user_price)
+        {
+            case 'a':
+                $price_column = 'price_a';
+                break;
+            case 'b':
+                $price_column = 'price_b';
+                break;
+            case 'c':
+                $price_column = 'price_c';    
+                break;
+            case 'd':
+                $price_column = 'price_d';
+                break;
+            case 'e':
+                $price_column = 'price_e';
+            // Add more cases as needed
+            default:
+            // In case of no matching price type, select all price columns
+                $price_column = 'price_a';
+                break;
+        }
+
+        $get_record = $query->select( 'product_code', 'product_name', 'print_name', 'brand','machine_part_no', DB::raw("$price_column as price"), 'product_image')
+              ->where('machine_part_no', $code)
+              ->get();
+
+        return response()->json(['Fetch data successfully!', 'data' => $get_record, 'fetch_records' => count($get_record)], 200);
     }
 }

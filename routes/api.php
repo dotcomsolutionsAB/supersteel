@@ -93,6 +93,8 @@ Route::prefix('admin')->middleware(['auth:sanctum', GetUserRole::class . ':admin
     Route::post('/add_invoice', [CreateController::class, 'make_invoice']);
 
     Route::get('/spare_product/{code?}', [ViewController::class, 'get_spares']);
+
+    Route::get('/spares_pricelist/{code}', [InvoiceController::class, 'price_spares']);
 });
 
 Route::prefix('user')->middleware(['auth:sanctum', GetUserRole::class . ':user'])->group(function () {
