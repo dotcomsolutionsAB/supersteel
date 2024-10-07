@@ -3,6 +3,17 @@
 <head>
     <title>VCL Items</title>
     <style>
+        /* Styling for the brown box */
+        .title-box {
+            background-color: brown;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -10,9 +21,25 @@
         table, th, td {
             border: 1px solid black;
         }
-        th, td {
+        /* Styling for table headers */
+        th {
+            background-color: blue;
+            color: white;
             padding: 10px;
             text-align: left;
+        }
+
+        /* Styling for table rows */
+        td {
+            background-color: lightblue;
+            padding: 10px;
+            text-align: left;
+        }
+
+        /* Image styling */
+        img {
+            width: 50px;
+            height: auto;
         }
     </style>
 </head>
