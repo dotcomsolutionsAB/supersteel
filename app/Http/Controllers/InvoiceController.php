@@ -216,10 +216,27 @@ class InvoiceController extends Controller
             <div class="title-box" style="background-color: brown; color: white; text-align: center; padding: 20px; font-size: 24px; font-weight: bold; border-radius: 8px 8px 0 0;">
                 ' . $get_product_details->product_name . ' - ' . $get_product_details->product_code . '
             </div>
-            <h1 style="text-align: center; padding: 20px;">Sorry, no spare available</h1>
-        ';
+            <h1 style="text-align: center; padding: 20px;">Sorry, no spare available</h1>';
             $mpdf->writeHTML($html);
-            return $mpdf->Output('no_spares_available.pdf', 'D'); // Generate and return the PDF
+
+            // Prepare the file path and name
+            $publicPath = 'uploads/spare/';
+            $sanitizedProductName = str_replace(' ', '_', $get_product_details->product_name); // Sanitize product name to avoid spaces in file name
+            $fileName = $get_product_details->product_code . '_' . $sanitizedProductName . '.pdf';
+            $filePath = storage_path('app/public/' . $publicPath . $fileName);
+
+            // Create directory if it doesn't exist
+            if (!File::isDirectory($storage_path = storage_path('app/public/' . $publicPath))) {
+                File::makeDirectory($storage_path, 0755, true);
+            }
+
+            // Save the blank PDF to the file system
+            $mpdf->Output($filePath, 'F');
+
+            // Generate the file URL
+            $fileUrl = asset('storage/' . $publicPath . $fileName);
+
+            return $fileUrl; // Return the file URL for the blank PDF
         }
               
         // Load the Blade view and pass the data
@@ -231,7 +248,20 @@ class InvoiceController extends Controller
         // write the html content
         $mpdf->writeHTML($html);
 
-        // Output the PDF as a download
-        return $mpdf->Output('Invoice.pdf', 'D');
+        $publicPath = 'uploads/spare/';
+        $sanitizedProductName =  $get_product_details->product_name;
+        $fileName = $get_product_details->product_code. '_' . $sanitizedProductName . '.pdf';
+        $filePath = storage_path('app/public/' . $publicPath . $fileName);
+
+        if (!File::isDirectory($storage_path = storage_path('app/public/' . $publicPath))) {
+            File::makeDirectory($storage_path, 0755, true);
+        }
+
+        $mpdf->Output($filePath, 'F');
+
+        $fileUrl = asset('storage/' . $publicPath . $fileName);
+
+        return $fileUrl;
+
     }
 }
