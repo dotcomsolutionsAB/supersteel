@@ -46,7 +46,7 @@
 <body>
     <!-- Title Box -->
     <div class="title-box">
-        VCL Items List
+        {{ $get_product_details->print_name }} - {{$get_product_details->prduct_code}}
     </div>
 
     <!-- Table for the Items -->
