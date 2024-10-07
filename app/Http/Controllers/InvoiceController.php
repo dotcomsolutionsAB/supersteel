@@ -202,6 +202,10 @@ class InvoiceController extends Controller
               ->where('machine_part_no', $code)
               ->get();
 
-        return response()->json(['Fetch data successfully!', 'data' => $get_record, 'fetch_records' => count($get_record)], 200);
+        // Pass data to the Blade view
+        $pdf = PDF::loadview('spare_pricelist', compact($get_record));
+
+        // Generate and download pdf
+        return $pdf->download('abc.pdf');
     }
 }
