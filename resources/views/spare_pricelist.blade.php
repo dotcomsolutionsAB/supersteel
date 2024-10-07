@@ -46,7 +46,7 @@
 <body>
     <!-- Title Box -->
     <div class="title-box">
-        {{ $get_product_details->print_name }} - {{$get_product_details->prduct_code}}
+        {{ $get_product_details->product_name }} - {{$get_product_details->product_code}}
     </div>
 
     <!-- Table for the Items -->

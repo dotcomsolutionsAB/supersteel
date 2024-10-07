@@ -202,6 +202,7 @@ class InvoiceController extends Controller
                                             ->where('product_code', $code)
                                             ->first();
 
+
         $get_record = $query->select('product_code', 'print_name', 'brand', DB::raw("$price_column as price"), 'product_image')
               ->where('machine_part_no', $code)
               ->get();
