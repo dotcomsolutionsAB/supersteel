@@ -59,10 +59,10 @@
             @foreach($get_record as $index => $item)
                 <tr>
                     <td>{{ $index + 1 }}</td> <!-- S.NO -->
-                    <td>{{ $get_record->product_code }}</td>
-                    <td>{{ $get_record->print_name }}</td>
-                    <td>{{ $get_record->brand }}</td>
-                    <td>{{ $get_record->product_image }}</td>
+                    <td>{{ $item->product_code }}</td>
+                    <td>{{ $item->print_name }}</td>
+                    <td>{{ $item->brand }}</td>
+                    <td>{{ $item->product_image }}</td>
                 </tr>
             @endforeach
         </tbody>
