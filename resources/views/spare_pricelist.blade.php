@@ -37,7 +37,7 @@
 
         /* Image styling */
         img {
-            width: 50px;
+            width: auto;
             height: auto;
         }
     </style>
