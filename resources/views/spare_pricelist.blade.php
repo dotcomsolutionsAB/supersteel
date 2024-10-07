@@ -8,41 +8,51 @@
             background-color: brown;
             color: white;
             text-align: center;
-            padding: 10px;
+            padding: 20px;
             font-size: 24px;
             font-weight: bold;
-            border-radius: 8px;
-            width: 80%; /* Increase the width of the title box */
-            margin: 0 auto 20px; /* Center the box and add margin */
+            border-radius: 8px 8px 0 0; /* Rounded corners on top only */
         }
+        /* Make the table full width */
+        .table-container {
+            width: 95%;
+            margin: 0 auto; /* Center the entire table block */
+            border: 1px solid black;
+            border-radius: 0 0 8px 8px; /* Rounded corners on bottom only */
+            overflow: hidden; /* Ensures the image doesn't overflow */
+        }
+
         table {
-            width: 90%; /* Make the table larger */
-            margin: 0 auto; /* Center the table */
+            width: 100%; /* Full width table */
             border-collapse: collapse;
-            font-size: 16px; /* Increase font size for better visibility */
+            font-size: 16px;
         }
+
+        /* Table borders */
         table, th, td {
             border: 1px solid black;
         }
+
         /* Styling for table headers */
         th {
             background-color: blue;
             color: white;
-            padding: 10px;
+            padding: 12px;
             text-align: left;
         }
 
-        /* Specific styling for the "PRICE" column */
+        /* Specific styling for the "print-column" */
         .print-column {
             background-color: lightblue;
         }
 
-        /* Image styling */
+        /* Image styling to fill the table cell */
         td img {
-            width: 100%; /* Image fills the table cell */
-            height: 100px; /* Fixed height for the image */
-            object-fit: cover; /* Ensure the image fills the box without distortion */
+            width: 100%; /* Image fills the entire cell */
+            height: 100%; /* Ensure the image takes the height of the cell */
+            object-fit: cover; /* Ensures the image fills without distorting */
         }
+
     </style>
 </head>
 <body>
@@ -50,7 +60,7 @@
     <div class="title-box">
         VCL Items List
     </div>
-    
+
     <table>
         <thead>
             <tr>
