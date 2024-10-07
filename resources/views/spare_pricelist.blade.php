@@ -29,7 +29,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($items as $index => $item)
+            @foreach($get_record as $index => $item)
                 <tr>
                     <td>{{ $index + 1 }}</td> <!-- S.NO -->
                     <td>{{ $item->ITEM_NO }}</td>
