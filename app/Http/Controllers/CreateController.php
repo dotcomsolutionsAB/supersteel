@@ -253,11 +253,11 @@ class CreateController extends Controller
        
 
         // Pad the number with leading zeros to make it a four-digit number
-        $formattedNumber = str_pad($get_counter_data[0]->counter, 4, '0', STR_PAD_LEFT);
+        $formattedCounterNumber = str_pad($get_counter_data[0]->counter, 4, '0', STR_PAD_LEFT);
 
         if ($get_counter_data->isNotEmpty()) 
         {
-            $get_order_id = strtoupper($get_counter_data[0]->prefix).$get_counter_data[0]->counter.$get_counter_data[0]->postfix;
+            $get_order_id = strtoupper($get_counter_data[0]->prefix).$formattedCounterNumber.$get_counter_data[0]->postfix;
     
             if ((count($get_product)) > 0) 
             {
