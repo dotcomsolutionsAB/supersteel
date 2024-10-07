@@ -202,10 +202,16 @@ class InvoiceController extends Controller
               ->where('machine_part_no', $code)
               ->get();
 
-        // Pass data to the Blade view
-        $pdf = PDF::loadview('spare_pricelist', compact($get_record));
+        // Load the Blade view and pass the data
+        $html = view('spare_pricelist', compact('get_record'))->render();
 
-        // Generate and download pdf
-        return $pdf->download('abc.pdf');
+        // create the instance of Mpdf
+        $mpdf = new Mpdf();
+
+        // write the html content
+        $mpdf->writeHTML($html);
+
+        // Output the PDF as a download
+        return $mpdf->Output('Invoice.pdf', 'D');
     }
 }
