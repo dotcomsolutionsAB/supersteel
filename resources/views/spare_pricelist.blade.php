@@ -3,17 +3,33 @@
 <head>
     <title>VCL Items</title>
     <style>
-        /* Styling for the brown box */
-        .title-box {
+       /* Container for the header (image on the left, text on the right) */
+       .header-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             background-color: brown;
             color: white;
-            text-align: center;
             padding: 20px;
             font-size: 24px;
             font-weight: bold;
-            border-radius: 8px 8px 0 0; /* Rounded corners on top only */
-            margin-bottom: 0; /* Ensure no gap between title and table */
+            border-radius: 8px 8px 0 0;
         }
+
+        /* Styling for the image */
+        .header-box img {
+            width: 100px;
+            height: auto;
+            object-fit: contain;
+        }
+
+        /* Right align for the text */
+        .header-box .product-details {
+            text-align: right;
+            flex-grow: 1;
+            margin-left: 20px;
+        }
+
         /* Styling for the table */
         table {
             width: 100%;
