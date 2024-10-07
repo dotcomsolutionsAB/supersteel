@@ -124,13 +124,13 @@ class ViewController extends Controller
             // Add more cases as needed
             default:
             // In case of no matching price type, select all price columns
-                $query->select('id', 'product_code', 'product_name', 'print_name', 'brand', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'type', 'machine_part_no', 'price_a','price_b','price_c', 'price_d', 'price_e', 'product_image');
+                $price_column = 'price_a';
                 break;
         }
 
         // If a valid price type is found, select that column as 'price'
         if (!empty($price_column)) {
-            $query->select('id', 'product_code', 'product_name', 'print_name', 'brand', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'type', 'machine_part_no', DB::raw("$price_column as price"), 'product_image');
+            $query->select('id', 'product_code', 'product_name', 'print_name', 'brand', 'c1', 'c2', 'c3', 'c4', 'c5', 'type', 'machine_part_no', DB::raw("$price_column as price"), 'product_image');
         }
 
 
@@ -323,7 +323,7 @@ class ViewController extends Controller
 			'message' => 'Failed to get data!',
 		], 404);
 	}
-    
+
     // public function categories(Request $request)
     // {
     //     $query = ProductModel::query();
