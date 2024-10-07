@@ -21,13 +21,13 @@
             width: 100px;
             height: auto;
             object-fit: contain;
+            margin-right: 20px; /* Space between the image and text */
         }
 
         /* Right align for the text */
         .header-box .product-details {
             text-align: right;
-            flex-grow: 1;
-            margin-left: 20px;
+            flex-grow: 1; /* Ensure the text takes up the remaining space */
         }
 
         /* Styling for the table */
