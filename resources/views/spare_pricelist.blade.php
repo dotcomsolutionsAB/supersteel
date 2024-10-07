@@ -39,37 +39,9 @@
 
         /* Image styling */
         img {
-            width: 70px
-            
-            /* Ensure that the table and content are responsive */
-        @media print, screen {
-            body {
-                width: 100%;
-                margin: 0;
-                padding: 0;
-            }
-
-            table {
-                width: 100%; /* Make sure the table uses full width on smaller screens or prints */
-            }
-        }
-;
+            width: 50px;
             height: auto;
         }
-
-        /* Ensure that the table and content are responsive */
-        @media print, screen {
-            body {
-                width: 100%;
-                margin: 0;
-                padding: 0;
-            }
-
-            table {
-                width: 100%; /* Make sure the table uses full width on smaller screens or prints */
-            }
-        }
-
     </style>
 </head>
 <body>
