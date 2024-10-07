@@ -12,11 +12,14 @@
             font-size: 24px;
             font-weight: bold;
             border-radius: 8px;
-            margin-bottom: 20px;
+            width: 80%; /* Increase the width of the title box */
+            margin: 0 auto 20px; /* Center the box and add margin */
         }
         table {
-            width: 100%;
+            width: 90%; /* Make the table larger */
+            margin: 0 auto; /* Center the table */
             border-collapse: collapse;
+            font-size: 16px; /* Increase font size for better visibility */
         }
         table, th, td {
             border: 1px solid black;
@@ -36,9 +39,37 @@
 
         /* Image styling */
         img {
-            width: 50px;
+            width: 70px
+            
+            /* Ensure that the table and content are responsive */
+        @media print, screen {
+            body {
+                width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            table {
+                width: 100%; /* Make sure the table uses full width on smaller screens or prints */
+            }
+        }
+;
             height: auto;
         }
+
+        /* Ensure that the table and content are responsive */
+        @media print, screen {
+            body {
+                width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            table {
+                width: 100%; /* Make sure the table uses full width on smaller screens or prints */
+            }
+        }
+
     </style>
 </head>
 <body>
