@@ -29,11 +29,9 @@
             text-align: left;
         }
 
-        /* Styling for table rows */
-        td {
+        /* Specific styling for the "PRICE" column */
+        .print-column {
             background-color: lightblue;
-            padding: 10px;
-            text-align: left;
         }
 
         /* Image styling */
@@ -60,9 +58,9 @@
                 <tr>
                     <td>{{ $index + 1 }}</td> <!-- S.NO -->
                     <td>{{ $item->product_code }}</td>
-                    <td>{{ $item->print_name }}</td>
+                    <td class="print-column">{{ $item->print_name }}</td>
                     <td>{{ $item->brand }}</td>
-                    <td>{{ $item->product_image }}</td>
+                    <td><img src="{{ public_path($item->product_image)}}" alt="{{ $item->print_name }}"></td>
                 </tr>
             @endforeach
         </tbody>
