@@ -271,53 +271,107 @@ class ViewController extends Controller
     }
 
     public function categories(Request $request)
-    {
-        $query = ProductModel::query();
-        
-        if(empty($request->c1) && empty($request->c2) && empty($request->c3))
-        {
-            $distinctValues = $query->get(); 
-                             
-        }
-        elseif (!empty($request->c1) && empty($request->c2) && empty($request->c3)) 
-        {
-            $distinctValues = $query
-                            ->where('c1', $request->c1)
-                            ->distinct()
-                            ->pluck('c2');                  
-        }
-        elseif (!empty($request->c1) && !empty($request->c2) && empty($request->c3)) 
-        {
-            $distinctValues = $query
-                            ->where('c1', $request->c1)
-                            ->where('c2', $request->c2)
-                            ->distinct()
-                            ->pluck('c3');                  
-        }
-        elseif (!empty($request->c1) && !empty($request->c2) && !empty($request->c3)) 
-        {
-            $distinctValues = $query
-                            ->where('c1', $request->c1)
-                            ->where('c2', $request->c2)
-                            ->where('c3', $request->c3)
-                            ->distinct()
-                            ->pluck('c4');                  
-        }
-        else
-        {
-            $distinctValues = $query
-                            ->where('c1', $request->c1)
-                            ->where('c2', $request->c2)
-                            ->where('c3', $request->c3)
-                            ->where('c4', $request->c4)
-                            ->distinct()
-                            ->pluck('c5');    
-        }
+	{
+		// Initialize the product query
+		$query = ProductModel::query();
 
-        return $distinctValues->isEmpty() 
-        ? response()->json(['Sorry, Failed to get data'], 404)
-        : response()->json(['Fetch data successfully!', 'data' => $distinctValues], 200);
-    }
+		// Check which parameters are provided and adjust the query accordingly
+		if (empty($request->c1) && empty($request->c2) && empty($request->c3) && empty($request->c4)) {
+			// No parameters provided: Fetch distinct category_id from products table
+			$distinctValues = $query->distinct()->pluck('c1');
+		} elseif (!empty($request->c1) && empty($request->c2) && empty($request->c3) && empty($request->c4)) {
+			// Only c1 is provided: Fetch distinct c2 where c1 == $request->c1
+			$distinctValues = $query->where('c1', $request->c1)->distinct()->pluck('c2');
+		} elseif (!empty($request->c1) && !empty($request->c2) && empty($request->c3) && empty($request->c4)) {
+			// c1 and c2 are provided: Fetch distinct c3 where c1 == $request->c1 and c2 == $request->c2
+			$distinctValues = $query->where('c1', $request->c1)->where('c2', $request->c2)->distinct()->pluck('c3');
+		} elseif (!empty($request->c1) && !empty($request->c2) && !empty($request->c3) && empty($request->c4)) {
+			// c1, c2, and c3 are provided: Fetch distinct c4 where c1 == $request->c1, c2 == $request->c2, and c3 == $request->c3
+			$distinctValues = $query->where('c1', $request->c1)->where('c2', $request->c2)->where('c3', $request->c3)->distinct()->pluck('c4');
+		} else {
+			// All c1, c2, c3, and c4 are provided: Fetch distinct category_id where all conditions are met
+			$distinctValues = $query->where('c1', $request->c1)
+									->where('c2', $request->c2)
+									->where('c3', $request->c3)
+									->where('c4', $request->c4)
+									->distinct()
+									->pluck('c5');
+		}
+
+		// Fetch all categories with their product count based on the distinct category IDs (for category_id case)
+		if ($distinctValues->isNotEmpty()) {
+			$categories = CategoryModel::whereIn('code', $distinctValues)->get();
+
+			// Format the categories data for a JSON response
+			$formattedCategories = $categories->map(function ($category) {
+				return [
+					'category_id' => $category->code,
+					'category_name' => $category->product_code,
+					'category_image' => $category->category_image,
+				];
+			});
+
+			return response()->json([
+				'message' => 'Fetch data successfully!',
+				'data' => $formattedCategories,
+				'count' => count($formattedCategories),
+			], 200);
+		}
+
+		// If no categories were found
+		return response()->json([
+			'message' => 'Failed to get data!',
+		], 404);
+	}
+    
+    // public function categories(Request $request)
+    // {
+    //     $query = ProductModel::query();
+        
+    //     if(empty($request->c1) && empty($request->c2) && empty($request->c3))
+    //     {
+    //         $distinctValues = $query->get(); 
+                             
+    //     }
+    //     elseif (!empty($request->c1) && empty($request->c2) && empty($request->c3)) 
+    //     {
+    //         $distinctValues = $query
+    //                         ->where('c1', $request->c1)
+    //                         ->distinct()
+    //                         ->pluck('c2');                  
+    //     }
+    //     elseif (!empty($request->c1) && !empty($request->c2) && empty($request->c3)) 
+    //     {
+    //         $distinctValues = $query
+    //                         ->where('c1', $request->c1)
+    //                         ->where('c2', $request->c2)
+    //                         ->distinct()
+    //                         ->pluck('c3');                  
+    //     }
+    //     elseif (!empty($request->c1) && !empty($request->c2) && !empty($request->c3)) 
+    //     {
+    //         $distinctValues = $query
+    //                         ->where('c1', $request->c1)
+    //                         ->where('c2', $request->c2)
+    //                         ->where('c3', $request->c3)
+    //                         ->distinct()
+    //                         ->pluck('c4');                  
+    //     }
+    //     else
+    //     {
+    //         $distinctValues = $query
+    //                         ->where('c1', $request->c1)
+    //                         ->where('c2', $request->c2)
+    //                         ->where('c3', $request->c3)
+    //                         ->where('c4', $request->c4)
+    //                         ->distinct()
+    //                         ->pluck('c5');    
+    //     }
+
+    //     return $distinctValues->isEmpty() 
+    //     ? response()->json(['Sorry, Failed to get data'], 404)
+    //     : response()->json(['Fetch data successfully!', 'data' => $distinctValues], 200);
+    // }
     // public function categories()
     // {
     //     // Fetch all categories with their product count
