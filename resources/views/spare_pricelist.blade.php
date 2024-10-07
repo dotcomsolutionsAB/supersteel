@@ -3,10 +3,10 @@
 <head>
     <title>VCL Items</title>
     <style>
-        /* Container for the header (image on the left, text on the right) */
-        .header-box {
+       /* Container for the header (image on the left, text on the right) */
+       .header-box {
             display: flex;
-            justify-content: flex-start;
+            justify-content: space-between;
             align-items: center;
             background-color: brown;
             color: white;
@@ -26,8 +26,8 @@
 
         /* Right align for the text */
         .header-box .product-details {
-            text-align: left;
-            flex-grow: 1;
+            text-align: right;
+            flex-grow: 1; /* Ensure the text takes up the remaining space */
         }
 
         /* Styling for the table */
@@ -54,19 +54,19 @@
             background-color: lightblue;
         }
 
-        /* Image styling inside the table */
-        td img {
+        /* Image styling */
+        img {
             width: 80px;
             height: auto;
         }
     </style>
 </head>
 <body>
-    <!-- Title Box with image and product details -->
+    <!-- Title Box -->
     <div class="header-box">
-        <img src="{{ public_path($get_product_details->product_image) }}" alt="Product Image"> <!-- Product Image -->
+        <img src="{{ public_path($get_product_details->product_image) }}" alt="Product Image">
         <div class="product-details">
-            {{ $get_product_details->product_name }} - {{ $get_product_details->product_code }} <!-- Product Title -->
+            {{ $get_product_details->product_name }} - {{$get_product_details->product_code}}
         </div>
     </div>
 
