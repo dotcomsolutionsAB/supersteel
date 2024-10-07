@@ -38,14 +38,19 @@
         }
 
         /* Image styling */
-        img {
-            width: 50px;
-            height: auto;
+        td img {
+            width: 100%; /* Image fills the table cell */
+            height: 100px; /* Fixed height for the image */
+            object-fit: cover; /* Ensure the image fills the box without distortion */
         }
     </style>
 </head>
 <body>
-    <h1>VCL Items List</h1>
+    <!-- Title Box -->
+    <div class="title-box">
+        VCL Items List
+    </div>
+    
     <table>
         <thead>
             <tr>
