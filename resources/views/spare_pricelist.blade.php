@@ -11,7 +11,7 @@
             background-color: brown;
             color: white;
             padding: 20px;
-            font-size: 24px;
+            font-size: 15px;
             font-weight: bold;
             border-radius: 8px 8px 0 0;
         }
