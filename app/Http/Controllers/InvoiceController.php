@@ -198,7 +198,7 @@ class InvoiceController extends Controller
                 break;
         }
 
-        $get_product_details = ProductModel::select('product_name', 'product_code')
+        $get_product_details = ProductModel::select('product_name', 'product_code', 'product_image')
                                             ->where('product_code', $code)
                                             ->first();
 

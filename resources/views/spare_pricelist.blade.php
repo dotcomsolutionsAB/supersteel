@@ -27,7 +27,7 @@
 
         /* Styling for table headers */
         th {
-            background-color: blue;
+            background-color: grey;
             color: white;
             padding: 10px;
             text-align: left;
@@ -47,8 +47,11 @@
 </head>
 <body>
     <!-- Title Box -->
-    <div class="title-box">
-        {{ $get_product_details->product_name }} - {{$get_product_details->product_code}}
+    <div class="header-box">
+        <img src="{{ public_path($get_product_details->product_image) }}" alt="Product Image">
+        <div class="product-details">
+            {{ $get_product_details->product_name }} - {{$get_product_details->product_code}}
+        </div>
     </div>
 
     <!-- Table for the Items -->
