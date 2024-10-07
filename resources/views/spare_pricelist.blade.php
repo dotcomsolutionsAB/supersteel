@@ -58,6 +58,7 @@
                 <th>ITEM</th>
                 <th>MODEL</th>
                 <th>PRICE</th>
+                <th>Image</th>
             </tr>
         </thead>
         <tbody>
@@ -67,6 +68,7 @@
                     <td>{{ $item->product_code }}</td>
                     <td class="print-column">{{ $item->print_name }}</td>
                     <td>{{ $item->brand }}</td>
+                    <td>{{ $item->price }}</td>
                     <td><img src="{{ public_path($item->product_image)}}" alt="{{ $item->print_name }}"></td>
                 </tr>
             @endforeach
