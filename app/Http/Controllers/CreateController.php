@@ -245,7 +245,7 @@ class CreateController extends Controller
             $userId = $request->input('user_id');
         }
 
-        $get_product = CartModel::select('amount', 'quantity', 'product_code', 'product_name', 'rate', 'type')
+        $get_product = CartModel::select('amount', 'quantity', 'product_code', 'product_name', 'rate')
                                        ->where('user_id', $userId)
                                        ->get();
 
