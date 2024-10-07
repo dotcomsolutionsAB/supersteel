@@ -205,6 +205,7 @@ class InvoiceController extends Controller
 
         $get_record = $query->select('product_code', 'print_name', 'brand', DB::raw("$price_column as price"), 'product_image')
               ->where('machine_part_no', $code)
+              ->skip(1) // Skip the first record
               ->get();
               
         // Load the Blade view and pass the data

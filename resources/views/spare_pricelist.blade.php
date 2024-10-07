@@ -21,6 +21,8 @@
         }
         table, th, td {
             border: 1px solid black;
+            text-align: center; /* Center-align all table content */
+            padding: 10px;
         }
 
         /* Styling for table headers */
