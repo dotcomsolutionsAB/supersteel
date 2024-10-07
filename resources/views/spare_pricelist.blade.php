@@ -12,6 +12,7 @@
             font-size: 24px;
             font-weight: bold;
             border-radius: 8px 8px 0 0; /* Rounded corners on top only */
+            margin-bottom: 0; /* Ensure no gap between title and table */
         }
         /* Styling for the table */
         table {
@@ -48,6 +49,7 @@
         VCL Items List
     </div>
 
+    <!-- Table for the Items -->
     <table>
         <thead>
             <tr>
