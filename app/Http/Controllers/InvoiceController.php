@@ -208,6 +208,19 @@ class InvoiceController extends Controller
               ->skip(1) // Skip the first record
               ->take(PHP_INT_MAX) // Take all remaining records
               ->get();
+
+        if (count($get_record) == 0)
+        {
+            $mpdf = new Mpdf();
+            $html = '
+            <div class="title-box" style="background-color: brown; color: white; text-align: center; padding: 20px; font-size: 24px; font-weight: bold; border-radius: 8px 8px 0 0;">
+                ' . $get_product_details->product_name . ' - ' . $get_product_details->product_code . '
+            </div>
+            <h1 style="text-align: center; padding: 20px;">Sorry, no spare available</h1>
+        ';
+            $mpdf->writeHTML($html);
+            return $mpdf->Output('no_spares_available.pdf', 'D'); // Generate and return the PDF
+        }
               
         // Load the Blade view and pass the data
         $html = view('spare_pricelist', compact('get_product_details', 'get_record'))->render();
