@@ -453,6 +453,7 @@ class ViewController extends Controller
             foreach($get_user_details as $user)
             {
                 $response[] = [
+                    'user_id' => $user->id,
                     'name' => $user->name,
                     'email' => $user->email,
                     'mobile' => $user->mobile,
