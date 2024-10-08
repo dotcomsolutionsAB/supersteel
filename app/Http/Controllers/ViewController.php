@@ -476,6 +476,7 @@ class ViewController extends Controller
 
             $response = $get_user_details->map(function ($user) {
                 return [
+                    'user_id' => $user->id,
                     'name' => $user->name,
                     'email' => $user->email,
                     'mobile' => $user->mobile,
