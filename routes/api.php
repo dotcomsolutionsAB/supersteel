@@ -121,10 +121,13 @@ Route::prefix('user')->middleware(['auth:sanctum', GetUserRole::class . ':user']
     // Route::get('/generate_invoice/{userId}/{orderId}', [InvoiceController::class, 'generateInvoice']);
     // Route::get('/generate_invoice/{orderId}', [InvoiceController::class, 'generateInvoice']);
 
+    Route::get('/spares_pricelist/{code}', [InvoiceController::class, 'price_spares']);
 });
 
 Route::prefix('manager')->middleware(['auth:sanctum', GetUserRole::class . ':manager'])->group(function () {
     Route::get('/view_user', [ViewController::class, 'user']);
+
+    Route::get('/spares_pricelist/{code}', [InvoiceController::class, 'price_spares']);
 });
 Route::post('/login/{otp?}', [CreateController::class, 'login']);
 
