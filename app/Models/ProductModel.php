@@ -33,7 +33,7 @@ class ProductModel extends Model
         'price_b',
         'price_c',
         'price_d',
-        'price_e',
+        'price_i',
         'product_image',
     ];
 

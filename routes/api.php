@@ -45,6 +45,8 @@ Route::prefix('admin')->middleware(['auth:sanctum', GetUserRole::class . ':admin
     Route::post('/get_product', [ViewController::class, 'get_product']);
 
     Route::post('/category', [ViewController::class, 'categories']);
+	
+    Route::post('/sub_category', [ViewController::class, 'sub_category']);
 
     // Route::post('/lng_get_product/{lang?}', [ViewController::class, 'lng_get_product']);
 
@@ -92,9 +94,9 @@ Route::prefix('admin')->middleware(['auth:sanctum', GetUserRole::class . ':admin
 
     Route::post('/add_invoice', [CreateController::class, 'make_invoice']);
 
-    Route::get('/spare_product/{code?}', [ViewController::class, 'get_spares']);
+    Route::post('/spare_product/{code?}', [ViewController::class, 'get_spares']);
 
-    Route::get('/spares_pricelist/{code}', [InvoiceController::class, 'price_spares']);
+    Route::post('/spares_pricelist/{code}', [InvoiceController::class, 'price_spares']);
 });
 
 Route::prefix('user')->middleware(['auth:sanctum', GetUserRole::class . ':user'])->group(function () {

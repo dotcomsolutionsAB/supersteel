@@ -29,56 +29,13 @@ class ViewController extends Controller
     //
     public function product()
     {
-        $get_product_details = ProductModel::select('product_code', 'product_name', 'print_name', 'brand', 'c1', 'c2', 'c3', 'c4', 'c5', 'type', 'machine_part_no', 'price_a','price_b','price_c', 'price_d', 'price_e', 'product_image')->get();
+        $get_product_details = ProductModel::select('product_code', 'product_name', 'print_name', 'brand', 'c1', 'c2', 'c3', 'c4', 'c5', 'type', 'machine_part_no', 'price_a','price_b','price_c', 'price_d', 'price_i', 'product_image')->get();
         
 
         return isset($get_product_details) && $get_product_details !== null
         ? response()->json(['Fetch records successfully!', 'data' => $get_product_details, 'fetch_records' => count($get_product_details)], 200)
         : response()->json(['Failed get data'], 404); 
     }
-
-    // public function lng_product($lang = 'eng')
-    // {
-    //     $get_product_details = ProductModel::select('product_code','product_name', 'print_name', 'name_in_hindi','name_in_telugu', 'brand', 'category', 'category_lvl2', 'category_lvl3', 'category_lvl4', 'category_lvl5', 'category_lvl6', 'type', 'machine_part_no', 'price_a','price_b','price_c', 'price_d', 'price_e')->get();
-        
-    //     $processed_prd_rec = $get_product_details->map(function($prd_rec) use ($lang)
-    //     {
-    //         $product_name = $prd_rec->product_name;
-
-    //         if($lang === 'hin' && !empty($prd_rec->name_in_hindi))
-    //         {
-    //             $product_name = $prd_rec->name_in_hindi;
-    //         }
-
-    //         elseif ($lang === 'tlg' && !empty($prd_rec->name_in_telugu)) {
-    //             $product_name = $prd_rec->name_in_telugu;
-    //         }
-
-    //         return [
-    //             'product_code' => $prd_rec->product_code,
-    //             'product_name' => $product_name,
-    //             'print_name' => $prd_rec->print_name,
-    //             'brand' => $prd_rec->brand,
-    //             'category' => $prd_rec->category,
-    //             'category_lvl2' => $prd_rec->category_lvl2,
-    //             'category_lvl3' => $prd_rec->category_lvl3,
-    //             'category_lvl4' => $prd_rec->category_lvl4,
-    //             'category_lvl5' => $prd_rec->category_lvl5,
-    //             'type' => $prd_rec->type,
-    //             'machine_part_no' => $prd_rec->machine_part_no,
-    //             'price_a' => $prd_rec->price_a,
-    //             'price_b' => $prd_rec->price_b,
-    //             'price_c' => $prd_rec->price_c,
-    //             'price_d' => $prd_rec->price_d,
-    //             'price_e' => $prd_rec->price_e,
-    //         ];
-    //     });
-
-
-    //     return isset($processed_prd_rec) && $processed_prd_rec !== null
-    //     ? response()->json(['Fetch data successfully!', 'data' => $processed_prd_rec], 201)
-    //     : response()->json(['Failed to get data'], 400);     
-    // }
 
     public function get_product(Request $request)
     {
@@ -96,8 +53,13 @@ class ViewController extends Controller
 
         // Retrieve filter parameters if provided
         $search = $request->input('search', null);
+		
+		$user_price_type = User::select('price_type')
+                                ->where('id', $user_id)
+                                ->get();
         
-
+		$price_type = $user_price_type[0]['price_type'];
+		//die($price_type);
         // Initialize the default query
         $query = ProductModel::query();
 
@@ -105,7 +67,7 @@ class ViewController extends Controller
 
         $price_column = '';
 
-        switch($user_price)
+        switch($price_type)
         {
             case 'a':
                 $price_column = 'price_a';
@@ -119,8 +81,9 @@ class ViewController extends Controller
             case 'd':
                 $price_column = 'price_d';
                 break;
-            case 'e':
-                $price_column = 'price_e';
+            case 'i':
+                $price_column = 'price_i';
+				break;
             // Add more cases as needed
             default:
             // In case of no matching price type, select all price columns
@@ -177,88 +140,49 @@ class ViewController extends Controller
             ], 400);
         }
     }
-
-    // public function lng_get_product(Request $request, $lang = 'eng')
-    // {
-    //     // Retrieve input parameters with defaults
-    //     $offset = max(0, (int) $request->input('offset', 0));
-    //     $limit = max(1, (int) $request->input('limit', 10));
-    //     $user_id = $request->input('user_id');
-    //     $search = $request->input('search', null);
-    //     $category = $request->input('category', null);
-    //     // $subCategory = $request->input('sub_category', null);
-
-    //     // Build the query for products
-    //     $query = ProductModel::select(
-    //         'product_code', 'product_name', 'name_in_hindi', 'name_in_telugu', 'brand', 'category', 'category_lvl2', 'category_lvl3', 'category_lvl3', 'category_lvl4', 'category_lvl5','type','machine_part_no', 'price_a', 'price_b', 'price_c', 'price_d', 'price_e'
-    //     );
-
-    //     // Apply filters
-    //     if ($search) {
-    //         $query->where('product_name', 'like', "%{$search}%");
-    //     }
-    //     if ($category) {
-    //         $query->where('category', $category);
-    //     }
-    //     // if ($subCategory) {
-    //     //     $query->where('sub_category', $subCategory);
-    //     // }
-
-    //     // Apply pagination and get products
-    //     $get_products = $query->skip($offset)->take($limit)->get();
-
-    //     // Process products for language and cart details
-    //     $processed_prd_lang_rec = $get_products->map(function ($prd_rec) use ($lang, $user_id) {
-    //         // Set product name based on the selected language
-    //         $product_name = $prd_rec->product_name;
-    //         if ($lang === 'hin' && !empty($prd_rec->name_in_hindi)) {
-    //             $product_name = $prd_rec->name_in_hindi;
-    //         } elseif ($lang === 'tlg' && !empty($prd_rec->name_in_telugu)) {
-    //             $product_name = $prd_rec->name_in_telugu;
-    //         }
-
-    //         // Check if the product is in the user's cart
-    //         $cart_item = CartModel::where('user_id', $user_id)
-    //             ->where('product_code', $prd_rec->product_code)
-    //             ->first();
-
-    //         // Return processed product data
-    //         return [
-    //             'product_code' => $prd_rec->product_code,
-    //             'product_name' => $product_name,
-    //             'brand' => $prd_rec->brand,
-    //             'category' => $prd_rec->category,
-    //             'category_lvl2' => $prd_rec->category_lvl2,
-    //             'category_lvl3' => $prd_rec->category_lvl3,
-    //             'category_lvl4' => $prd_rec->category_lvl4,
-    //             'category_lvl5' => $prd_rec->category_lvl5,
-    //             'type' => $prd_rec->type,
-    //             'machine_part_no' => $prd_rec->machine_part_no,
-    //             'price_a' => $prd_rec->price_a,
-    //             'price_b' => $prd_rec->price_b,
-    //             'price_c' => $prd_rec->price_c,
-    //             'price_d' => $prd_rec->price_d,
-    //             'price_e' => $prd_rec->price_e,
-    //             'in_cart' => $cart_item ? true : false,
-    //             'cart_quantity' => $cart_item->quantity ?? null,
-    //             'cart_type' => $cart_item->type ?? null,
-    //         ];
-    //     });
-
-    //     // Return response based on the result
-    //     return $processed_prd_lang_rec->isEmpty()
-    //     ? response()->json(['Failed to fetch data!'], 400)
-    //     : response()->json(['message' => 'Fetch data successfully!',
-    //             'data' => $processed_prd_lang_rec,
-    //             'count' => count($processed_prd_lang_rec)], 201);
-    // }
-
-    public function get_spares($code = null)
+	
+    public function get_spares(Request $request, $code = null)
     {
-        $productQuery = ProductModel::select('product_code','product_name','category','product_image')
-                                            ->where('type', 'SPARE');
+		$user_id = $request->input('user_id');  // Assuming the user ID is provided in the request
+		
+		$user_price_type = User::select('price_type')
+                                ->where('id', $user_id)
+                                ->get();
         
+		$price_type = $user_price_type[0]['price_type'];
+        // Initialize the default query
+        $query = ProductModel::query();
 
+        // Determine the column to select based on the user's price type
+
+        $price_column = '';
+
+        switch($price_type)
+        {
+            case 'a':
+                $price_column = 'price_a';
+                break;
+            case 'b':
+                $price_column = 'price_b';
+                break;
+            case 'c':
+                $price_column = 'price_c';    
+                break;
+            case 'd':
+                $price_column = 'price_d';
+                break;
+            case 'i':
+                $price_column = 'price_i';
+				break;
+            // Add more cases as needed
+            default:
+            // In case of no matching price type, select all price columns
+                $price_column = 'price_a';
+                break;
+        }
+		
+        $productQuery = ProductModel::select('product_code','product_name','c1','c2','c3','c4','c5',DB::raw("$price_column as price"), 'product_image')->where('product_code', '!=', "{$code}");
+        
         if ($code !== null) {
             $productQuery->where('machine_part_no', 'like', "%{$code}%");
         }
@@ -272,12 +196,13 @@ class ViewController extends Controller
 
     public function categories(Request $request)
 	{
+		
 		// Initialize the product query
 		$query = ProductModel::query();
 
-		// Check which parameters are provided and adjust the query accordingly
+		// Define your distinct values query based on the provided parameters.
 		if (empty($request->c1) && empty($request->c2) && empty($request->c3) && empty($request->c4)) {
-			// No parameters provided: Fetch distinct category_id from products table
+			// No parameters provided: Fetch distinct c1 from products table
 			$distinctValues = $query->distinct()->pluck('c1');
 		} elseif (!empty($request->c1) && empty($request->c2) && empty($request->c3) && empty($request->c4)) {
 			// Only c1 is provided: Fetch distinct c2 where c1 == $request->c1
@@ -289,7 +214,7 @@ class ViewController extends Controller
 			// c1, c2, and c3 are provided: Fetch distinct c4 where c1 == $request->c1, c2 == $request->c2, and c3 == $request->c3
 			$distinctValues = $query->where('c1', $request->c1)->where('c2', $request->c2)->where('c3', $request->c3)->distinct()->pluck('c4');
 		} else {
-			// All c1, c2, c3, and c4 are provided: Fetch distinct category_id where all conditions are met
+			// All c1, c2, c3, and c4 are provided: Fetch distinct c5 where all conditions are met
 			$distinctValues = $query->where('c1', $request->c1)
 									->where('c2', $request->c2)
 									->where('c3', $request->c3)
@@ -298,16 +223,51 @@ class ViewController extends Controller
 									->pluck('c5');
 		}
 
-		// Fetch all categories with their product count based on the distinct category IDs (for category_id case)
+		// Fetch all categories with their product count based on the distinct category IDs
 		if ($distinctValues->isNotEmpty()) {
 			$categories = CategoryModel::whereIn('code', $distinctValues)->get();
 
 			// Format the categories data for a JSON response
-			$formattedCategories = $categories->map(function ($category) {
+			$formattedCategories = $categories->map(function ($category) use ($request) {
+				
+				$productQuery = ProductModel::query();
+
+				// Always apply the condition for c1, since it's always required
+				$productQuery->where('c1', $request->c1);
+
+				// Conditionally apply c2, c3, and c4 based on the request
+				if (!empty($request->c2)) {
+					$productQuery->where('c2', $request->c2);
+				} else {
+					$productQuery->where('c2', $category->code); // Default when c2 is not passed
+				}
+
+				if (!empty($request->c3)) {
+					$productQuery->where('c3', $request->c3);
+				} else if (!empty($request->c2)) {
+					$productQuery->where('c3', $category->code); // Default when c3 is not passed but c2 is provided
+				}
+
+				if (!empty($request->c4)) {
+					$productQuery->where('c4', $request->c4);
+				} else if (!empty($request->c3)) {
+					$productQuery->where('c4', $category->code); // Default when c4 is not passed but c3 is provided
+				}
+
+				// Always apply c5 with $category->code when all the previous conditions are met
+				if (!empty($request->c1) && !empty($request->c2) && !empty($request->c3) && !empty($request->c4)) {
+					$productQuery->where('c5', $category->code);
+				}
+
+				// Manually count the number of products for this category
+				$productCount = $productQuery->count();
+
+				
 				return [
 					'category_id' => $category->code,
 					'category_name' => $category->product_code,
 					'category_image' => $category->category_image,
+					'product_count' => $productCount,  // Product count based on AND condition
 				];
 			});
 
@@ -324,117 +284,81 @@ class ViewController extends Controller
 		], 404);
 	}
 
-    // public function categories(Request $request)
-    // {
-    //     $query = ProductModel::query();
-        
-    //     if(empty($request->c1) && empty($request->c2) && empty($request->c3))
-    //     {
-    //         $distinctValues = $query->get(); 
-                             
-    //     }
-    //     elseif (!empty($request->c1) && empty($request->c2) && empty($request->c3)) 
-    //     {
-    //         $distinctValues = $query
-    //                         ->where('c1', $request->c1)
-    //                         ->distinct()
-    //                         ->pluck('c2');                  
-    //     }
-    //     elseif (!empty($request->c1) && !empty($request->c2) && empty($request->c3)) 
-    //     {
-    //         $distinctValues = $query
-    //                         ->where('c1', $request->c1)
-    //                         ->where('c2', $request->c2)
-    //                         ->distinct()
-    //                         ->pluck('c3');                  
-    //     }
-    //     elseif (!empty($request->c1) && !empty($request->c2) && !empty($request->c3)) 
-    //     {
-    //         $distinctValues = $query
-    //                         ->where('c1', $request->c1)
-    //                         ->where('c2', $request->c2)
-    //                         ->where('c3', $request->c3)
-    //                         ->distinct()
-    //                         ->pluck('c4');                  
-    //     }
-    //     else
-    //     {
-    //         $distinctValues = $query
-    //                         ->where('c1', $request->c1)
-    //                         ->where('c2', $request->c2)
-    //                         ->where('c3', $request->c3)
-    //                         ->where('c4', $request->c4)
-    //                         ->distinct()
-    //                         ->pluck('c5');    
-    //     }
+	public function sub_category(Request $request)
+	{
+		// Initialize the product query
+		$query = ProductModel::query();
 
-    //     return $distinctValues->isEmpty() 
-    //     ? response()->json(['Sorry, Failed to get data'], 404)
-    //     : response()->json(['Fetch data successfully!', 'data' => $distinctValues], 200);
-    // }
-    // public function categories()
-    // {
-    //     // Fetch all categories with their product count
-    //     $categories = CategoryModel::withCount('get_products')->get();
+		// Check if c2 is provided, if not return error
+		if (empty($request->c2)) {
+			return response()->json([
+				'message' => 'c2 is required!',
+			], 400);
+		}
 
-    //     // Format the categories data for a JSON response
-    //     $formattedCategories = $categories->map(function ($category) {
-    //         return [
-    //             'category_id' => $category->id,
-    //             'category_name' => $category->name,
-    //             'category_image' => $category->image,
-    //             'products_count' => $category->get_products_count,
-    //         ];
-    //     });
+		// Fetch all distinct combinations of c2, c3, c4, c5 where c2 equals the request's c2
+		$distinctValues = $query->where('c2', $request->c2)
+								->distinct()
+								->get(['c2', 'c3', 'c4', 'c5']);
 
-    //     if (isset($formattedCategories)) {
-    //         return response()->json([
-    //             'message' => 'Fetch data successfully!',
-    //             'data' => $formattedCategories,
-    //             'count' => count($formattedCategories),
-    //         ], 201);
-    //     }
+		// If no records were found
+		if ($distinctValues->isEmpty()) {
+			return response()->json([
+				'message' => 'No combinations found for the given c2!',
+			], 404);
+		}
 
-    //     else {
-    //         return response()->json([
-    //             'message' => 'Failed get data successfully!',
-    //         ], 400);
-    //     }    
-    // }
+		// Format the distinct combinations to include the required hierarchy, name, and product count
+		$formattedSubCategories = $distinctValues->map(function ($row) use ($request) {
 
-    // public function lng_categories($lang = 'eng')
-    // {
-    //     // Fetch all categories with their product count
-    //     $categories = CategoryModel::withCount('get_products')->get();
+			// Determine the last non-null value to pull the name from CategoryModel
+			$lastCategoryCode = $row->c5 ?? $row->c4 ?? $row->c3;
+			$category = CategoryModel::where('code', $lastCategoryCode)->first();
 
-    //     // Format the categories data for a JSON response
-    //     $formattedCategories = $categories->map(function ($category) use ($lang) {
+			// Build the hierarchy string
+			$hierarchy = [];
+			if ($row->c2) $hierarchy[] = CategoryModel::where('code', $row->c2)->value('product_code');
+			if ($row->c3) $hierarchy[] = CategoryModel::where('code', $row->c3)->value('product_code');
+			if ($row->c4) $hierarchy[] = CategoryModel::where('code', $row->c4)->value('product_code');
+			if ($row->c5) $hierarchy[] = CategoryModel::where('code', $row->c5)->value('product_code');
 
-    //         $category_name = $category->name;
+			// Initialize product query for counting
+			$productQuery = ProductModel::query();
 
-    //         if($lang === 'hin' && !empty($category->name_in_hindi))
-    //         {
-    //             $category_name = $category->name_in_hindi;
-    //         }
+			// Always apply the condition for c2 since it's provided
+			$productQuery->where('c2', $row->c2);
 
-    //         elseif ($lang === 'tlg' && !empty($category->name_in_telugu)) 
-    //         {
-    //             $category_name = $category->name_in_telugu;
-    //         }
-    //         return [
-    //             'category_id' => $category->id,
-    //             'category_name' => $category_name,
-    //             'category_image' => $category->image,
-    //             'products_count' => $category->get_products_count,
-    //         ];
-    //     });
-    //     // Check if the categories are set and return response
-    //     return $formattedCategories->isEmpty()
-    //     ? response()->json(['Failed get data successfully!'], 400)
-    //     : response()->json(['message' => 'Fetch data successfully!',
-    //             'data' => $formattedCategories,
-    //             'count' => count($formattedCategories)], 201);
-    // }
+			// Conditionally apply c3, c4, and c5 based on the non-null values in the current row
+			if (!empty($row->c3)) {
+				$productQuery->where('c3', $row->c3);
+			}
+			if (!empty($row->c4)) {
+				$productQuery->where('c4', $row->c4);
+			}
+			if (!empty($row->c5)) {
+				$productQuery->where('c5', $row->c5);
+			}
+
+			// Manually count the number of products for this sub-category combination
+			$productCount = $productQuery->count();
+
+			return [
+				'name' => $category ? $category->product_code : 'Unknown', // Pull name of the last category
+				'hierarchy' => implode(' > ', array_filter($hierarchy)), // Join the hierarchy names
+				'c2' => $row->c2,
+				'c3' => $row->c3,
+				'c4' => $row->c4,
+				'c5' => $row->c5,
+				'product_count' => $productCount, // Product count based on AND condition
+			];
+		});
+
+		return response()->json([
+			'message' => 'Sub-category combinations fetched successfully!',
+			'data' => $formattedSubCategories,
+			'count' => count($formattedSubCategories),
+		], 200);
+	}
 
     public function user()
     {
@@ -600,7 +524,7 @@ class ViewController extends Controller
         });
 
         return isset($formattedCartData) && $formattedCartData !== null
-        ? response()->json(['Fetch all recods successfully!', 'data' => $create_cart], 201)
+        ? response()->json(['Fetch all recods successfully!', 'data' => $create_cart], 200)
         : response()->json(['Failed fetch records successfully!'], 400);
     }
 
@@ -625,7 +549,7 @@ class ViewController extends Controller
 					// 't_cart.updated_at',
 					// 't_products.basic',
 					// 't_products.gst',
-					// 't_products.product_image'
+					't_products.product_image'
 				)
 				->get();
         }
@@ -645,15 +569,15 @@ class ViewController extends Controller
 					// 't_cart.updated_at',
 					// 't_products.basic',
 					// 't_products.gst',
-					// 't_products.product_image'
+					't_products.product_image'
 				)
 				->get();
         }
         
 
         return isset($get_items_for_user) && $get_items_for_user->isNotEmpty()
-        ? response()->json(['Fetch data successfully!', 'data' => $get_items_for_user, 'record count' => count($get_items_for_user)], 201)
-        : response()->json(['Sorry, your cart is empty'], 400);  
+        ? response()->json(['Fetch data successfully!', 'data' => $get_items_for_user, 'record count' => count($get_items_for_user)], 200)
+        : response()->json(['Sorry, your cart is empty', 'data' => array(), 'record count' => 0], 200);  
     }
 
     public function counter()
