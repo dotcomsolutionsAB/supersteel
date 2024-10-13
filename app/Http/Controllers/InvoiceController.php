@@ -18,18 +18,21 @@ use DB;
 
 class InvoiceController extends Controller
 {
-    //
     public function generateInvoice($orderId)
     {
-        $get_user = Auth::id();
+        // $get_user = Auth::id();
+
+        $order = OrderModel::select('user_id','order_id', 'amount', 'order_date')
+                            ->where('id', $orderId)
+                            ->first();
+
+        $get_user = $order->user_id;
         
         $user = User::select('name', 'mobile', 'email', 'address_line_1', 'address_line_2', 'gstin')
                     ->where('id', $get_user)
                     ->first();
         
-        $order = OrderModel::select('order_id', 'amount', 'order_date')
-                            ->where('id', $orderId)
-                            ->first();
+        
 
         $order_items = OrderItemsModel::with('product:product_code,print_name')
                                     ->select('product_code', 'product_name', 'rate', 'quantity', 'total')
@@ -158,7 +161,7 @@ class InvoiceController extends Controller
             ],
         ];
 
-        $response = $whatsAppUtility->sendWhatsApp('+919966633307', $templateParams, '', 'Admin Order Invoice');
+        $response = $whatsAppUtility->sendWhatsApp('+917003541353', $templateParams, '', 'Admin Order Invoice');
         
 
         // // Assuming additional functionality such as WhatsApp integration etc.

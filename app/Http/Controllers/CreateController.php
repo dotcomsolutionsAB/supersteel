@@ -3,36 +3,22 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use App\Models\ProductModel;
-
 use App\Models\User;
-
 use App\Models\OrderModel;
-
 use App\Models\OrderItemsModel;
-
 use App\Models\CartModel;
-
 use App\Models\CounterModel;
-
 use App\Models\InvoiceModel;
-
 use App\Models\InvoiceItemsModel;
-
 use Illuminate\Support\Facades\Auth;
-
 use Hash;
-
 use Carbon\Carbon;
-
 use App\Http\Controllers\InvoiceController;
-
 use App\Utils\sendWhatsAppUtility;
 
 class CreateController extends Controller
 {
-    //
     public function user(Request $request)
     {
         $request->validate([
