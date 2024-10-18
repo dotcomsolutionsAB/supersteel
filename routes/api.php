@@ -93,6 +93,11 @@ Route::prefix('user')->middleware(['auth:sanctum', GetUserRole::class . ':user']
     Route::post('/update_password', [UpdateController::class, 'user_password']);
     Route::get('/logout', [CreateController::class, 'logout']);
 
+    Route::get('/view_product', [ViewController::class, 'product']);
+    Route::post('/get_product', [ViewController::class, 'get_product']);
+    Route::post('/category', [ViewController::class, 'categories']);
+    Route::post('/sub_category', [ViewController::class, 'sub_category']);
+
     Route::post('/add_order', [CreateController::class, 'orders']);
     Route::post('/view_user_order/{id?}', [ViewController::class, 'orders_user_id']);
 
