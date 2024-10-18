@@ -451,26 +451,47 @@ class ViewController extends Controller
 
     }
 
-    public function orders_user_id($id = null)
+    public function orders_user_id(Request $request, $id = null)
     {
-        // Fetch all records if $id is null, otherwise filter by user_id
-        $get_user_orders = OrderModel::when($id, function($query, $id)
-        {
-            // If $id is not null, filter by user_id
-            return $query->where('user_id', $id);
-            
-        })->get();   
+        $get_user = Auth::User();
 
-        $formatted_user_order = $get_user_orders->map(function ($order_user_rec)
-        {
-            $order_user_rec_arr = $order_user_rec->toArray();
-            unset($order_user_rec_arr['created_at'], $order_user_rec_arr['updated_at']);
-            return $order_user_rec_arr;
+        if ($get_user->role == 'user') {
+            $id = $get_user->id;
+        } else {
+            $request->validate([
+                'user_id' => 'required',
+            ]);
+            $id = $request->input('user_id');
+        }
+
+        // Fetch all orders and their associated order items with product image
+        $get_user_orders = OrderModel::when($id, function ($query, $id) {
+            return $query->where('user_id', $id);
+        })
+        ->with(['order_items' => function($query) {
+            // Eager load product relationship and append the product_image field
+            $query->with('product:id,product_code,product_image');
+        }])
+        ->get();
+
+        // Modify the order items to append the product image directly
+        $get_user_orders->each(function($order) {
+            $order->order_items->each(function($orderItem) {
+                $orderItem->product_image = $orderItem->product->product_image ?? null;
+                unset($orderItem->product); // Remove the product object after extracting the image
+            });
         });
 
-        return isset($order_user_rec_arr) && $order_user_rec_arr !== null
-        ? response()->json(['Fetch data successfully!', 'data' => $order_user_rec_arr, 'fetch_records' => count($order_user_rec_arr)], 200)
-        : response()->json(['Failed get data successfully!'], 400);
+        if ($get_user_orders->isEmpty()) {
+            return response()->json([
+                'message' => 'Sorry, no data available!',
+            ], 404);
+        } else {
+            return response()->json([
+                'message' => 'Fetched data successfully!',
+                'data' => $get_user_orders
+            ], 200);
+        }
     }
 
     public function order_items()
