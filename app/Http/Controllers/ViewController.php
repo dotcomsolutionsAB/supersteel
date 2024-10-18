@@ -45,8 +45,17 @@ class ViewController extends Controller
         // Retrieve offset and limit from the request with default values
         $offset = $request->input('offset', 0); // Default to 0 if not provided
         $limit = $request->input('limit', 10);  // Default to 10 if not provided
-        $user_id = $request->input('user_id');  // Assuming the user ID is provided in the request
 
+        $get_user = Auth::User();
+
+        if ($get_user->role == 'user') {
+            $user_id = $get_user->id;
+        } else {
+            $request->validate([
+                'user_id' => 'required',
+            ]);
+            $user_id = $request->input('user_id');
+        }
         // Ensure the offset and limit are integers and non-negative
         $offset = max(0, (int) $offset);
         $limit = max(1, (int) $limit);
