@@ -16,6 +16,7 @@ class CartModel extends Model
         // 'products_id',
         'product_code',
         'product_name',
+        'remarks',
         'rate',
         'quantity',
         'amount',

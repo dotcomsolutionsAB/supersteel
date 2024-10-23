@@ -384,6 +384,7 @@ class CreateController extends Controller
 					'user_id' => $request->input('user_id'),
 					'product_code' => $request->input('product_code'),
 					'product_name' => $request->input('product_name'),
+					'remarks' => $request->input('remarks'),
 					'rate' => $request->input('rate'),
 					'quantity' => $request->input('quantity'),
 					'amount' => ($request->input('rate')) * ($request->input('quantity')),
