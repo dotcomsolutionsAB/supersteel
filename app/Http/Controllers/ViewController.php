@@ -22,6 +22,10 @@ use App\Models\CategoryModel;
 
 use App\Models\SubCategoryModel;
 
+use App\Models\AppCategoryModel;
+
+use App\Models\AppSubCategoryModel;
+
 use DB;
 
 class ViewController extends Controller
