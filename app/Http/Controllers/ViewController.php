@@ -206,167 +206,72 @@ class ViewController extends Controller
     public function categories(Request $request)
 	{
 		
-		// Initialize the product query
-		$query = ProductModel::query();
+		// Fetch all categories with their product count
+        $categories = AppCategoryModel::withCount('get_products')->get();
 
-		// Define your distinct values query based on the provided parameters.
-		if (empty($request->c1) && empty($request->c2) && empty($request->c3) && empty($request->c4)) {
-			// No parameters provided: Fetch distinct c1 from products table
-			$distinctValues = $query->distinct()->pluck('c1');
-		} elseif (!empty($request->c1) && empty($request->c2) && empty($request->c3) && empty($request->c4)) {
-			// Only c1 is provided: Fetch distinct c2 where c1 == $request->c1
-			$distinctValues = $query->where('c1', $request->c1)->distinct()->pluck('c2');
-		} elseif (!empty($request->c1) && !empty($request->c2) && empty($request->c3) && empty($request->c4)) {
-			// c1 and c2 are provided: Fetch distinct c3 where c1 == $request->c1 and c2 == $request->c2
-			$distinctValues = $query->where('c1', $request->c1)->where('c2', $request->c2)->distinct()->pluck('c3');
-		} elseif (!empty($request->c1) && !empty($request->c2) && !empty($request->c3) && empty($request->c4)) {
-			// c1, c2, and c3 are provided: Fetch distinct c4 where c1 == $request->c1, c2 == $request->c2, and c3 == $request->c3
-			$distinctValues = $query->where('c1', $request->c1)->where('c2', $request->c2)->where('c3', $request->c3)->distinct()->pluck('c4');
-		} else {
-			// All c1, c2, c3, and c4 are provided: Fetch distinct c5 where all conditions are met
-			$distinctValues = $query->where('c1', $request->c1)
-									->where('c2', $request->c2)
-									->where('c3', $request->c3)
-									->where('c4', $request->c4)
-									->distinct()
-									->pluck('c5');
-		}
-
-		// Fetch all categories with their product count based on the distinct category IDs
-		if ($distinctValues->isNotEmpty()) {
-			$categories = CategoryModel::whereIn('code', $distinctValues)->get();
-
-			// Format the categories data for a JSON response
-			$formattedCategories = $categories->map(function ($category) use ($request) {
-				
-				$productQuery = ProductModel::query();
-
-				// Always apply the condition for c1, since it's always required
-				$productQuery->where('c1', $request->c1);
-
-				// Conditionally apply c2, c3, and c4 based on the request
-				if (!empty($request->c2)) {
-					$productQuery->where('c2', $request->c2);
-				} else {
-					$productQuery->where('c2', $category->code); // Default when c2 is not passed
-				}
-
-				if (!empty($request->c3)) {
-					$productQuery->where('c3', $request->c3);
-				} else if (!empty($request->c2)) {
-					$productQuery->where('c3', $category->code); // Default when c3 is not passed but c2 is provided
-				}
-
-				if (!empty($request->c4)) {
-					$productQuery->where('c4', $request->c4);
-				} else if (!empty($request->c3)) {
-					$productQuery->where('c4', $category->code); // Default when c4 is not passed but c3 is provided
-				}
-
-				// Always apply c5 with $category->code when all the previous conditions are met
-				if (!empty($request->c1) && !empty($request->c2) && !empty($request->c3) && !empty($request->c4)) {
-					$productQuery->where('c5', $category->code);
-				}
-
-				// Manually count the number of products for this category
-				$productCount = $productQuery->count();
-
-				
+        // Filter and format the categories data for a JSON response
+		$formattedCategories = $categories->map(function ($category) {
+			// Only include categories with products_count > 0
+			if ($category->get_products_count > 0) {
 				return [
-					'category_id' => $category->code,
-					'category_name' => $category->product_code,
-					'category_image' => $category->category_image,
-					'product_count' => $productCount,  // Product count based on AND condition
+					'category_id' => $category->id,
+					'category_name' => $category->name,
+					'category_image' => $category->image,
+					'products_count' => $category->get_products_count,
 				];
-			});
+			}
+			return null; // Return null for categories with 0 products
+		})->filter(); // Remove null values
 
-			return response()->json([
-				'message' => 'Fetch data successfully!',
-				'data' => $formattedCategories,
-				'count' => count($formattedCategories),
-			], 200);
-		}
+        if (isset($formattedCategories)) {
+            return response()->json([
+                'message' => 'Fetch data successfully!',
+                'data' => $formattedCategories,
+                'count' => count($formattedCategories),
+            ], 200);
+        }
 
-		// If no categories were found
-		return response()->json([
-			'message' => 'Failed to get data!',
-		], 404);
+        else {
+            return response()->json([
+                'message' => 'Failed get data successfully!',
+            ], 404);
+        } 
 	}
 
 	public function sub_category(Request $request)
 	{
-		// Initialize the product query
-		$query = ProductModel::query();
+		// Convert the string of category IDs to an array, e.g., '1,2' -> [1, 2]
+        $categoryIds = $category ? explode(',', $category) : [];
 
-		// Check if c2 is provided, if not return error
-		if (empty($request->c2)) {
-			return response()->json([
-				'message' => 'c2 is required!',
-			], 400);
-		}
+        // Fetch subcategories filtered by multiple category_ids if provided
+        $sub_categories = AppSubCategoryModel::withCount('products')
+        ->when(!empty($categoryIds), function ($query) use ($categoryIds) {
+            // Filter subcategories by multiple category_ids using whereIn
+            return $query->whereIn('category_id', $categoryIds);
+        })->get();
 
-		// Fetch all distinct combinations of c2, c3, c4, c5 where c2 equals the request's c2
-		$distinctValues = $query->where('c2', $request->c2)
-								->distinct()
-								->get(['c2', 'c3', 'c4', 'c5']);
+        // Format the categories data for a JSON response
+        $formattedSubCategories = $sub_categories->map(function ($sub_category) {
+            return [
+                'sub_category_name' => $sub_category->name,
+                'sub_category_image' => $sub_category->image,
+                'sub_products_count' => $sub_category->products_count,
+            ];
+        });
+        
+        if (isset($formattedSubCategories)) {
+            return response()->json([
+                'message' => 'Fetch data successfully!',
+                'data' => $formattedSubCategories,
+                'count' => count($formattedSubCategories),
+            ], 200);
+        }
 
-		// If no records were found
-		if ($distinctValues->isEmpty()) {
-			return response()->json([
-				'message' => 'No combinations found for the given c2!',
-			], 404);
-		}
-
-		// Format the distinct combinations to include the required hierarchy, name, and product count
-		$formattedSubCategories = $distinctValues->map(function ($row) use ($request) {
-
-			// Determine the last non-null value to pull the name from CategoryModel
-			$lastCategoryCode = $row->c5 ?? $row->c4 ?? $row->c3;
-			$category = CategoryModel::where('code', $lastCategoryCode)->first();
-
-			// Build the hierarchy string
-			$hierarchy = [];
-			if ($row->c2) $hierarchy[] = CategoryModel::where('code', $row->c2)->value('product_code');
-			if ($row->c3) $hierarchy[] = CategoryModel::where('code', $row->c3)->value('product_code');
-			if ($row->c4) $hierarchy[] = CategoryModel::where('code', $row->c4)->value('product_code');
-			if ($row->c5) $hierarchy[] = CategoryModel::where('code', $row->c5)->value('product_code');
-
-			// Initialize product query for counting
-			$productQuery = ProductModel::query();
-
-			// Always apply the condition for c2 since it's provided
-			$productQuery->where('c2', $row->c2);
-
-			// Conditionally apply c3, c4, and c5 based on the non-null values in the current row
-			if (!empty($row->c3)) {
-				$productQuery->where('c3', $row->c3);
-			}
-			if (!empty($row->c4)) {
-				$productQuery->where('c4', $row->c4);
-			}
-			if (!empty($row->c5)) {
-				$productQuery->where('c5', $row->c5);
-			}
-
-			// Manually count the number of products for this sub-category combination
-			$productCount = $productQuery->count();
-
-			return [
-				'name' => $category ? $category->product_code : 'Unknown', // Pull name of the last category
-				'hierarchy' => implode(' > ', array_filter($hierarchy)), // Join the hierarchy names
-				'c2' => $row->c2,
-				'c3' => $row->c3,
-				'c4' => $row->c4,
-				'c5' => $row->c5,
-				'product_count' => $productCount, // Product count based on AND condition
-			];
-		});
-
-		return response()->json([
-			'message' => 'Sub-category combinations fetched successfully!',
-			'data' => $formattedSubCategories,
-			'count' => count($formattedSubCategories),
-		], 200);
+        else {
+            return response()->json([
+                'message' => 'Failed get data successfully!',
+            ], 400);
+        }   
 	}
 
     public function user()
