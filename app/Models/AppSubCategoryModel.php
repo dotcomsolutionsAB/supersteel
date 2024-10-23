@@ -18,7 +18,7 @@ class AppSubCategoryModel extends Model
     ];
 
     // Define the relationship: A category has many products, joined by the 'name' column
-    public function get_products()
+    public function products()
     {
         return $this->hasMany(ProductModel::class, 'sub_category', 'name');
     }
