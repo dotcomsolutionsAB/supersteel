@@ -262,7 +262,7 @@ class CsvImportController extends Controller
             if ($category_csv) 
             {
                 // If category exists, update it
-                $category_update_response = $product_csv->update([
+                $category_update_response = $category_csv->update([
                     'name' => $category_records_csv['Name'],
                     'category_image' => $categoryImagePath,
                 ]);
@@ -305,7 +305,10 @@ class CsvImportController extends Controller
 
         // Iterate through each record and create or update the product
         foreach ($category_records_csv as $category_records_csv) {
-            $category_csv = AppSubCategoryModel::where('name', $category_records_csv['Name'])->first();
+            $category_csv = AppSubCategoryModel::where('name', $category_records_csv['Name'])
+                                                ->where('category_id', $category_records_csv['Category ID'])
+                                                ->first();
+
 
             $filename = strtolower(str_replace(' ', '_', $category_records_csv['Name']));
 
@@ -320,7 +323,7 @@ class CsvImportController extends Controller
             if ($category_csv) 
             {
                 // If category exists, update it
-                $category_update_response = $product_csv->update([
+                $category_update_response = $category_csv->update([
                     'category_id' => $category_records_csv['Category ID'],
                     'name' => $category_records_csv['Name'],
                     'category_image' => $categoryImagePath,
