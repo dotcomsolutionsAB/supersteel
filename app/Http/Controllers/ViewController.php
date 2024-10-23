@@ -245,6 +245,7 @@ class ViewController extends Controller
 	public function sub_category(Request $request)
 	{
 		// Convert the string of category IDs to an array, e.g., '1,2' -> [1, 2]
+        $category = $request['category'];
         $categoryIds = $category ? explode(',', $category) : [];
 
         // Fetch subcategories filtered by multiple category_ids if provided
