@@ -235,11 +235,19 @@ class ViewController extends Controller
 			return null; // Return null for categories with 0 products
 		})->filter(); // Remove null values
 
+        // Add slides object with links to images in the storage folder
+        $slides = [
+            [
+                'slide_image' => asset('/storage/uploads/slider/slide_01.jpg'),
+            ]
+        ];
+
         if (isset($formattedCategories)) {
             return response()->json([
                 'message' => 'Fetch data successfully!',
                 'data' => $formattedCategories,
                 'count' => count($formattedCategories),
+                'slides' => $slides, // Add slides to the response
             ], 200);
         }
 
