@@ -220,7 +220,7 @@ class ViewController extends Controller
 				return [
 					'category_id' => $category->id,
 					'category_name' => $category->name,
-					'category_image' => $category->image,
+					'category_image' => $category->category_image,
 					'products_count' => $category->get_products_count,
 				];
 			}
@@ -258,7 +258,7 @@ class ViewController extends Controller
         $formattedSubCategories = $sub_categories->map(function ($sub_category) {
             return [
                 'sub_category_name' => $sub_category->name,
-                'sub_category_image' => $sub_category->image,
+                'sub_category_image' => $sub_category->category_image,
                 'sub_products_count' => $sub_category->products_count,
             ];
         });
