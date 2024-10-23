@@ -154,7 +154,6 @@ class UpdateController extends Controller
 
         $update_cart = CartModel::where('id', $id)
                                 ->update([
-                'user_id' => $request->input('user_id'),
                 'product_code' => $request->input('product_code'), 
                 'product_name' => $request->input('product_name'),
                 'remarks' => $request->input('remarks'),
