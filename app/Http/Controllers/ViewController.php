@@ -129,6 +129,14 @@ class ViewController extends Controller
                     ->where('product_code', $product->product_code)
                     ->first();
 
+                // Check if the product code appears in other product's machine_part_no
+                $has_spares = ProductModel::where('machine_part_no', 'like', "%{$product->product_code}%")
+                ->where('product_code', '!=', $product->product_code) // Exclude the current product
+                ->exists();
+
+                // Set the has_spares field in the product response
+                $product->has_spares = $has_spares;
+
                 // If the product is in the cart, set cart details
                 // if ($cart_item) {
                 //     $product->in_cart = true;
