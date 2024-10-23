@@ -380,15 +380,20 @@ class CreateController extends Controller
             $request->merge(['user_id' => $get_user->id]);
         }
     
-            $create_cart = CartModel::create([
-					'user_id' => $request->input('user_id'),
-					'product_code' => $request->input('product_code'),
-					'product_name' => $request->input('product_name'),
-					'remarks' => $request->input('remarks'),
-					'rate' => $request->input('rate'),
-					'quantity' => $request->input('quantity'),
-					'amount' => ($request->input('rate')) * ($request->input('quantity')),
-				]);
+            $create_cart = CartModel::updateOrCreate(
+                [
+                    'user_id' => $request->input('user_id'),
+                    'product_code' => $request->input('product_code'),
+                ], 
+                [
+                    'product_name' => $request->input('product_name'),
+                    'remarks' => $request->input('remarks'),
+                    'rate' => $request->input('rate'),
+                    'quantity' => $request->input('quantity'),
+                    'amount' => ($request->input('rate')) * ($request->input('quantity')),
+                    'type' => $request->input('type'),
+                ]
+            );
 
             unset($create_cart['id'], $create_cart['created_at'], $create_cart['updated_at']);
 
