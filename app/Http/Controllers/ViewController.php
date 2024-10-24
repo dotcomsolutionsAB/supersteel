@@ -237,9 +237,7 @@ class ViewController extends Controller
 
         // Add slides object with links to images in the storage folder
         $slides = [
-            [
-                'slide_image' => asset('/storage/uploads/slider/slide_01.jpg'),
-            ]
+            asset('/storage/uploads/slider/slide_01.jpg')
         ];
 
         if (isset($formattedCategories)) {
