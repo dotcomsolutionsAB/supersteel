@@ -74,19 +74,21 @@ class CsvImportController extends Controller
             ];
 
 
-            foreach($cat_array as $index => $category_value)
-            {
+            // foreach($cat_array as $index => $category_value)
+            // {
 
-                $category = CategoryModel::where('code', $category_value)->first();
+            //     $category = CategoryModel::where('code', $category_value)->first();
 
-                // If category is found, update the level
-                if($category)
-                {
-                    $category->update([
-                        'level' => $index + 1 // Set the level based on the array position
-                    ]);
-                }
-            }
+            //     // If category is found, update the level
+            //     if($category)
+            //     {
+            //         $category->update([
+            //             'level' => $index + 1 // Set the level based on the array position
+            //         ]);
+            //     }
+            // }
+
+            
 
             // Step 4: Convert the array into JSON format
             // $jsonArray = json_encode($cat_array);
