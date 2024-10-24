@@ -29,6 +29,8 @@ class ProductModel extends Model
         'price_d',
         'price_i',
         'product_image',
+        'new_arrival',
+        'special_price',
     ];
 
     public function transactions()
