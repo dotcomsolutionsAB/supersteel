@@ -88,7 +88,7 @@ class CsvImportController extends Controller
             //     }
             // }
 
-            
+
 
             // Step 4: Convert the array into JSON format
             // $jsonArray = json_encode($cat_array);
@@ -113,8 +113,8 @@ class CsvImportController extends Controller
                     'price_d' => $record_csv['Price D'],
                     'price_i' => $record_csv['Price I'],
                     'product_image' => $productImagePath,
-                    'new_arrival' => $record_csv['New Arrival'],
-                    'special_price' => $record_csv['Special Price'],
+                    'new_arrival' => $record_csv['New Arrival'] ? 1 : 0,
+                    'special_price' => $record_csv['Special Price'] ? 1 : 0,
                 ], $category_column));
             } 
             else 
@@ -137,8 +137,8 @@ class CsvImportController extends Controller
                     'price_d' => $record_csv['Price D'],
                     'price_i' => $record_csv['Price I'],
                     'product_image' => $productImagePath,
-                    'new_arrival' => $record_csv['New Arrival'],
-                    'special_price' => $record_csv['Special Price'],
+                    'new_arrival' => $record_csv['New Arrival'] ? 1 : 0,
+                    'special_price' => $record_csv['Special Price'] ? 1 : 0,
                 ], $category_column));
 
             }
