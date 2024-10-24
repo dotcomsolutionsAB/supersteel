@@ -216,29 +216,47 @@ class ViewController extends Controller
     }
 
     public function categories(Request $request)
-	{
-		
-		// Fetch all categories with their product count
+    {
+        // Fetch all categories with their product count
         $categories = AppCategoryModel::withCount('get_products')->get();
 
         // Filter and format the categories data for a JSON response
-		$formattedCategories = $categories->map(function ($category) {
-			// Only include categories with products_count > 0
-			if ($category->get_products_count > 0) {
-				return [
-					'category_id' => $category->id,
-					'category_name' => $category->name,
-					'category_image' => $category->category_image,
-					'products_count' => $category->get_products_count,
-				];
-			}
-			return null; // Return null for categories with 0 products
-		})->filter(); // Remove null values
+        $formattedCategories = $categories->map(function ($category) {
+            // Only include categories with products_count > 0
+            if ($category->get_products_count > 0) {
+                return [
+                    'category_id' => $category->id,
+                    'category_name' => $category->name,
+                    'category_image' => $category->category_image,
+                    'products_count' => $category->get_products_count,
+                ];
+            }
+            return null; // Return null for categories with 0 products
+        })->filter(); // Remove null values
 
         // Add slides object with links to images in the storage folder
         $slides = [
             asset('/storage/uploads/slider/slide_01.jpg')
         ];
+
+        // Add the two new items: "New Arrival" and "Special Offer"
+        $newArrivals = [
+            'category_id' => 'new_arrival', // Can use an ID if applicable
+            'category_name' => 'New Arrival',
+            'category_image' => asset('/storage/uploads/category/new_arrival.png'),
+            'products_count' => 10 // Example count, adjust as needed
+        ];
+
+        $specialOffers = [
+            'category_id' => 'special_offer', // Can use an ID if applicable
+            'category_name' => 'Special Offer',
+            'category_image' => asset('/storage/uploads/category/special_offer.png'),
+            'products_count' => 5 // Example count, adjust as needed
+        ];
+
+        // Append new items to the categories
+        $formattedCategories->push($newArrivals);
+        $formattedCategories->push($specialOffers);
 
         if (isset($formattedCategories)) {
             return response()->json([
@@ -247,14 +265,13 @@ class ViewController extends Controller
                 'count' => count($formattedCategories),
                 'slides' => $slides, // Add slides to the response
             ], 200);
-        }
-
-        else {
+        } else {
             return response()->json([
-                'message' => 'Failed get data successfully!',
+                'message' => 'Failed to get data successfully!',
             ], 404);
-        } 
-	}
+        }
+    }
+
 
 	public function sub_category(Request $request)
 	{
