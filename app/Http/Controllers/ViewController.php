@@ -295,14 +295,13 @@ class ViewController extends Controller
             ];
         });
 
-        // Apply custom sorting: Spares first, Accessories second, then the rest
+        // Custom sorting: Spares first, Accessories second, then the rest
         $orderedSubCategories = $formattedSubCategories->sortBy(function ($subCategory) {
-            if ($subCategory['sub_category_name'] === 'Spares') {
-                return 0;
-            } elseif ($subCategory['sub_category_name'] === 'Accessories') {
-                return 1;
-            }
-            return 2;
+            return match ($subCategory['sub_category_name']) {
+                'Spares' => 0,
+                'Accessories' => 1,
+                default => 2,
+            };
         })->values();
 
         if ($orderedSubCategories->isNotEmpty()) {
