@@ -138,16 +138,14 @@ class ViewController extends Controller
                 $product->has_spares = $has_spares;
 
                 // If the product is in the cart, set cart details
-                // if ($cart_item) {
-                //     $product->in_cart = true;
-                //     $product->cart_quantity = $cart_item->quantity;
-                //     $product->cart_type = $cart_item->type;
-                // } else {
-                //     // If the product is not in the cart
-                //     $product->in_cart = false;
-                //     $product->cart_quantity = null;  // or 0, depending on your preference
-                //     $product->cart_type = null;
-                // }
+                if ($cart_item) {
+                    $product->in_cart = true;
+                    $product->cart_quantity = $cart_item->quantity;
+                } else {
+                    // If the product is not in the cart
+                    $product->in_cart = false;
+                    $product->cart_quantity = null;  // or 0, depending on your preference
+                }
             }
 
             return response()->json([
