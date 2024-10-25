@@ -274,17 +274,17 @@ class ViewController extends Controller
 
 
 	public function sub_category(Request $request)
-	{
-		// Convert the string of category IDs to an array, e.g., '1,2' -> [1, 2]
+    {
+        // Convert the string of category IDs to an array, e.g., '1,2' -> [1, 2]
         $category = $request['category'];
         $categoryIds = $category ? explode(',', $category) : [];
 
         // Fetch subcategories filtered by multiple category_ids if provided
         $sub_categories = AppSubCategoryModel::withCount('products')
-        ->when(!empty($categoryIds), function ($query) use ($categoryIds) {
-            // Filter subcategories by multiple category_ids using whereIn
-            return $query->whereIn('category_id', $categoryIds);
-        })->get();
+            ->when(!empty($categoryIds), function ($query) use ($categoryIds) {
+                // Filter subcategories by multiple category_ids using whereIn
+                return $query->whereIn('category_id', $categoryIds);
+            })->get();
 
         // Format the categories data for a JSON response
         $formattedSubCategories = $sub_categories->map(function ($sub_category) {
@@ -294,21 +294,30 @@ class ViewController extends Controller
                 'sub_products_count' => $sub_category->products_count,
             ];
         });
-        
-        if (isset($formattedSubCategories)) {
+
+        // Apply custom sorting: Spares first, Accessories second, then the rest
+        $orderedSubCategories = $formattedSubCategories->sortBy(function ($subCategory) {
+            if ($subCategory['sub_category_name'] === 'Spares') {
+                return 0;
+            } elseif ($subCategory['sub_category_name'] === 'Accessories') {
+                return 1;
+            }
+            return 2;
+        })->values();
+
+        if ($orderedSubCategories->isNotEmpty()) {
             return response()->json([
                 'message' => 'Fetch data successfully!',
-                'data' => $formattedSubCategories,
-                'count' => count($formattedSubCategories),
+                'data' => $orderedSubCategories,
+                'count' => $orderedSubCategories->count(),
             ], 200);
-        }
-
-        else {
+        } else {
             return response()->json([
-                'message' => 'Failed get data successfully!',
+                'message' => 'Failed to get data successfully!',
             ], 400);
-        }   
-	}
+        }
+    }
+
 
     public function user()
     {
