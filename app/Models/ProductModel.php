@@ -28,6 +28,7 @@ class ProductModel extends Model
         'price_c',
         'price_d',
         'price_i',
+        'ppc',
         'product_image',
         'new_arrival',
         'special_price',
