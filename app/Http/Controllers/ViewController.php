@@ -298,8 +298,8 @@ class ViewController extends Controller
         // Custom sorting: Spares first, Accessories second, then the rest
         $orderedSubCategories = $formattedSubCategories->sortBy(function ($subCategory) {
             return match ($subCategory['sub_category_name']) {
-                'Spares' => 0,
-                'Accessories' => 1,
+                'SPARES' => 0,
+                'ACCESSORIES' => 1,
                 default => 2,
             };
         })->values();
