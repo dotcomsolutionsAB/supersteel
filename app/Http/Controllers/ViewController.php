@@ -141,12 +141,12 @@ class ViewController extends Controller
                 if ($cart_item) {
                     $product->in_cart = true;
                     $product->cart_quantity = $cart_item->quantity;
-                    $product->cart_quantity = $cart_item->remarks;
+                    $product->cart_remarks = $cart_item->remarks;
                 } else {
                     // If the product is not in the cart
                     $product->in_cart = false;
                     $product->cart_quantity = null;  // or 0, depending on your preference
-                    $product->cart_quantity = null;  // or 0, depending on your preference
+                    $product->cart_remarks = null;  // or 0, depending on your preference
                 }
             }
 
