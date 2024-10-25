@@ -243,14 +243,14 @@ class ViewController extends Controller
         $newArrivals = [
             'category_id' => 'new_arrival', // Can use an ID if applicable
             'category_name' => 'New Arrival',
-            'category_image' => asset('/storage/uploads/category/new_arrival.png'),
+            'category_image' => asset('/storage/uploads/category/new_arrival.jpg'),
             'products_count' => 10 // Example count, adjust as needed
         ];
 
         $specialOffers = [
             'category_id' => 'special_offer', // Can use an ID if applicable
             'category_name' => 'Special Offer',
-            'category_image' => asset('/storage/uploads/category/special_offer.png'),
+            'category_image' => asset('/storage/uploads/category/special_offer.jpg'),
             'products_count' => 5 // Example count, adjust as needed
         ];
 
