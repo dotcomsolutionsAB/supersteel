@@ -164,18 +164,17 @@ class ViewController extends Controller
 	
     public function get_spares(Request $request, $code = null)
     {
-		$user_id = $request->input('user_id');  // Assuming the user ID is provided in the request
-		
-		$user_price_type = User::select('price_type')
+        $user_id = $request->input('user_id');  // Assuming the user ID is provided in the request
+
+        $user_price_type = User::select('price_type')
                                 ->where('id', $user_id)
                                 ->get();
         
-		$price_type = $user_price_type[0]['price_type'];
+        $price_type = $user_price_type[0]['price_type'];
         // Initialize the default query
         $query = ProductModel::query();
 
         // Determine the column to select based on the user's price type
-
         $price_column = '';
 
         switch($price_type)
@@ -194,26 +193,69 @@ class ViewController extends Controller
                 break;
             case 'i':
                 $price_column = 'price_i';
-				break;
+                break;
             // Add more cases as needed
             default:
-            // In case of no matching price type, select all price columns
+                // In case of no matching price type, select all price columns
                 $price_column = 'price_a';
                 break;
         }
-		
-        $productQuery = ProductModel::select('product_code','product_name','c1','c2','c3','c4','c5',DB::raw("$price_column as price"), 'product_image')->where('product_code', '!=', "{$code}");
         
+        $productQuery = ProductModel::select(
+            'product_code',
+            'product_name',
+            'c1',
+            'c2',
+            'c3',
+            'c4',
+            'c5',
+            DB::raw("$price_column as price"),
+            'product_image',
+            'ppc'
+        )->where('product_code', '!=', "{$code}");
+
         if ($code !== null) {
             $productQuery->where('machine_part_no', 'like', "%{$code}%");
         }
 
         $get_spare_product = $productQuery->get();
 
-        return isset($get_spare_product) && $get_spare_product !== null
-        ? response()->json(['Fetch data successfully!', 'data' => $get_spare_product, 'fetch_records' => count($get_spare_product)], 200)
-        : response()->json(['Failed get data'], 404); 
+        // Check if products are found
+        if (isset($get_spare_product) && !$get_spare_product->isEmpty()) {
+
+            // Loop through each product to check if it's in the cart
+            foreach ($get_spare_product as $product) {
+                // Check if the product is in the user's cart
+                $cart_item = CartModel::where('user_id', $user_id)
+                    ->where('product_code', $product->product_code)
+                    ->first();
+
+                // If the product is in the cart, set cart details
+                if ($cart_item) {
+                    $product->in_cart = true;
+                    $product->cart_quantity = $cart_item->quantity;
+                    $product->cart_remarks = $cart_item->remarks;
+                } else {
+                    // If the product is not in the cart
+                    $product->in_cart = false;
+                    $product->cart_quantity = null;  // or 0, depending on your preference
+                    $product->cart_remarks = null;  // or 0, depending on your preference
+                }
+            }
+
+            return response()->json([
+                'message' => 'Fetch data successfully!',
+                'data' => $get_spare_product,
+                'fetch_records' => count($get_spare_product)
+            ], 200);
+
+        } else {
+            return response()->json([
+                'message' => 'Failed to get data'
+            ], 404);
+        }
     }
+
 
     public function categories(Request $request)
     {
