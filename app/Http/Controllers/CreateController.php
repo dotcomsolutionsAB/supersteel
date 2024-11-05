@@ -231,7 +231,7 @@ class CreateController extends Controller
             $userId = $request->input('user_id');
         }
 
-        $get_product = CartModel::select('amount', 'quantity', 'product_code', 'product_name', 'rate')
+        $get_product = CartModel::select('amount', 'quantity', 'product_code', 'product_name', 'remarks', 'rate')
                                        ->where('user_id', $userId)
                                        ->get();
 
@@ -250,7 +250,7 @@ class CreateController extends Controller
                 $product_amount = 0;
                 foreach ($get_product as $order) 
                 {
-                    $product_amount += (($order->amount) * ($order->quantity));
+                    $product_amount += (($order->rate) * ($order->quantity));
                 }
                 
                 $create_order = OrderModel::create([
@@ -270,13 +270,14 @@ class CreateController extends Controller
                             'order_id' => $create_order->id,
                             'product_code' => $order->product_code,
                             'product_name' => $order->product_name,
+                            'remarks' => $order->remarks,
                             'rate' => $order->rate,
                             'quantity' => $order->quantity,
-                            'total' => $product_amount,
+                            'total' => $order->amount,
                         ]);
                     }
 
-                    $update_cart = CounterModel::where('name', 'order_basic')
+                    $update_cart = CounterModel::where('name', 'order')
                                                 ->update(['counter' => (($get_counter_data[0]->counter)+1),
                                                 ]);
 
@@ -340,6 +341,7 @@ class CreateController extends Controller
                 // 'item' => $request->input('item'),
                 'product_code' => $request->input('product_code'),
                 'product_name' => $request->input('product_name'),
+                'remarks' => $request->input('remarks'),
                 'rate' => $request->input('rate'),
                 // 'discount' => $request->input('discount'),
                 'quantity' => $request->input('quantity'),
