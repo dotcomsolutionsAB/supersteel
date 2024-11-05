@@ -90,16 +90,10 @@
             <td class="value">{{ $order->order_date }}</td>
         </tr>
         <tr>
-            <td class="label">GSTIN:</td>
-            <td class="value">{{ $user->gstin }}</td>
-            <td class="label">Order Type:</td>
-            <td class="value">"GST"</td>
-        </tr>
-        <tr>
-            <td class="label">Mobile:</td>
-            <td class="value">{{ $user->mobile }}</td>
-            <td class="label">Amount:</td>
-            <td class="value">₹ {{ $order->amount }}</td>
+            <td class="label">Transport:</td>
+            <td class="value">{{ $user->transport }}</td>
+            <td class="label">Billing Style:</td>
+            <td class="value"></td>
         </tr>
     </table>
 
