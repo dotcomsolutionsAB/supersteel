@@ -36,11 +36,6 @@ Route::prefix('admin')->middleware(['auth:sanctum', GetUserRole::class . ':admin
     Route::patch('/update_cart/{id?}', [UpdateController::class, 'cart']);
     Route::delete('/delete_cart/{id}', [DeleteController::class, 'cart']);
 
-    Route::get('/fetch_products', [CsvImportController::class, 'importProduct']);
-    Route::get('/fetch_users', [CsvImportController::class, 'importUser']);
-    Route::get('/fetch_category', [CsvImportController::class, 'importCategory']);
-    Route::get('/fetch_sub_category', [CsvImportController::class, 'importSubCategory']);
-
     Route::post('/add_counter', [CreateController::class, 'counter']);
     Route::get('/view_counter', [ViewController::class, 'counter']);
     Route::get('/dashboard', [ViewController::class, 'dashboard_details']);
@@ -116,3 +111,8 @@ Route::prefix('user')->middleware(['auth:sanctum', GetUserRole::class . ':user']
 Route::post('/login/{otp?}', [CreateController::class, 'login']);
 Route::post('/register_user', [CreateController::class, 'user']);
 Route::post('/get_otp', [UpdateController::class, 'generate_otp']);
+
+Route::get('/fetch_products', [CsvImportController::class, 'importProduct']);
+Route::get('/fetch_users', [CsvImportController::class, 'importUser']);
+Route::get('/fetch_category', [CsvImportController::class, 'importCategory']);
+Route::get('/fetch_sub_category', [CsvImportController::class, 'importSubCategory']);
