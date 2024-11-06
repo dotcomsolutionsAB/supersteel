@@ -27,4 +27,6 @@ class AppCategoryModel extends Model
     {
         return $this->hasMany(AppSubCategoryModel::class, 'category_id', 'id');
     }
+
+    
 }
