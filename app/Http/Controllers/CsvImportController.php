@@ -17,6 +17,7 @@ use Hash;
 use App\Models\CategoryModel;
 use App\Models\AppCategoryModel;
 use App\Models\AppSubCategoryModel;
+use App\Models\AppSpareCategoryModel;
 
 class CsvImportController extends Controller
 {
@@ -31,9 +32,7 @@ class CsvImportController extends Controller
 
         // Fetch and parse the CSV
         $csv_product = Reader::createFromString($csvContent_product);
-
         $csv_product->setHeaderOffset(0); // Set the header offset
-        
 
         $records_csv = (new Statement())->process($csv_product);
 
@@ -54,17 +53,11 @@ class CsvImportController extends Controller
                 $productImagePath = $product_imagePath_for_not_available; // Use placeholder if image not found
             }
 
-            // Step 1: Convert the string into an array, and remove empty values (caused by trailing commas)
+            // Category assignment
             $cat_array = array_filter(explode(',', $record_csv['Category']));
-
-            // Step 2: Check if the array has elements
-            if (count($cat_array) > 1)
-            {
-                // Reverse the remaining array elements (except the last one) to complete the rotation
+            if (count($cat_array) > 1) {
                 $cat_array = array_reverse($cat_array);
             }
-
-            // Store categories into columns c1, c2, c3, c4, and c5
             $category_column = [
                 'c1' => $cat_array[0] ?? null,
                 'c2' => $cat_array[1] ?? null,
@@ -73,85 +66,62 @@ class CsvImportController extends Controller
                 'c5' => $cat_array[4] ?? null,
             ];
 
+            // Handle Spare Sub Category
+            $spareSubCategory = $record_csv['Spare Sub Category'];
+            $spareCategory = AppSubCategoryModel::where('name', $spareSubCategory)->first();
 
-            // foreach($cat_array as $index => $category_value)
-            // {
+            if (!$spareCategory) {
+                // Get the App Sub Category ID from AppCategoryModel
+                $appSubCategory = AppCategoryModel::where('name', $record_csv['App Sub Categoy'])->first();
 
-            //     $category = CategoryModel::where('code', $category_value)->first();
-
-            //     // If category is found, update the level
-            //     if($category)
-            //     {
-            //         $category->update([
-            //             'level' => $index + 1 // Set the level based on the array position
-            //         ]);
-            //     }
-            // }
-
-
-
-            // Step 4: Convert the array into JSON format
-            // $jsonArray = json_encode($cat_array);
-
-
-            if ($product_csv) 
-            {
-                // If product exists, update it
-                $product_update_response = $product_csv->update(array_merge([
-                    'product_code' => $record_csv['Product Code'],
-                    'product_name' => $record_csv['Product Name'],
-                    'print_name' => $record_csv['Print Name'],
-                    'brand' => $record_csv['Brand'],
-                    'category' => $record_csv['App Category'],
-                    'sub_category' => $record_csv['App Sub Categoy'],
-                    // 'category' => $jsonArray,
-                    // 'type' => $record_csv['Type'],
-                    'machine_part_no' => $record_csv['Machine Part No.'],
-                    'price_a' => $record_csv['Price A'],
-                    'price_b' => $record_csv['Price B'],
-                    'price_c' => $record_csv['Price C'],
-                    'price_d' => $record_csv['Price D'],
-                    'price_i' => $record_csv['Price I'],
-                    'ppc' => $record_csv['PPC'],
-                    'product_image' => $productImagePath,
-                    'new_arrival' => $record_csv['New Arrival'] === 'TRUE' ? 1 : 0,
-                    'special_price' => $record_csv['Special Price'] === 'TRUE' ? 1 : 0,
-                ], $category_column));
-            } 
-            else 
-            {
-                // If product does not exist, create a new one
-                $product_insert_response = ProductModel::create(array_merge([
-                    'product_code' => $record_csv['Product Code'],
-                    'product_name' => $record_csv['Product Name'],
-                    'print_name' => $record_csv['Print Name'],
-                    'brand' => $record_csv['Brand'],
-                    'category' => $record_csv['App Category'],
-                    'sub_category' => $record_csv['App Sub Categoy'],
-                    // 'category' => $record_csv['Category'],
-                    // 'category' => $jsonArray,
-                    // 'type' => $record_csv['Type'],
-                    'machine_part_no' => $record_csv['Machine Part No.'],
-                    'price_a' => $record_csv['Price A'],
-                    'price_b' => $record_csv['Price B'],
-                    'price_c' => $record_csv['Price C'],
-                    'price_d' => $record_csv['Price D'],
-                    'price_i' => $record_csv['Price I'],
-                    'ppc' => $record_csv['PPC'],
-                    'product_image' => $productImagePath,
-                    'new_arrival' => $record_csv['New Arrival'] === 'TRUE' ? 1 : 0,
-                    'special_price' => $record_csv['Special Price'] === 'TRUE' ? 1 : 0,
-                ], $category_column));
-
+                if ($appSubCategory) {
+                    // Create new AppSubCategoryModel entry if it doesn't exist
+                    $spareCategory = AppSubCategoryModel::create([
+                        'sub_category_id' => $appSubCategory->id,
+                        'name' => $spareSubCategory,
+                        'category_image' => $record_csv['Category Image'] ?? null,
+                    ]);
+                }
             }
-        }   
+
+            // Merge common data for insertion or update
+            $productData = array_merge([
+                'product_code' => $record_csv['Product Code'],
+                'product_name' => $record_csv['Product Name'],
+                'print_name' => $record_csv['Print Name'],
+                'brand' => $record_csv['Brand'],
+                'category' => $record_csv['App Category'],
+                'sub_category' => $record_csv['App Sub Categoy'],
+                'machine_part_no' => $record_csv['Machine Part No.'],
+                'price_a' => $record_csv['Price A'],
+                'price_b' => $record_csv['Price B'],
+                'price_c' => $record_csv['Price C'],
+                'price_d' => $record_csv['Price D'],
+                'price_i' => $record_csv['Price I'],
+                'ppc' => $record_csv['PPC'],
+                'product_image' => $productImagePath,
+                'new_arrival' => $record_csv['New Arrival'] === 'TRUE' ? 1 : 0,
+                'special_price' => $record_csv['Special Price'] === 'TRUE' ? 1 : 0,
+                'spare_category' => $spareCategory ? $spareCategory->name : null,
+            ], $category_column);
+
+            if ($product_csv) {
+                // If product exists, update it
+                $product_update_response = $product_csv->update($productData);
+            } else {
+                // If product does not exist, create a new one
+                $product_insert_response = ProductModel::create($productData);
+            }
+        }
+
+        // Return appropriate response
         if ($product_update_response == 1 || isset($product_insert_response)) {
             return response()->json(['message' => 'Products imported successfully'], 200);
-        }
-        else {
-            return response()->json(['message' => 'Sorry, failed to imported successfully'], 404);
+        } else {
+            return response()->json(['message' => 'Sorry, failed to import successfully'], 404);
         }
     }
+
 
     public function importUser()
     {
@@ -354,4 +324,5 @@ class CsvImportController extends Controller
             return response()->json(['message' => 'Sorry, failed to import'], 404);
         }
     }
+
 }

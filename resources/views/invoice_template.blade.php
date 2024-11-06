@@ -78,16 +78,10 @@
             <td class="value">{{ $order->order_date }}</td>
         </tr>
         <tr>
-            <td class="label">GSTIN:</td>
-            <td class="value">{{ $user->gstin }}</td>
-            <td class="label">Order Type:</td>
-            <td class="value">"GST"</td>
-        </tr>
-        <tr>
-            <td class="label">Mobile:</td>
-            <td class="value">{{ $user->mobile }}</td>
-            <td class="label">Amount:</td>
-            <td class="value">₹ {{ $order->amount }}</td>
+            <td class="label">Transport:</td>
+            <td class="value">{{ $user->transport }}</td>
+            <td class="label">Billing Style:</td>
+            <td class="value"></td>
         </tr>
     </table>
 
@@ -108,7 +102,7 @@
                 <tr>
                     <td class="center-align">{{ $index + 1 }}</td>
                     <td><img src="{{ Storage::url('uploads/products_pdf/' . $item->product_code . '.jpg') }}" alt="" style="height: 60px; width: 60px;"></td>
-                    <td>{{ $item->product_name }}<br>SKU: {{ $item->product->sku }}</td>
+                    <td>{{ $item->product_name }}<br>Part No: {{ $item->product->product_code }}<br>Part No: {{ $item->remarks }}</td>
                     <td class="center-align">{{ $item->quantity }}</td>
                     <td class="right-align">₹ {{ $item->rate }}</td>
                     <td class="right-align">₹ {{ $item->total }}</td>
