@@ -63,20 +63,23 @@ class CsvImportController extends Controller
 
             // Handle Spare Sub Category
             $spareSubCategory = $record_csv['Spare Sub Category'];
-            // die(json_encode($record_csv));
-            $spareCategory = AppSpareCategoryModel::where('name', $spareSubCategory)->first();
+            if($spareSubCategory != '')
+            {
+                // die(json_encode($record_csv));
+                $spareCategory = AppSpareCategoryModel::where('name', $spareSubCategory)->first();
 
-            if (!$spareCategory) {
-                // Get the App Sub Category ID from AppCategoryModel
-                $appSubCategory = AppSubCategoryModel::where('name', $record_csv['App Sub Categoy'])->first();
+                if (!$spareCategory) {
+                    // Get the App Sub Category ID from AppCategoryModel
+                    $appSubCategory = AppSubCategoryModel::where('name', $record_csv['App Sub Categoy'])->first();
 
-                if ($appSubCategory) {
-                    // Create new AppSubCategoryModel entry if it doesn't exist
-                    $spareCategory = AppSpareCategoryModel::create([
-                        'sub_category_id' => $appSubCategory->id,
-                        'name' => $spareSubCategory,
-                        'category_image' => null,
-                    ]);
+                    if ($appSubCategory) {
+                        // Create new AppSubCategoryModel entry if it doesn't exist
+                        $spareCategory = AppSpareCategoryModel::create([
+                            'sub_category_id' => $appSubCategory->id,
+                            'name' => $spareSubCategory,
+                            'category_image' => null,
+                        ]);
+                    }
                 }
             }
 
