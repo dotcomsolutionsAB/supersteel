@@ -22,10 +22,5 @@ class AppSubCategoryModel extends Model
     {
         return $this->hasMany(ProductModel::class, 'sub_category', 'name');
     }
-
-    // A sub_category has many sparecategories
-    public function sparecategories()
-    {
-        return $this->hasMany(AppSpareCategoryModel::class, 'sub_category_id', 'id');
-    }
+    
 }

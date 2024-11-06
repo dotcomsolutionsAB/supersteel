@@ -12,7 +12,6 @@ use Hash;
 use App\Models\CategoryModel;
 use App\Models\AppCategoryModel;
 use App\Models\AppSubCategoryModel;
-use App\Models\AppSpareCategoryModel;
 
 class CsvImportController extends Controller
 {
@@ -62,27 +61,27 @@ class CsvImportController extends Controller
             ];
 
             // Handle Spare Sub Category
-            $spareSubCategory = $record_csv['Spare Sub Category'];
-            $spareCategory = '';
-            if($spareSubCategory != '')
-            {
-                // die(json_encode($record_csv));
-                $spareCategory = AppSpareCategoryModel::where('name', $spareSubCategory)->first();
+            // $spareSubCategory = $record_csv['Spare Sub Category'];
+            // $spareCategory = '';
+            // if($spareSubCategory != '')
+            // {
+            //     // die(json_encode($record_csv));
+            //     $spareCategory = AppSpareCategoryModel::where('name', $spareSubCategory)->first();
 
-                if (!$spareCategory) {
-                    // Get the App Sub Category ID from AppCategoryModel
-                    $appSubCategory = AppSubCategoryModel::where('name', $record_csv['App Sub Categoy'])->first();
+            //     if (!$spareCategory) {
+            //         // Get the App Sub Category ID from AppCategoryModel
+            //         $appSubCategory = AppSubCategoryModel::where('name', $record_csv['App Sub Categoy'])->first();
 
-                    if ($appSubCategory) {
-                        // Create new AppSubCategoryModel entry if it doesn't exist
-                        $spareCategory = AppSpareCategoryModel::create([
-                            'sub_category_id' => $appSubCategory->id,
-                            'name' => $spareSubCategory,
-                            'category_image' => "/storage/uploads/category/placeholder.jpg",
-                        ]);
-                    }
-                }
-            }
+            //         if ($appSubCategory) {
+            //             // Create new AppSubCategoryModel entry if it doesn't exist
+            //             $spareCategory = AppSpareCategoryModel::create([
+            //                 'sub_category_id' => $appSubCategory->id,
+            //                 'name' => $spareSubCategory,
+            //                 'category_image' => "/storage/uploads/category/placeholder.jpg",
+            //             ]);
+            //         }
+            //     }
+            // }
 
             // Merge common data for insertion or update
             $productData = array_merge([

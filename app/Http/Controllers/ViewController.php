@@ -25,7 +25,6 @@ use App\Models\SubCategoryModel;
 use App\Models\AppCategoryModel;
 
 use App\Models\AppSubCategoryModel;
-use App\Models\AppSpareCategoryModel;
 
 use DB;
 
@@ -349,41 +348,6 @@ class ViewController extends Controller
                 'message' => 'Fetch data successfully!',
                 'data' => $orderedSubCategories,
                 'count' => $orderedSubCategories->count(),
-            ], 200);
-        } else {
-            return response()->json([
-                'message' => 'Failed to get data successfully!',
-            ], 400);
-        }
-    }
-
-    public function spare_category(Request $request)
-    {
-        // Convert the string of category IDs to an array, e.g., '1,2' -> [1, 2]
-        $category = $request['sub_category'];
-        $categoryIds = $category ? explode(',', $category) : [];
-
-        // Fetch subcategories filtered by multiple category_ids if provided
-        $spare_categories = AppSpareCategoryModel::withCount('products')
-            ->when(!empty($categoryIds), function ($query) use ($categoryIds) {
-                // Filter subcategories by multiple category_ids using whereIn
-                return $query->whereIn('sub_category_id', $categoryIds);
-            })->get();
-
-        // Format the categories data for a JSON response
-        $formattedSubCategories = $spare_categories->map(function ($sub_category) {
-            return [
-                'spare_category_name' => $sub_category->name,
-                'spare_category_image' => $sub_category->category_image,
-                'spare_products_count' => $sub_category->products_count,
-            ];
-        });
-
-        if ($formattedSubCategories->isNotEmpty()) {
-            return response()->json([
-                'message' => 'Fetch data successfully!',
-                'data' => $formattedSubCategories,
-                'count' => $formattedSubCategories->count(),
             ], 200);
         } else {
             return response()->json([
