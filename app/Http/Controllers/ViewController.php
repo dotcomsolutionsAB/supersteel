@@ -371,7 +371,7 @@ class ViewController extends Controller
             })->get();
 
         // Format the categories data for a JSON response
-        $formattedSubCategories = $sub_categories->map(function ($sub_category) {
+        $formattedSubCategories = $spare_categories->map(function ($sub_category) {
             return [
                 'spare_category_name' => $sub_category->name,
                 'spare_category_image' => $sub_category->category_image,
