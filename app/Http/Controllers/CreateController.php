@@ -37,7 +37,7 @@ class CreateController extends Controller
                 'password' => bcrypt($request->input('password')),
                 'email' => strtolower($request->input('email')),
                 'mobile' => $request->input('mobile'),
-                'role' => $request->input('role'),
+                'role' => 'user',
                 'address_line_1' => $request->input('address_line_1'),
                 'address_line_2' => $request->input('address_line_2'),
                 'city' => $request->input('city'),
