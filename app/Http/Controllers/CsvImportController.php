@@ -77,7 +77,7 @@ class CsvImportController extends Controller
                         $spareCategory = AppSpareCategoryModel::create([
                             'sub_category_id' => $appSubCategory->id,
                             'name' => $spareSubCategory,
-                            'category_image' => null,
+                            'category_image' => "/storage/uploads/category/placeholder.jpg",
                         ]);
                     }
                 }
