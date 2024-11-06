@@ -379,11 +379,11 @@ class ViewController extends Controller
             ];
         });
 
-        if ($orderedSubCategories->isNotEmpty()) {
+        if ($formattedSubCategories->isNotEmpty()) {
             return response()->json([
                 'message' => 'Fetch data successfully!',
-                'data' => $orderedSubCategories,
-                'count' => $orderedSubCategories->count(),
+                'data' => $formattedSubCategories,
+                'count' => $formattedSubCategories->count(),
             ], 200);
         } else {
             return response()->json([
