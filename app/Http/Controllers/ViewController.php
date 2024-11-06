@@ -25,6 +25,7 @@ use App\Models\SubCategoryModel;
 use App\Models\AppCategoryModel;
 
 use App\Models\AppSubCategoryModel;
+use App\Models\AppSpareCategoryModel;
 
 use DB;
 
