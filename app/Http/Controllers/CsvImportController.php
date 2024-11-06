@@ -68,6 +68,7 @@ class CsvImportController extends Controller
 
             // Handle Spare Sub Category
             $spareSubCategory = $record_csv['Spare Sub Category'];
+            die($spareSubCategory);
             $spareCategory = AppSpareCategoryModel::where('name', $spareSubCategory)->first();
 
             if (!$spareCategory) {
