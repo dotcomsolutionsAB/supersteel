@@ -16,7 +16,6 @@ class ProductModel extends Model
         'brand',
         'category',
         'sub_category',
-        'spare_category',
         'c1',
         'c2',
         'c3',

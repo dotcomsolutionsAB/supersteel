@@ -101,7 +101,6 @@ class CsvImportController extends Controller
                 'product_image' => $productImagePath,
                 'new_arrival' => $record_csv['New Arrival'] === 'TRUE' ? 1 : 0,
                 'special_price' => $record_csv['Special Price'] === 'TRUE' ? 1 : 0,
-                'spare_category' => $spareCategory ? $spareCategory->name : null,
             ], $category_column);
 
             if ($product_csv) {
