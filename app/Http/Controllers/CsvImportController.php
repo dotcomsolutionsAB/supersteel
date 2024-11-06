@@ -63,6 +63,7 @@ class CsvImportController extends Controller
 
             // Handle Spare Sub Category
             $spareSubCategory = $record_csv['Spare Sub Category'];
+            $spareCategory = '';
             if($spareSubCategory != '')
             {
                 // die(json_encode($record_csv));
