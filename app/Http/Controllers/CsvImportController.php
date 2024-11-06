@@ -5,15 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\ProductModel;
-
 use App\Models\User;
-
 use League\Csv\Reader;
-
 use League\Csv\Statement;
-
 use Hash;
-
 use App\Models\CategoryModel;
 use App\Models\AppCategoryModel;
 use App\Models\AppSubCategoryModel;
