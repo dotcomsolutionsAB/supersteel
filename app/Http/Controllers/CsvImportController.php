@@ -72,7 +72,7 @@ class CsvImportController extends Controller
 
             if (!$spareCategory) {
                 // Get the App Sub Category ID from AppCategoryModel
-                $appSubCategory = AppCategoryModel::where('name', $record_csv['App Sub Categoy'])->first();
+                $appSubCategory = AppSubCategoryModel::where('name', $record_csv['App Sub Categoy'])->first();
 
                 if ($appSubCategory) {
                     // Create new AppSubCategoryModel entry if it doesn't exist
