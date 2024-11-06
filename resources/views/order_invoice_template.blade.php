@@ -95,6 +95,10 @@
             <td class="label">Billing Style:</td>
             <td class="value"></td>
         </tr>
+        <tr>
+            <td class="label">Order Remarks:</td>
+            <td class="value">{{ $order->remarks }}</td>
+        </tr>
     </table>
 
     <!-- Order Details -->
