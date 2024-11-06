@@ -258,6 +258,7 @@ class CreateController extends Controller
                     'order_id' => $get_order_id,
                     'order_date' => Carbon::now()->toDateString(),
                     'amount' => $product_amount,
+                    'remarks' => $request->input('remarks'),
                 ]);
                 //order_table_id
 

@@ -20,6 +20,7 @@ class OrderModel extends Model
         // 'log_user',
         'status',
         'type',
+        'remarks',
     ];
 
     public function user()
