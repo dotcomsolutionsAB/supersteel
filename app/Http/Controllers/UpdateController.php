@@ -130,18 +130,19 @@ class UpdateController extends Controller
                 ], 200);
             }
 
-        else {
+            else {
                 return response()->json([
-                'message' => 'Fail to store otp successfully!',
-                'data' => $store_otp
+                    'message' => 'Fail to store otp successfully!',
+                    'data' => $store_otp
                 ], 501);
             }
         }
 
         else {
             return response()->json([
-                'message' => 'User has not registered!',
-            ], 404);
+                'success' => false,
+                'message' => 'Mobile no. is not registered.',
+            ], 200);
         }
     }
 
