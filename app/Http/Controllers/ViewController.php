@@ -204,6 +204,7 @@ class ViewController extends Controller
         $productQuery = ProductModel::select(
             'product_code',
             'product_name',
+            'print_name',
             'category',
             'sub_category',
             DB::raw("$price_column as price"),
