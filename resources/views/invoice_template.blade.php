@@ -84,7 +84,7 @@
             <td class="value"></td>
         </tr>
         <tr>
-            <td colspan="2" class="value"><strong>Remarks:</strong> {{ $order->remarks }}</td>
+            <td class="value"><strong>Remarks:</strong> {{ $order->remarks }}</td>
         </tr>
     </table>
 
