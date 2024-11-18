@@ -40,11 +40,18 @@ class CsvImportController extends Controller
             $filename = $record_csv['Product Code'];
 
             // Define the product image path and check if the image exists
+            $productImagePathPdf = "/storage/uploads/products_pdf/{$filename}.jpg";
             $productImagePath = "/storage/uploads/products/{$filename}.jpg";
             $product_imagePath_for_not_available = "/storage/uploads/products/placeholder.jpg";
 
-            if (!file_exists(public_path($productImagePath))) {
-                $productImagePath = $product_imagePath_for_not_available; // Use placeholder if image not found
+            // if (!file_exists(public_path($productImagePath))) {
+            //     $productImagePath = $product_imagePath_for_not_available; // Use placeholder if image not found
+            // }
+            
+            if (file_exists(public_path($productImagePathPdf))) {
+                $productImagePath = $productImagePathPdf;
+            } elseif (!file_exists(public_path($productImagePath))) {
+                $productImagePath = $product_imagePath_for_not_available;
             }
 
             // Category assignment
