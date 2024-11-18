@@ -249,7 +249,6 @@ class CreateController extends Controller
         $get_product = CartModel::select('amount', 'quantity', 'product_code', 'product_name', 'remarks', 'rate')
                                        ->where('user_id', $userId)
                                        ->get();
-                                       dd($get_product);
 
         $get_counter_data = CounterModel::select('prefix', 'counter', 'postfix')->where('name', 'order')->get();
        
