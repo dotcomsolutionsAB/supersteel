@@ -24,6 +24,13 @@
             margin-right: 20px; /* Space between the image and text */
         }
 
+        /* Center align for the user name */
+        .username {
+            text-align: center;
+            flex: 1;
+            margin-left: 20px;
+        }
+
         /* Right align for the text */
         .header-box .product-details {
             flex-grow: 1;
@@ -60,6 +67,15 @@
             width: 80px;
             height: auto;
         }
+
+        /* Ensuring the ITEM and MODEL columns are centered and justified */
+        .center-text {
+            text-align: center;
+        }
+
+        .header-box{
+            width: auto;
+        }
     </style>
 </head>
 <body>
@@ -78,12 +94,12 @@
     <table>
         <thead>
             <tr>
-                <th>S.NO</th>
-                <th>ITEM NO</th>
-                <th>ITEM</th>
-                <th>MODEL</th>
-                <th>PRICE</th>
-                <th>Image</th>
+                <th class="center-text">S.NO</th>
+                <th class="center-text">ITEM NO</th>
+                <th class="center-text">ITEM</th>
+                <th class="center-text">MODEL</th>
+                <th class="center-text">PRICE</th>
+                <th class="center-text">Image</th>
             </tr>
         </thead>
         <tbody>
