@@ -104,6 +104,8 @@ Route::prefix('user')->middleware(['auth:sanctum', GetUserRole::class . ':user']
 
     Route::post('/spare_product/{code?}', [ViewController::class, 'get_spares']);
     Route::post('/spares_pricelist/{code}', [InvoiceController::class, 'price_spares']);
+    Route::post('/generate_invoice/{orderId}', [InvoiceController::class, 'generateInvoice']);
+
 });
 
 
