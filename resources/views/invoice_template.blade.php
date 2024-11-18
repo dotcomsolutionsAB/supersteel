@@ -121,7 +121,7 @@
     <!-- QR Code and Footer -->
     <div style="position: fixed; bottom: 20px; width: 100%;">
         <div class="footer">
-            <p>Thank you for working with us</p>
+            <p style="font-size: 18px;">Thank you for working with us</p>
         </div>
     </div>
 
