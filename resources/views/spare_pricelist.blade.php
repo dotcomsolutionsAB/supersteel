@@ -20,15 +20,21 @@
         .header-box img {
             height: 100px; /* Fixed height for the image */
             width: auto; /* Maintain the aspect ratio */
-            object-fit: contain; /* Ensure the image fits without cropping */
-            margin-right: 20px; /* Space between the image and the username */
+            object-fit: cover; /* Fill the container while maintaining aspect ratio */
+            margin-right: 10px; /* Add a smaller margin for better alignment */
         }
 
         /* Center align for the user name */
         .username {
             text-align: center;
             flex: 1;
-            margin-left: 20px;
+            margin-left: 30px;
+        }
+
+        .product-details {
+            flex-grow: 1;
+            text-align: right;
+            margin-left: 40px; /* Increase the margin for more space */
         }
 
         /* Right align for the text */
