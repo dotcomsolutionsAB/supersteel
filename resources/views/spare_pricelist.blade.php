@@ -18,8 +18,8 @@
 
         /* Styling for the image */
         .header-box img {
-            height: 100%; /* Make the image fill the height of the header */
-            max-height: 80px; /* Set a maximum height to keep it from becoming too large */
+            height: 100px; /* Adjust height as needed to fit the header */
+            width: auto; /* Keep width proportional */
             object-fit: contain; /* Maintain the aspect ratio */
             margin-right: 20px; /* Space between the image and the text */
         }
