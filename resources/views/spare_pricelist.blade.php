@@ -33,9 +33,9 @@
 
         /* Right align for the text */
         .product-details {
-            flex-grow: 1;
+            flex-grow: 2;
             text-align: right;
-            margin-left: 40px; /* Adjust margin for spacing */
+            margin-left: 30px; /* Adjust margin for spacing */
         }
 
         /* Styling for the table */
@@ -86,7 +86,7 @@
             {{ $user_name }}
         </div>
         <div class="product-details">
-            {{ $get_product_details->print_name }}  {{$get_product_details->product_code}}
+            {{ $get_product_details->print_name }} - {{$get_product_details->product_code}}
         </div>
     </div>
 
