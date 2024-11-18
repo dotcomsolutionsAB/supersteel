@@ -86,7 +86,7 @@
             {{ $user_name }}
         </div>
         <div class="product-details">
-            {{ $get_product_details->print_name }} - {{$get_product_details->product_code}}
+            {{ $get_product_details->print_name }}  {{$get_product_details->product_code}}
         </div>
     </div>
 
