@@ -65,9 +65,12 @@
 <body>
     <!-- Title Box -->
     <div class="header-box">
+        <div class="username">
+            {{ $user_name }}
+        </div>
         <img src="{{ public_path($get_product_details->product_image) }}" alt="Product Image">
         <div class="product-details">
-            {{ $get_product_details->product_name }} - {{$get_product_details->product_code}}
+            {{ $get_product_details->print_name }} - {{$get_product_details->product_code}}
         </div>
     </div>
 
@@ -89,7 +92,7 @@
                     <td>{{ $index + 1 }}</td> <!-- S.NO -->
                     <td>{{ $item->product_code }}</td>
                     <td class="print-column">{{ $item->print_name }}</td>
-                    <td>{{ $item->brand }}</td>
+                    <td>{{ $get_product_details->print_name }} - {{$get_product_details->product_code}}</td>
                     <td>{{ $item->price }}</td>
                     <td><img src="{{ public_path($item->product_image)}}" alt="{{ $item->print_name }}"></td>
                 </tr>

@@ -162,6 +162,8 @@ class InvoiceController extends Controller
         ];
 
         $response = $whatsAppUtility->sendWhatsApp('+917003541353', $templateParams, '', 'Admin Order Invoice');
+
+        $response = $whatsAppUtility->sendWhatsApp('+919908570858', $templateParams, '', 'Admin Order Invoice');
         
 
         // // Assuming additional functionality such as WhatsApp integration etc.
@@ -174,7 +176,27 @@ class InvoiceController extends Controller
         // initialize the query
         $query = ProductModel::query();
 
-        $user_price = Auth::user()->price_type;
+        $get_user = Auth::User();
+
+        if($get_user->role == 'user') {
+            $get_user = Auth::User();
+
+            $user_price = $get_user->price_type;
+            
+            $user_name = $get_user->name;
+        }
+
+        else{
+            $request->validate([
+                'id' => 'required|integer'
+            ]);  
+
+            $get_user_price = User::select('price_type', 'name')->where('id', $id)->first();
+
+            $user_price = $get_user_price->price_type;
+
+            $user_name = $get_user_price->name;
+        }
 
         $price_column = '';
 
