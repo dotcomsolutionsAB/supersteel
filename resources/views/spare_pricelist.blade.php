@@ -3,8 +3,8 @@
 <head>
     <title>VCL Items</title>
     <style>
-       /* Container for the header (image on the left, text on the right) */
-       .header-box {
+        /* Container for the header (image on the left, text on the right) */
+        .header-box {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -31,17 +31,11 @@
             margin-left: 30px;
         }
 
+        /* Right align for the text */
         .product-details {
             flex-grow: 1;
             text-align: right;
-            margin-left: 40px; /* Increase the margin for more space */
-        }
-
-        /* Right align for the text */
-        .header-box .product-details {
-            flex-grow: 1;
-            text-align: right;
-            margin-left: 20px;
+            margin-left: 40px; /* Adjust margin for spacing */
         }
 
         /* Styling for the table */
@@ -79,7 +73,7 @@
             text-align: center;
         }
 
-        .header-box{
+        .header-box {
             width: auto;
         }
     </style>
