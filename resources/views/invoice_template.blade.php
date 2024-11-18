@@ -54,11 +54,6 @@
         .value {
             width: 35%; /* Wider values */
         }
-        td {
-            width: 100%; /* Ensure the cell takes the full width */
-            padding: 10px; /* Adjust padding to your preference */
-            text-align: left; /* Align text to the left */
-        }
     </style>
 </head>
 <body>
@@ -89,9 +84,7 @@
             <td class="value"></td>
         </tr>
         <tr>
-            <td colspan="2">
-                <strong>Remarks:</strong> {{ $order->remarks }}
-            </td>
+            <td colspan="2" class="value"><strong>Remarks:</strong> {{ $order->remarks }}</td>
         </tr>
     </table>
 
