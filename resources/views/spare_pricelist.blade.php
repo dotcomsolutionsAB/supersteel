@@ -18,11 +18,10 @@
 
         /* Styling for the image */
         .header-box img {
-            height: 100%; /* Fill the height of the header */
-            max-height: 80px; /* Set a maximum height */
+            height: 100px; /* Fixed height for the image */
             width: auto; /* Maintain the aspect ratio */
-            object-fit: cover; /* Cover the container, cropping if necessary */
-            margin-right: 0; /* Remove the right margin */
+            object-fit: contain; /* Ensure the image fits without cropping */
+            margin-right: 20px; /* Space between the image and the username */
         }
 
         /* Center align for the user name */
