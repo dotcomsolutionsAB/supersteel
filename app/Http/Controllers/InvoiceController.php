@@ -38,6 +38,7 @@ class InvoiceController extends Controller
                                     ->select('product_code', 'product_name', 'rate', 'quantity', 'total', 'remarks')
                                     ->where('order_id', $orderId)
                                     ->get();
+                                    dd($order_items);
 
         if (!$user || !$order || $order_items->isEmpty()) {
             return response()->json(['error' => 'Sorry, required data are not available!'], 500);
