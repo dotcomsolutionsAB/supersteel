@@ -265,7 +265,7 @@ class InvoiceController extends Controller
         }
               
         // Load the Blade view and pass the data
-        $html = view('spare_pricelist', compact('get_product_details', 'get_record'))->render();
+        $html = view('spare_pricelist', compact('get_product_details', 'get_record', 'user_name'))->render();
 
         // create the instance of Mpdf
         $mpdf = new Mpdf();
