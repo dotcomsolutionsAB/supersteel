@@ -22,7 +22,7 @@ class InvoiceController extends Controller
     {
         // $get_user = Auth::id();
 
-        $order = OrderModel::select('user_id','order_id', 'amount', 'order_date')
+        $order = OrderModel::select('user_id','order_id', 'amount', 'order_date', 'remarks')
                             ->where('id', $orderId)
                             ->first();
 

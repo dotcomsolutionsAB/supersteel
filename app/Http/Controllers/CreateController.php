@@ -231,12 +231,17 @@ class CreateController extends Controller
 
         if($get_user->role == 'user') {
             $userId = $get_user->id;
+            
+            $request->validate([
+                'remarks' => 'nullable|string'
+            ]);  
         }
 
         else 
         {
             $request->validate([
                 'user_id' => 'required',
+                'remarks' => 'nullable|string'
             ]);
             $userId = $request->input('user_id');
         }
