@@ -54,6 +54,11 @@
         .value {
             width: 35%; /* Wider values */
         }
+        td {
+            width: 100%; /* Ensure the cell takes the full width */
+            padding: 10px; /* Adjust padding to your preference */
+            text-align: left; /* Align text to the left */
+        }
     </style>
 </head>
 <body>
@@ -75,7 +80,7 @@
             <td class="label">Address:</td>
             <td class="value">{{ $user->address_line_1 }}{{ !empty($user->address_line_1) && !empty($user->address_line_2) ? ', ' : '' }}{{ $user->address_line_2 }}</td>
             <td class="label">Order Date:</td>
-            <td class="value">{{ $order->order_date }}</td>
+            <td class="value">{{ \Carbon\Carbon::parse($order->order_date)->format('d-m-Y') }}</td>
         </tr>
         <tr>
             <td class="label">Transport:</td>
@@ -84,8 +89,9 @@
             <td class="value"></td>
         </tr>
         <tr>
-            <td class="label">Remarks:</td>
-            <td class="value">{{ $order->remarks }}</td>
+            <td colspan="2">
+                <strong>Remarks:</strong> {{ $order->remarks }}
+            </td>
         </tr>
     </table>
 
@@ -97,7 +103,7 @@
                 <th>Photo</th>
                 <th>Product Name</th>
                 <th class="center-align">Qty</th>
-                <th class="right-align">Unit Price (Rs.)</th>
+                <th class="right-align">Rate (Rs.)</th>
                 <th class="right-align">Total (Rs.)</th>
             </tr>
         </thead>
