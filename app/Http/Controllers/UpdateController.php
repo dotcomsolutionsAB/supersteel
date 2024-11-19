@@ -299,7 +299,7 @@ class UpdateController extends Controller
             'user_id' => 'required|integer',
             'amount' => 'required|numeric',
             'items' => 'required|array',
-            'items.*.product_code' => 'required|string',
+            'items.*.product_code' => 'required|string|exists:t_products,product_code',
             'items.*.product_name' => 'required|string',
             'items.*.quantity' => 'required|integer',
             'items.*.rate' => 'required|numeric',
