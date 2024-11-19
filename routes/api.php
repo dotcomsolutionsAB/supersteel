@@ -15,6 +15,7 @@ Route::prefix('admin')->middleware(['auth:sanctum', GetUserRole::class . ':admin
     Route::post('/add_user', [CreateController::class, 'user']);
     Route::get('/view_user', [ViewController::class, 'user']);
     Route::patch('/make_verify/{id}', [UpdateController::class, 'verify_user']);
+    Route::patch('/make_unverify/{id}', [UpdateController::class, 'unverify_user']);
     Route::post('/update_user', [UpdateController::class, 'user']);
     Route::post('/update_password', [UpdateController::class, 'user_password']);
     Route::post('/logout', [CreateController::class, 'logout']);

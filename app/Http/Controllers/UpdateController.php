@@ -149,8 +149,8 @@ class UpdateController extends Controller
     public function cart(Request $request, $id)
     {
         $request->validate([
-            'product_code' => 'required',
-            'quantity' => 'required',
+            'product_code' => 'required|exists:t_products,product_code',
+            'quantity' => 'required|numeric',
         ]);
 
         $update_cart = CartModel::where('id', $id)
@@ -170,9 +170,14 @@ class UpdateController extends Controller
 
     public function verify_user($get_id)
     {
+        $request->validate([
+            'price_type' => 'required|string',
+        ]);
+
         $update_verify = User::where('id', $get_id)
             ->update([
                 'verified' => '1',
+                'price_type' => $request->input('price_type')
             ]);
 
             $user = User::select('name', 'mobile')
@@ -216,6 +221,58 @@ class UpdateController extends Controller
             else {
                 return response()->json([
                     'message' => 'Failed to verify the user'
+                ], 400);
+            }    
+    }
+
+    public function unverify_user($get_id)
+    {
+        $update_unverify = User::where('id', $get_id)
+            ->update([
+                'verified' => '0',
+            ]);
+
+            $user = User::select('name', 'mobile')
+                         ->where('id', $get_id)
+                         ->first();
+
+            if ($update_unverify == 1) {
+
+                $templateParams = [
+                    'name' => 'ace_user_approved', // Replace with your WhatsApp template name
+                    'language' => ['code' => 'en'],
+                    'components' => [
+                        [
+                            'type' => 'body',
+                            'parameters' => [
+                                [
+                                    'type' => 'text',
+                                    'text' => $user->name,
+                                ],
+                                [
+                                    'type' => 'text',
+                                    'text' => substr($user->mobile, -10),
+                                ],
+                            ],
+                        ]
+                    ],
+                ];
+                
+                // Directly create an instance of SendWhatsAppUtility
+                $whatsAppUtility = new sendWhatsAppUtility();
+                
+                // Send OTP via WhatsApp
+                $response = $whatsAppUtility->sendWhatsApp('+918961043773', $templateParams, '', 'Approve Client');
+                
+                return response()->json([
+                    'message' => 'User un-verified successfully!',
+                    'data' => $update_unverify
+                ], 200);
+            }
+    
+            else {
+                return response()->json([
+                    'message' => 'Failed to un-verify the user'
                 ], 400);
             }    
     }
