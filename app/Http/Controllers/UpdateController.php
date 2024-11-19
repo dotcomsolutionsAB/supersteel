@@ -174,6 +174,8 @@ class UpdateController extends Controller
             'price_type' => 'required|string',
         ]);
 
+        dd($request->toArray());
+
         $update_verify = User::where('id', $get_id)
             ->update([
                 'is_verified' => '1',
