@@ -176,7 +176,7 @@ class UpdateController extends Controller
 
         $update_verify = User::where('id', $get_id)
             ->update([
-                'verified' => '1',
+                'is_verified' => '1',
                 'price_type' => $request->input('price_type')
             ]);
 
@@ -229,7 +229,7 @@ class UpdateController extends Controller
     {
         $update_unverify = User::where('id', $get_id)
             ->update([
-                'verified' => '0',
+                'is_verified' => '0',
             ]);
 
             $user = User::select('name', 'mobile')
