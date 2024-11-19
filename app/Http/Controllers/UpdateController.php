@@ -293,7 +293,7 @@ class UpdateController extends Controller
     // update order
     public function order(Request $request, $id)
     {
-        dd($request->toArray());
+        dd($request->all());
         // Validate incoming request data
         $request->validate([
             'order_id' => 'required|string',
