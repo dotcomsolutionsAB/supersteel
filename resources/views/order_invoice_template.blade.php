@@ -97,7 +97,7 @@
         </tr>
         <tr>
             <td class="label">Order Remarks:</td>
-            <td class="value">{{ $order->remarks }}</td>
+            <td class="value" colspan="4">{{ $order->remarks }}</td>
         </tr>
     </table>
 
