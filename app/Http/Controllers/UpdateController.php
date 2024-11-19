@@ -235,6 +235,11 @@ class UpdateController extends Controller
             $user = User::select('name', 'mobile')
                          ->where('id', $get_id)
                          ->first();
+            
+            if(!$user)
+            {
+                return response()->json(['Sorry, user not found!'], 404); 
+            }
 
             if ($update_unverify == 1) {
 
