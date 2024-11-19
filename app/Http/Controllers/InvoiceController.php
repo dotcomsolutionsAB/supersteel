@@ -38,19 +38,20 @@ class InvoiceController extends Controller
                                     ->select('product_code', 'product_name', 'rate', 'quantity', 'total', 'remarks')
                                     ->where('order_id', $orderId)
                                     ->get();
-                                   dd($order_items);
-        $productImagePathPdf = "/storage/uploads/products_pdf/{$order_items->product_code}.jpg";
 
-        if (file_exists(public_path($productImagePathPdf))) {
-            $get_product_image = $productImagePathPdf;
-        }
+        foreach($order_items as $item)
+        {
+            $filename = $item->product_code;
+            $productImagePathPdf = "/storage/uploads/products_pdf/{$order_items->product_code}.jpg";
 
-        else {
-            $get_product_image = ProductModel::select('product_image')->where('product_code', $order_items->product_code)->get();
-        }
-
-        dd($get_product_image);
-
+            if (file_exists(public_path($productImagePathPdf))) {
+                $item->product_image = $productImagePathPdf;
+            }
+    
+            else {
+                $item->product_image = ProductModel::select('product_image')->where('product_code', $order_items->product_code)->get();
+            }
+        }                           
 
         if (!$user || !$order || $order_items->isEmpty()) {
             return response()->json(['error' => 'Sorry, required data are not available!'], 500);
