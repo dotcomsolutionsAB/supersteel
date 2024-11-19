@@ -373,7 +373,7 @@ class UpdateController extends Controller
                             ->where('user_id', $request->input('user_id'))
                             ->first();
 
-                            dd($order);
+                            dd($order == null);
 
         if (!$order) {
             return response()->json([
