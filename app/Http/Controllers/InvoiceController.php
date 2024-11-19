@@ -244,7 +244,7 @@ class InvoiceController extends Controller
 
         $mpdf = new Mpdf();
 
-        $headerHtml = view('order_invoice_template_header', ['user' => $user, 'order' => $order])->render();
+        $headerHtml = view('invoice_template_header', ['user' => $user, 'order' => $order])->render();
 
         $mpdf->WriteHTML($headerHtml);
 
@@ -254,7 +254,7 @@ class InvoiceController extends Controller
         foreach ($orderItems as $chunk) {
 			foreach ($chunk as $index => $item) {
 				// Render each item row individually
-				$htmlChunk = view('order_invoice_template_items', compact('item', 'index'))->render();
+				$htmlChunk = view('invoice_template_items', compact('item', 'index'))->render();
 				$mpdf->WriteHTML($htmlChunk);
 			}
 			ob_flush();
@@ -262,7 +262,7 @@ class InvoiceController extends Controller
 		}
 
         // Render the footer
-		$footerHtml = view('order_invoice_template_footer', ['order' => $order])->render();
+		$footerHtml = view('invoice_template_footer', ['order' => $order])->render();
 		$mpdf->WriteHTML($footerHtml);
 
         // Output the PDF
