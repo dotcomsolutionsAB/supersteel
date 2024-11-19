@@ -342,7 +342,6 @@ class UpdateController extends Controller
                 'quantity' => $item['quantity'],
                 'rate' => $item['rate'],
                 'total' => $item['total'],
-                'type' => strtolower($request->input('order_type')),
                 'remarks' => $item['remarks'] ?? '',
             ]);
         }
