@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order</title>
     <style>
-        body {
+         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
@@ -54,13 +54,6 @@
         .value {
             width: 35%; /* Wider values */
         }
-        .order-title {
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            margin-top: 20px;
-            margin-bottom: 10px;
-        }
     </style>
 </head>
 <body>
@@ -87,7 +80,7 @@
             <td class="label">Address:</td>
             <td class="value">{{ $user->address_line_1 }}{{ !empty($user->address_line_1) && !empty($user->address_line_2) ? ', ' : '' }}{{ $user->address_line_2 }}</td>
             <td class="label">Order Date:</td>
-            <td class="value">{{ $order->order_date }}</td>
+            <td class="value">{{ \Carbon\Carbon::parse($order->order_date)->format('d-m-Y') }}</td>
         </tr>
         <tr>
             <td class="label">Transport:</td>
@@ -96,8 +89,7 @@
             <td class="value"></td>
         </tr>
         <tr>
-            <td class="label">Order Remarks:</td>
-            <td class="value">{{ $order->remarks }}</td>
+            <td colspan="4" class="value"><strong>Remarks:</strong> {{ $order->remarks }}</td>
         </tr>
     </table>
 
@@ -109,7 +101,7 @@
                 <th>Photo</th>
                 <th>Product Name</th>
                 <th class="center-align">Qty</th>
-                <th class="right-align">Unit Price (Rs.)</th>
+                <th class="right-align">Rate (Rs.)</th>
                 <th class="right-align">Total (Rs.)</th>
             </tr>
         </thead>
