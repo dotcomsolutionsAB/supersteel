@@ -42,14 +42,14 @@ class InvoiceController extends Controller
         foreach($order_items as $item)
         {
             $filename = $item->product_code;
-            $productImagePathPdf = "/storage/uploads/products_pdf/{$order_items->product_code}.jpg";
+            $productImagePathPdf = "/storage/uploads/products_pdf/{$filename}.jpg";
 
             if (file_exists(public_path($productImagePathPdf))) {
                 $item->product_image = $productImagePathPdf;
             }
     
             else {
-                $item->product_image = ProductModel::select('product_image')->where('product_code', $order_items->product_code)->get();
+                $item->product_image = ProductModel::select('product_image')->where('product_code', $item->product_code)->get();
             }
         }                           
 
