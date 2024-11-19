@@ -383,6 +383,8 @@ class UpdateController extends Controller
         $order->status = 'partial';
         $order->save();
 
+        unset($order['id'], $order['created_at'], $order['updated_at']);
+
         return response()->json([
             'message' => 'Order status updated to partial successfully!',
             'order' => $order
@@ -412,6 +414,8 @@ class UpdateController extends Controller
         // Update the status of the order to 'completed'
         $order->status = 'paid';
         $order->save();
+
+        unset($order['id'], $order['created_at'], $order['updated_at']);
 
         return response()->json([
             'message' => 'Order status updated to paid successfully!',
