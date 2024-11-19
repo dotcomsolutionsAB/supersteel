@@ -355,7 +355,7 @@ class UpdateController extends Controller
         ], 200);
     }
 
-    public function complete_order(Request $request, $id)
+    public function complete_order(Request $request)
     {
         // Validate incoming request data
         $request->validate([
