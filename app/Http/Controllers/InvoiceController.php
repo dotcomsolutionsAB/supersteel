@@ -38,7 +38,7 @@ class InvoiceController extends Controller
                                     ->select('product_code', 'product_name', 'rate', 'quantity', 'total', 'remarks')
                                     ->where('order_id', $orderId)
                                     ->get();
-                                   dd($order_items->product_code);
+                                   dd($order_items);
         $productImagePathPdf = "/storage/uploads/products_pdf/{$order_items->product_code}.jpg";
 
         if (file_exists(public_path($productImagePathPdf))) {
