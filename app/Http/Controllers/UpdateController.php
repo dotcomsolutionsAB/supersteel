@@ -296,7 +296,6 @@ class UpdateController extends Controller
         // Validate incoming request data
         $request->validate([
             'order_id' => 'required|string',
-            // 'order_type' => 'required|string',
             'user_id' => 'required|integer',
             'amount' => 'required|numeric',
             'items' => 'required|array',
@@ -313,19 +312,18 @@ class UpdateController extends Controller
                             ->where('user_id', $request->input('user_id'))
                             ->first();
 
-        dd($order);
-        if (!$order) {
+        if ($order == null) {
             return response()->json([
                 'message' => 'Order not found!'
             ], 404);
         }
 
-        // Check if the order belongs to the provided user_id
-        if ($order->user_id !== $request->input('user_id')) {
-            return response()->json([
-                'message' => 'Unauthorized action. This order does not belong to the specified user.'
-            ], 403);
-        }
+        // // Check if the order belongs to the provided user_id
+        // if ($order->user_id !== $request->input('user_id')) {
+        //     return response()->json([
+        //         'message' => 'Unauthorized action. This order does not belong to the specified user.'
+        //     ], 403);
+        // }
 
         // Update the order details
         $order->amount = $request->input('amount');
@@ -350,7 +348,7 @@ class UpdateController extends Controller
         }
 
         $generate_order_invoice = new InvoiceController();
-        $generate_order_invoice->generateorderInvoice($id, true);
+        $generate_order_invoice->generateInvoice($id, true);
 
         return response()->json([
             'message' => 'Order updated successfully!',
