@@ -64,7 +64,6 @@ class InvoiceController extends Controller
             'user' => $user,
             'order' => $order,
             'order_items' => $order_items,
-            'product_image' => $get_product_image
         ];
 
         $html = view('invoice_template', $data)->render();
