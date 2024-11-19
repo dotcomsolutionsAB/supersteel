@@ -170,8 +170,6 @@ class UpdateController extends Controller
 
     public function verify_user(Request $request, $get_id)
     {
-        dd($request->toArray());
-
         $request->validate([
             'price_type' => 'required|string',
         ]);
