@@ -373,9 +373,7 @@ class UpdateController extends Controller
                             ->where('user_id', $request->input('user_id'))
                             ->first();
 
-                            dd($order == null);
-
-        if (!$order) {
+        if ($order == null) {
             return response()->json([
                 'message' => 'Order not found!'
             ], 404);
