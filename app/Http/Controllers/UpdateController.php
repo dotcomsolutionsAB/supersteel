@@ -372,7 +372,7 @@ class UpdateController extends Controller
         $order = OrderModel::where('id',$request->input('order_id'))
         ->where('user_id', $request->input('user_id'))
         ->first();
-        dd($order);
+        dd($order->status);
 
         if (!$order) {
             return response()->json([
