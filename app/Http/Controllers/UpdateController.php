@@ -370,21 +370,15 @@ class UpdateController extends Controller
         // Find the order by its ID
         // $order = OrderModel::find($id);
         $order = OrderModel::where('id',$request->input('order_id'))
-        ->where('user_id', $request->input('user_id'))
-        ->first();
-        dd($order->status);
+                            ->where('user_id', $request->input('user_id'))
+                            ->first();
+
+                            dd($order);
 
         if (!$order) {
             return response()->json([
                 'message' => 'Order not found!'
             ], 404);
-        }
-
-        // Check if the order belongs to the provided user_id
-        if ($order->user_id !== $request->input('user_id')) {
-            return response()->json([
-                'message' => 'Unauthorized action. This order does not belong to the specified user.'
-            ], 403);
         }
 
         // Update the status of the order to 'completed'
