@@ -359,7 +359,7 @@ class UpdateController extends Controller
         ], 200);
     }
 
-    public function complete_order(Request $request)
+    public function partial_order(Request $request)
     {
         // Validate incoming request data
         $request->validate([
@@ -380,11 +380,41 @@ class UpdateController extends Controller
         }
 
         // Update the status of the order to 'completed'
-        $order->status = 'completed';
+        $order->status = 'partial';
         $order->save();
 
         return response()->json([
-            'message' => 'Order status updated to completed successfully!',
+            'message' => 'Order status updated to partial successfully!',
+            'order' => $order
+        ], 200);
+    }
+
+    public function paid_order(Request $request)
+    {
+        // Validate incoming request data
+        $request->validate([
+            'order_id' => 'required|string',
+            'user_id' => 'required|integer'
+        ]);
+
+        // Find the order by its ID
+        // $order = OrderModel::find($id);
+        $order = OrderModel::where('id',$request->input('order_id'))
+                            ->where('user_id', $request->input('user_id'))
+                            ->first();
+
+        if ($order == null) {
+            return response()->json([
+                'message' => 'Order not found!'
+            ], 404);
+        }
+
+        // Update the status of the order to 'completed'
+        $order->status = 'paid';
+        $order->save();
+
+        return response()->json([
+            'message' => 'Order status updated to paid successfully!',
             'order' => $order
         ], 200);
     }
