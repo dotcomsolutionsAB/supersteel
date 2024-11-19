@@ -49,7 +49,9 @@ class InvoiceController extends Controller
             }
     
             else {
-                $item->product_image = ProductModel::select('product_image')->where('product_code', $item->product_code)->get();
+                $get_product_image = ProductModel::select('product_image')->where('product_code', $item->product_code)->first();
+
+                $item->product_image = $get_product_image->product_image;
             }
         }                           
 
