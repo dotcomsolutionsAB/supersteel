@@ -285,4 +285,111 @@ class UpdateController extends Controller
                 ], 400);
             }    
     }
+
+    // update order
+    public function order(Request $request, $id)
+    {
+        // Validate incoming request data
+        $request->validate([
+            'order_id' => 'required|string',
+            // 'order_type' => 'required|string',
+            'user_id' => 'required|integer',
+            'amount' => 'required|numeric',
+            'items' => 'required|array',
+            'items.*.product_code' => 'required|string',
+            'items.*.product_name' => 'required|string',
+            'items.*.quantity' => 'required|integer',
+            'items.*.rate' => 'required|numeric',
+            'items.*.total' => 'required|numeric',
+            'items.*.remarks' => 'nullable|string',
+        ]);
+
+        // Find the order by its ID
+        $order = OrderModel::where('id',$id)
+                            ->where('user_id', $request->input('user_id'))
+                            ->first();
+
+        dd($order);
+        if (!$order) {
+            return response()->json([
+                'message' => 'Order not found!'
+            ], 404);
+        }
+
+        // Check if the order belongs to the provided user_id
+        if ($order->user_id !== $request->input('user_id')) {
+            return response()->json([
+                'message' => 'Unauthorized action. This order does not belong to the specified user.'
+            ], 403);
+        }
+
+        // Update the order details
+        $order->amount = $request->input('amount');
+        $order->save();
+
+        // Remove existing order items for the given order ID
+        OrderItemsModel::where('order_id', $id)->delete();
+
+        // Add the updated items to the order
+        $items = $request->input('items');
+        foreach ($items as $item) {
+            OrderItemsModel::create([
+                'order_id' => $id,
+                'product_code' => $item['product_code'],
+                'product_name' => $item['product_name'],
+                'quantity' => $item['quantity'],
+                'rate' => $item['rate'],
+                'total' => $item['total'],
+                'type' => strtolower($request->input('order_type')),
+                'remarks' => $item['remarks'] ?? '',
+            ]);
+        }
+
+        $generate_order_invoice = new InvoiceController();
+        $generate_order_invoice->generateorderInvoice($id, true);
+
+        return response()->json([
+            'message' => 'Order updated successfully!',
+            'order' => $order,
+            'items' => $items
+        ], 200);
+    }
+
+    public function complete_order(Request $request, $id)
+    {
+        // Validate incoming request data
+        $request->validate([
+            'order_id' => 'required|string',
+            'user_id' => 'required|integer'
+        ]);
+
+        // Find the order by its ID
+        // $order = OrderModel::find($id);
+        $order = OrderModel::where('id',$id)
+        ->where('user_id', $request->input('user_id'))
+        ->first();
+        dd($order);
+
+        if (!$order) {
+            return response()->json([
+                'message' => 'Order not found!'
+            ], 404);
+        }
+
+        // Check if the order belongs to the provided user_id
+        if ($order->user_id !== $request->input('user_id')) {
+            return response()->json([
+                'message' => 'Unauthorized action. This order does not belong to the specified user.'
+            ], 403);
+        }
+
+        // Update the status of the order to 'completed'
+        $order->status = 'completed';
+        $order->save();
+
+        return response()->json([
+            'message' => 'Order status updated to completed successfully!',
+            'order' => $order
+        ], 200);
+    }
 }

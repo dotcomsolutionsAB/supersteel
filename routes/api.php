@@ -30,6 +30,7 @@ Route::prefix('admin')->middleware(['auth:sanctum', GetUserRole::class . ':admin
     Route::post('/add_order_items', [CreateController::class, 'orders_items']);
     Route::get('/view_order_items', [ViewController::class, 'order_items']);
     Route::get('/view_items_orders/{id}', [ViewController::class, 'orders_items_order_id']);
+    Route::post('/make_complete', [UpdateController::class, 'complete_order']);
 
     Route::post('/add_cart', [CreateController::class, 'cart']);
     Route::get('/view_cart', [ViewController::class, 'cart']);
