@@ -168,7 +168,7 @@ class UpdateController extends Controller
         : response()->json(['Failed to update cart'], 404); 
     }
 
-    public function verify_user($get_id)
+    public function verify_user(Request $request, $get_id)
     {
         $request->validate([
             'price_type' => 'required|string',
