@@ -369,7 +369,7 @@ class UpdateController extends Controller
 
         // Find the order by its ID
         // $order = OrderModel::find($id);
-        $order = OrderModel::where('id',$id)
+        $order = OrderModel::where('id',$request->input('order_id'))
         ->where('user_id', $request->input('user_id'))
         ->first();
         dd($order);
