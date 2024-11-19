@@ -16,6 +16,9 @@ use App\Utils\sendWhatsAppUtility;
 use Carbon\Carbon;
 use DB;
 
+ini_set('memory_limit', '512M'); // Adjust as needed
+set_time_limit(300); // Increase timeout to 5 minutes or as needed
+
 class InvoiceController extends Controller
 {
     // public function generateInvoice($orderId)
