@@ -339,6 +339,15 @@ class ViewController extends Controller
             ];
         });
 
+        // Return the response
+        return response()->json([
+            'success' => true,
+            'message' => 'Categories fetched successfully!',
+            'data' => $formattedCategories,
+            'count' => $formattedCategories->count(),
+        ], 200);
+    }
+
     // public function categories(Request $request)
     // {
     //     // Fetch all categories with their product count
