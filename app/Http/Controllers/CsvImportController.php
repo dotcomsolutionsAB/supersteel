@@ -19,7 +19,7 @@ class CsvImportController extends Controller
     public function importProduct()
     {
         // URL of the CSV file from Google Sheets
-        $get_product_csv_url = 'https://docs.google.com/spreadsheets/d/1_4XMqLfR7EqOWMxrilnCZq5-YuYn1dRLlPbFIl41OsU/pub?gid=0&single=true&output=csv';
+        $get_product_csv_url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSoVot_t3TuRNSNBnz_vCeeeKpMXSap3pPvoers6QuVAIp3Gr32EbE56GSZitCrdGTLudR4vvATlPnD/pub?gid=559356101&single=true&output=csv';
 
         // Fetch the CSV content using file_get_contents
         $csvContent_product = file_get_contents($get_product_csv_url);
@@ -56,58 +56,20 @@ class CsvImportController extends Controller
                 $productImagePath = $product_imagePath_for_not_available;
             }
 
-
-            // Category assignment
-            $cat_array = array_filter(explode(',', $record_csv['Category']));
-            if (count($cat_array) > 1) {
-                $cat_array = array_reverse($cat_array);
-            }
-            $category_column = [
-                'c1' => $cat_array[0] ?? null,
-                'c2' => $cat_array[1] ?? null,
-                'c3' => $cat_array[2] ?? null,
-                'c4' => $cat_array[3] ?? null,
-                'c5' => $cat_array[4] ?? null,
-            ];
-
-            // Handle Spare Sub Category
-            // $spareSubCategory = $record_csv['Spare Sub Category'];
-            // $spareCategory = '';
-            // if($spareSubCategory != '')
-            // {
-            //     // die(json_encode($record_csv));
-            //     $spareCategory = AppSpareCategoryModel::where('name', $spareSubCategory)->first();
-
-            //     if (!$spareCategory) {
-            //         // Get the App Sub Category ID from AppCategoryModel
-            //         $appSubCategory = AppSubCategoryModel::where('name', $record_csv['App Sub Categoy'])->first();
-
-            //         if ($appSubCategory) {
-            //             // Create new AppSubCategoryModel entry if it doesn't exist
-            //             $spareCategory = AppSpareCategoryModel::create([
-            //                 'sub_category_id' => $appSubCategory->id,
-            //                 'name' => $spareSubCategory,
-            //                 'category_image' => "/storage/uploads/category/placeholder.jpg",
-            //             ]);
-            //         }
-            //     }
-            // }
-
             // Merge common data for insertion or update
             $productData = array_merge([
-                'product_code' => $record_csv['Product Code'],
-                'product_name' => $record_csv['Product Name'],
-                'print_name' => $record_csv['Print Name'],
-                'brand' => $record_csv['Brand'],
-                'category' => $record_csv['App Category'],
-                'sub_category' => $record_csv['App Sub Categoy'],
-                'machine_part_no' => $record_csv['Machine Part No.'],
-                'price_a' => $record_csv['Price A'],
-                'price_b' => $record_csv['Price B'],
-                'price_c' => $record_csv['Price C'],
-                'price_d' => $record_csv['Price D'],
-                'price_i' => $record_csv['Price I'],
-                'ppc' => $record_csv['PPC'],
+                'product_code' => $record_csv['PRODUCT CODE'],
+                'product_name' => $record_csv['PRODUCT NAME'],
+                'print_name' => $record_csv['ITEM PRINT NAME'],
+                'brand' => $record_csv['BRAND'],
+                'category' => $record_csv['APP CAT'],
+                'machine_part_no' => $record_csv['PARENT NAME'],
+                'price_a' => $record_csv['PRICE A'],
+                'price_b' => $record_csv['PRICE B'],
+                'price_c' => $record_csv['PRICE C'],
+                'price_d' => $record_csv['PRICE D'],
+                'price_i' => $record_csv['PRICE I'],
+                'ppc' => $record_csv['PCS/CTN'],
                 'product_image' => $productImagePath,
                 'new_arrival' => $record_csv['New Arrival'] === 'TRUE' ? 1 : 0,
                 'special_price' => $record_csv['Special Price'] === 'TRUE' ? 1 : 0,
