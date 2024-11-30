@@ -100,9 +100,6 @@ class ViewController extends Controller
             case 'i':
                 $price_column = 'price_i';
 				break;
-            case 'zero_price':
-                // For zero_price, set the price to 0
-                $price_column = DB::raw('0 as price');
             // Add more cases as needed
             default:
             // In case of no matching price type, select all price columns
@@ -154,6 +151,11 @@ class ViewController extends Controller
                     $product->cart_quantity = null;  // or 0, depending on your preference
                     $product->cart_remarks = null;  // or 0, depending on your preference
                 }
+
+                // If the price type is 'zero_price', set price to 0
+                if ($price_type == 'zero_price') {
+                    $product->price = 0;
+                }
             }
 
             return response()->json([
@@ -200,9 +202,6 @@ class ViewController extends Controller
             case 'i':
                 $price_column = 'price_i';
                 break;
-            case 'zero_price':
-                // For zero_price, set the price to 0
-                $price_column = DB::raw('0 as price');
             // Add more cases as needed
             default:
                 // In case of no matching price type, select all price columns
@@ -247,6 +246,11 @@ class ViewController extends Controller
                     $product->in_cart = false;
                     $product->cart_quantity = null;  // or 0, depending on your preference
                     $product->cart_remarks = null;  // or 0, depending on your preference
+                }
+
+                // If the price type is 'zero_price', set price to 0
+                if ($price_type == 'zero_price') {
+                    $product->price = 0;
                 }
             }
 
