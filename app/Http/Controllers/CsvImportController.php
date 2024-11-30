@@ -194,7 +194,10 @@ class CsvImportController extends Controller
 
         // Iterate through each record and create or update the product
         foreach ($category_records_csv as $category_records_csv) {
-            $category_csv = CategoryModel::where('name', $category_records_csv['Name'])->first();
+            $category_csv = CategoryModel::where('name', $category_records_csv['Name'])
+            ->where('cat_1', $category_records_csv['CAT 1'])
+            ->first();
+
 
             // $filename = strtolower(str_replace(' ', '_', $category_records_csv['Name']));
             $filename = $category_records_csv['PHOTO'];

@@ -268,17 +268,19 @@ class ViewController extends Controller
             if (CategoryModel::where('cat_1', $parent)->exists()) {
                 // Parent is found in cat_1
                 $categories = CategoryModel::where('cat_1', $parent)
-                    ->whereNotNull('cat_2')
-                    ->where(function($query) {
-                        $query->whereNull('cat_3')->orWhere('cat_3', '');
-                    })
-                    ->get();
+					->where('cat_2', '!=', '')
+					->where('cat_3', '')
+					->get();
+				
             } elseif (CategoryModel::where('cat_2', $parent)->exists()) {
                 // Parent is found in cat_2
-                $categories = CategoryModel::where('cat_1', $parent)
-                    ->whereNotNull('cat_3')
-                    ->get();
+                $categories = CategoryModel::where('cat_2', $parent)
+					->where('cat_3', '!=', '')
+					->get();
+				
             } elseif (CategoryModel::where('cat_3', $parent)->exists()) {
+				die('found in cat_3');
+				
                 // If parent is found in cat_3, no further child categories, so return empty
                 return response()->json([
                     'success' => false,
