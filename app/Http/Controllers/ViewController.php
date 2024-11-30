@@ -294,6 +294,7 @@ class ViewController extends Controller
                 ], 404);
             }
         }
+        
 
         // Format the response with category_id, category_name, category_image, and products_count
         $formattedCategories = $categories->map(function ($category) {
