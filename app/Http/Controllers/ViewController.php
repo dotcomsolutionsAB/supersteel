@@ -319,7 +319,7 @@ class ViewController extends Controller
         // Format the response with category_id, category_name, category_image, and products_count
         $formattedCategories = $categories->map(function ($category) use ($parent) {
 
-            $hasChildren = true;
+            $hasChildren = false;
 
             // Count all products in the current category and its sub-categories
             if ($parent == $category->cat_1) {
@@ -335,7 +335,7 @@ class ViewController extends Controller
             }
 
             if($category->name == 'POWER TOOLS' || $category->name == 'GARDEN TOOLS' || $category->name == 'SPARES' || $category->name == 'ACCESSORIES'){
-                $hasChildren = false;
+                $hasChildren = true;
             }
 
             return [
