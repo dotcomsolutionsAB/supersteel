@@ -37,12 +37,6 @@ class ProductModel extends Model
     // Define the relationship: A product belongs to a category using the 'category' field
     public function category()
     {
-        return $this->belongsTo(AppCategoryModel::class, 'category', 'name');
-    }
-
-    // Define the relationship: A product belongs to a sub_category using the 'category' field
-    public function sub_category()
-    {
-        return $this->belongsTo(AppSubCategoryModel::class, 'sub_category', 'name');
+        return $this->belongsTo(CategoryModel::class, 'category', 'name');
     }
 }

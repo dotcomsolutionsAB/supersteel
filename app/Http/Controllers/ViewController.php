@@ -22,10 +22,6 @@ use App\Models\CategoryModel;
 
 use App\Models\SubCategoryModel;
 
-use App\Models\AppCategoryModel;
-
-use App\Models\AppSubCategoryModel;
-
 use DB;
 
 class ViewController extends Controller
@@ -363,51 +359,6 @@ class ViewController extends Controller
     //         ], 404);
     //     }
     // }
-
-
-	public function sub_category(Request $request)
-    {
-        // Convert the string of category IDs to an array, e.g., '1,2' -> [1, 2]
-        $category = $request['category'];
-        $categoryIds = $category ? explode(',', $category) : [];
-
-        // Fetch subcategories filtered by multiple category_ids if provided
-        $sub_categories = AppSubCategoryModel::withCount('products')
-            ->when(!empty($categoryIds), function ($query) use ($categoryIds) {
-                // Filter subcategories by multiple category_ids using whereIn
-                return $query->whereIn('category_id', $categoryIds);
-            })->get();
-
-        // Format the categories data for a JSON response
-        $formattedSubCategories = $sub_categories->map(function ($sub_category) {
-            return [
-                'sub_category_name' => $sub_category->name,
-                'sub_category_image' => $sub_category->category_image,
-                'sub_products_count' => $sub_category->products_count,
-            ];
-        });
-
-        // Custom sorting: Spares first, Accessories second, then the rest
-        $orderedSubCategories = $formattedSubCategories->sortBy(function ($subCategory) {
-            return match ($subCategory['sub_category_name']) {
-                'SPARES' => 0,
-                'ACCESSORIES' => 1,
-                default => 2,
-            };
-        })->values();
-
-        if ($orderedSubCategories->isNotEmpty()) {
-            return response()->json([
-                'message' => 'Fetch data successfully!',
-                'data' => $orderedSubCategories,
-                'count' => $orderedSubCategories->count(),
-            ], 200);
-        } else {
-            return response()->json([
-                'message' => 'Failed to get data successfully!',
-            ], 400);
-        }
-    }
 
     public function user()
     {
