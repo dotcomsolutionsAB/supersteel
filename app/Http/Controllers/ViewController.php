@@ -298,7 +298,7 @@ class ViewController extends Controller
         // Format the response with category_id, category_name, category_image, and products_count
         $formattedCategories = $categories->map(function ($category) {
             // Count all products in the current category and its sub-categories
-            $productsCount = Product::where('category', $category->id)
+            $productsCount = ProductModel::where('category', $category->id)
                 ->orWhereHas('category', function ($query) use ($category) {
                     // Check for products that belong to any of the parent category levels
                     $query->where('cat_1', $category->id)
