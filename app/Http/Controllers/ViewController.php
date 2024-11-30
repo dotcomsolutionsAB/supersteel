@@ -313,6 +313,9 @@ class ViewController extends Controller
             return [
                 'category_id' => $category->id,
                 'category_name' => $category->name,
+                'cat_1' => $category->cat_1,
+                'cat_2' => $category->cat_2,
+                'cat_3' => $category->cat_3,
                 'category_image' => $category->category_image,
                 'products_count' => $productsCount,
             ];
