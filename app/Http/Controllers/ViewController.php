@@ -536,11 +536,12 @@ class ViewController extends Controller
         }
 
         $types = [
-            ['price_type' => 'a'],
-            ['price_type' => 'b'],
-            ['price_type' => 'c'],
-            ['price_type' => 'd'],
-            ['price_type' => 'e'],
+            ['value' => 'a', 'name' => "Price - A"],
+            ['value' => 'b', 'name' => "Price - B"],
+            ['value' => 'c', 'name' => "Price - C"],
+            ['value' => 'd', 'name' => "Price - D"],
+            ['value' => 'i', 'name' => "Price - I"],
+            ['value' => 'zero_price', 'name' => "Zero Price"],
         ];
 
         $get_managers = User::select('id', 'name')
@@ -549,14 +550,14 @@ class ViewController extends Controller
         
         $manager_records = $get_managers->map(function ($manager) {
             return [
-                'id' => $manager->id,
+                'value' => $manager->id,
                 'name' => $manager->name,
             ];
         });
 
         return empty($response)
         ? response()->json(['Sorry, Failed to get data'], 404)
-        : response()->json(['Fetch data successfully!', 'data' => $response, 'types' => $types, 'namagers' => $manager_records], 200);
+        : response()->json(['Fetch data successfully!', 'data' => $response, 'types' => $types, 'managers' => $manager_records], 200);
     }
 
     public function user_details()
