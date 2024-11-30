@@ -254,63 +254,115 @@ class ViewController extends Controller
         }
     }
 
-
     public function categories(Request $request)
     {
-        // Fetch all categories with their product count
-        $categories = AppCategoryModel::withCount('get_products')->get();
+        $parent = $request->input('parent');
 
-        // Filter and format the categories data for a JSON response
-        $formattedCategories = $categories->map(function ($category) {
-            // Only include categories with products_count > 0
-            if ($category->get_products_count > 0) {
-                return [
-                    'category_id' => $category->id,
-                    'category_name' => $category->name,
-                    'category_image' => $category->category_image,
-                    'products_count' => $category->get_products_count,
-                ];
-            }
-            return null; // Return null for categories with 0 products
-        })->filter(); // Remove null values
-
-        // Add slides object with links to images in the storage folder
-        $slides = [
-            asset('/storage/uploads/slider/slide_01.jpg')
-        ];
-
-        // Add the two new items: "New Arrival" and "Special Offer"
-        $newArrivals = [
-            'category_id' => 'new_arrival', // Can use an ID if applicable
-            'category_name' => 'New Arrival',
-            'category_image' => '/storage/uploads/category/new_arrival.jpg',
-            'products_count' => 10 // Example count, adjust as needed
-        ];
-
-        $specialOffers = [
-            'category_id' => 'special_offer', // Can use an ID if applicable
-            'category_name' => 'Special Offer',
-            'category_image' => '/storage/uploads/category/special_offer.jpg',
-            'products_count' => 5 // Example count, adjust as needed
-        ];
-
-        // Append new items to the categories
-        $formattedCategories->push($newArrivals);
-        $formattedCategories->push($specialOffers);
-
-        if (isset($formattedCategories)) {
-            return response()->json([
-                'message' => 'Fetch data successfully!',
-                'data' => $formattedCategories,
-                'count' => count($formattedCategories),
-                'slides' => $slides, // Add slides to the response
-            ], 200);
+        if (is_null($parent)) {
+            // Case 1: If parent is empty, return top-level categories (cat_1 only, cat_2 and cat_3 are NULL)
+            $categories = CategoryModel::whereNull('cat_2')
+                ->whereNull('cat_3')
+                ->get();
         } else {
-            return response()->json([
-                'message' => 'Failed to get data successfully!',
-            ], 404);
+            // Case 2 & 3: If parent is provided, check level and fetch accordingly
+            if (CategoryModel::where('cat_1', $parent)->whereNull('cat_2')->exists()) {
+                // Parent is a top-level category, fetch second-level categories
+                $categories = CategoryModel::where('cat_1', $parent)
+                    ->whereNotNull('cat_2')
+                    ->whereNull('cat_3')
+                    ->get();
+            } elseif (CategoryModel::where('cat_2', $parent)->whereNull('cat_3')->exists()) {
+                // Parent is a second-level category, fetch third-level categories
+                $categories = CategoryModel::where('cat_2', $parent)
+                    ->whereNotNull('cat_3')
+                    ->get();
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid parent ID!',
+                    'data' => [],
+                ], 404);
+            }
         }
+
+        // Format the response
+        $formattedCategories = $categories->map(function ($category) {
+            return [
+                'category_id' => $category->id,
+                'category_name' => $category->name,
+                'category_image' => $category->category_image,
+                'products_count' => $category->get_products()->count(), // Count products associated with this category
+            ];
+        });
+
+        // Return response
+        return response()->json([
+            'success' => true,
+            'message' => 'Categories fetched successfully!',
+            'data' => $formattedCategories,
+            'count' => $formattedCategories->count(),
+        ], 200);
     }
+
+
+
+
+    // public function categories(Request $request)
+    // {
+    //     // Fetch all categories with their product count
+    //     $categories = AppCategoryModel::withCount('get_products')->get();
+
+    //     // Filter and format the categories data for a JSON response
+    //     $formattedCategories = $categories->map(function ($category) {
+    //         // Only include categories with products_count > 0
+    //         if ($category->get_products_count > 0) {
+    //             return [
+    //                 'category_id' => $category->id,
+    //                 'category_name' => $category->name,
+    //                 'category_image' => $category->category_image,
+    //                 'products_count' => $category->get_products_count,
+    //             ];
+    //         }
+    //         return null; // Return null for categories with 0 products
+    //     })->filter(); // Remove null values
+
+    //     // Add slides object with links to images in the storage folder
+    //     $slides = [
+    //         asset('/storage/uploads/slider/slide_01.jpg')
+    //     ];
+
+    //     // Add the two new items: "New Arrival" and "Special Offer"
+    //     $newArrivals = [
+    //         'category_id' => 'new_arrival', // Can use an ID if applicable
+    //         'category_name' => 'New Arrival',
+    //         'category_image' => '/storage/uploads/category/new_arrival.jpg',
+    //         'products_count' => 10 // Example count, adjust as needed
+    //     ];
+
+    //     $specialOffers = [
+    //         'category_id' => 'special_offer', // Can use an ID if applicable
+    //         'category_name' => 'Special Offer',
+    //         'category_image' => '/storage/uploads/category/special_offer.jpg',
+    //         'products_count' => 5 // Example count, adjust as needed
+    //     ];
+
+    //     // Append new items to the categories
+    //     $formattedCategories->push($newArrivals);
+    //     $formattedCategories->push($specialOffers);
+
+    //     if (isset($formattedCategories)) {
+    //         return response()->json([
+    //             'message' => 'Fetch data successfully!',
+    //             'data' => $formattedCategories,
+    //             'count' => count($formattedCategories),
+    //             'slides' => $slides, // Add slides to the response
+    //         ], 200);
+    //     } else {
+    //         return response()->json([
+    //             'message' => 'Failed to get data successfully!',
+    //         ], 404);
+    //     }
+    // }
 
 
 	public function sub_category(Request $request)

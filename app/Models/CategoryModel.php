@@ -24,10 +24,4 @@ class CategoryModel extends Model
     {
         return $this->hasMany(ProductModel::class, 'c1', 'code');
     }
-
-    // A category has many subcategories
-    public function subcategories()
-    {
-        return $this->hasMany(SubCategoryModel::class, 'category_id', 'id');
-    }
 }
