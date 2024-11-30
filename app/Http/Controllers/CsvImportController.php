@@ -56,7 +56,6 @@ class CsvImportController extends Controller
                 $productImagePath = $product_imagePath_for_not_available;
             }
 
-            // Merge common data for insertion or update
             $productData = [
                 'product_code' => $record_csv['PRODUCT CODE'],
                 'product_name' => $record_csv['PRODUCT NAME'],
@@ -64,17 +63,18 @@ class CsvImportController extends Controller
                 'brand' => $record_csv['BRAND'],
                 'category' => $record_csv['APP CAT'],
                 'machine_part_no' => $record_csv['PARENT NAME'],
-                'price_a' => $record_csv['PRICE A'],
-                'price_b' => $record_csv['PRICE B'],
-                'price_c' => $record_csv['PRICE C'],
-                'price_d' => $record_csv['PRICE D'],
-                'price_i' => $record_csv['PRICE I'],
-                'ppc' => $record_csv['PCS/CTN'],
+                'price_a' => (int)str_replace([',', '.00'], '', $record_csv['PRICE A']),
+                'price_b' => (int)str_replace([',', '.00'], '', $record_csv['PRICE B']),
+                'price_c' => (int)str_replace([',', '.00'], '', $record_csv['PRICE C']),
+                'price_d' => (int)str_replace([',', '.00'], '', $record_csv['PRICE D']),
+                'price_i' => (int)str_replace([',', '.00'], '', $record_csv['PRICE I']),
+                'ppc' => !empty($record_csv['PCS/CTN']) ? (int)$record_csv['PCS/CTN'] : 1,
                 'product_image' => $productImagePath,
                 'new_arrival' => $record_csv['New Arrival'] === 'TRUE' ? 1 : 0,
                 'special_price' => $record_csv['Special Price'] === 'TRUE' ? 1 : 0,
             ];
-
+            
+            // Insert or update product
             if ($product_csv) {
                 // If product exists, update it
                 $product_update_response = $product_csv->update($productData);
@@ -82,6 +82,7 @@ class CsvImportController extends Controller
                 // If product does not exist, create a new one
                 $product_insert_response = ProductModel::create($productData);
             }
+            
         }
 
         // Return appropriate response
