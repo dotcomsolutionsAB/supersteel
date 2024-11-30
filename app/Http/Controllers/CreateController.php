@@ -246,7 +246,7 @@ class CreateController extends Controller
             $userId = $request->input('user_id');
         }
 
-        $current_user = User::select('type')->where('id', $userId)->first();
+        $current_user = User::select('price_type')->where('id', $userId)->first();
         $user_type = $current_user->price_type;
 
         if ($user_type == 'zeroprice') 
