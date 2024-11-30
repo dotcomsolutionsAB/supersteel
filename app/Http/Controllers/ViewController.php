@@ -24,7 +24,7 @@ use App\Models\SubCategoryModel;
 
 use DB;
 
-use Carbon;
+use Carbon\Carbon;
 
 class ViewController extends Controller
 {
