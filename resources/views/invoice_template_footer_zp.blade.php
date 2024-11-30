@@ -1,7 +1,3 @@
-<tr>
-                <td colspan="5" class="right-align">Total</td>
-                <td class="right-align">₹ {{ $order->amount }}</td>
-            </tr>
         </tbody>
     </table>
 
