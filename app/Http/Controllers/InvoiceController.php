@@ -380,7 +380,7 @@ class InvoiceController extends Controller
         return $fileUrl;
     }
 
-    public function price_spares($code)
+    public function price_spares(Request $request, $code)
     {
         // initialize the query
         $query = ProductModel::query();
