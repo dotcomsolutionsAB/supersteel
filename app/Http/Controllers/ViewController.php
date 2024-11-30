@@ -263,7 +263,7 @@ class ViewController extends Controller
                 $query->whereNull('cat_3')->orWhere('cat_3', '');
             })
             ->get();
-        } else if ($parent == 'filter') {
+        } else if ($parent === 'filter') {
             $categories = CategoryModel::all();
         } else {
             // Case 2: Check where the parent exists in the categories (cat_1, cat_2, or cat_3)
