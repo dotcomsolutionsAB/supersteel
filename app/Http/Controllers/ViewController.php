@@ -302,13 +302,14 @@ class ViewController extends Controller
         $formattedCategories = $categories->map(function ($category) {
             // Count all products in the current category and its sub-categories
             $productsCount = ProductModel::where('category', $category->id)
-                ->orWhereHas('category', function ($query) use ($category) {
-                    // Check for products that belong to any of the parent category levels
-                    $query->where('cat_1', $category->id)
-                        ->orWhere('cat_2', $category->id)
-                        ->orWhere('cat_3', $category->id);
-                })
-                ->count();
+            ->orWhereHas('category', function ($query) use ($category) {
+                // Check for products that belong to any of the parent category levels
+                $query->where('cat_1', $category->cat_1)
+                    ->orWhere('cat_2', $category->cat_2)
+                    ->orWhere('cat_3', $category->cat_3);
+            })
+            ->count();
+
 
             return [
                 'category_id' => $category->id,
