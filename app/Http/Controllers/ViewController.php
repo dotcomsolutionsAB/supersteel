@@ -256,7 +256,14 @@ class ViewController extends Controller
 
         // Case 1: If parent is empty, return top-level categories (cat_1 only, cat_2 and cat_3 are NULL)
         if (is_null($parent)) {
-            $categories = CategoryModel::whereNull('cat_2')->whereNull('cat_3')->get();
+            $categories = CategoryModel::where(function($query) {
+                $query->whereNull('cat_2')->orWhere('cat_2', '');
+            })
+            ->where(function($query) {
+                $query->whereNull('cat_3')->orWhere('cat_3', '');
+            })
+            ->get();
+            
         } else {
             // Case 2: If parent is provided, fetch child categories (cat_2 or cat_3)
             // Fetch the child categories based on parent
