@@ -214,7 +214,6 @@ class ViewController extends Controller
             'product_name',
             'print_name',
             'category',
-            'sub_category',
             DB::raw("$price_column as price"),
             'product_image',
             'ppc'
