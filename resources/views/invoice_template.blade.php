@@ -75,13 +75,16 @@
             <td class="label">Address:</td>
             <td class="value">{{ $user->address_line_1 }}{{ !empty($user->address_line_1) && !empty($user->address_line_2) ? ', ' : '' }}{{ $user->address_line_2 }}</td>
             <td class="label">Order Date:</td>
-            <td class="value">{{ $order->order_date }}</td>
+            <td class="value">{{ \Carbon\Carbon::parse($order->order_date)->format('d-m-Y') }}</td>
         </tr>
         <tr>
             <td class="label">Transport:</td>
             <td class="value">{{ $user->transport }}</td>
             <td class="label">Billing Style:</td>
             <td class="value"></td>
+        </tr>
+        <tr>
+            <td colspan="4" class="value"><strong>Remarks:</strong> {{ $order->remarks }}</td>
         </tr>
     </table>
 
@@ -93,7 +96,7 @@
                 <th>Photo</th>
                 <th>Product Name</th>
                 <th class="center-align">Qty</th>
-                <th class="right-align">Unit Price (Rs.)</th>
+                <th class="right-align">Rate (Rs.)</th>
                 <th class="right-align">Total (Rs.)</th>
             </tr>
         </thead>
@@ -101,8 +104,8 @@
             @foreach($order_items as $index => $item)
                 <tr>
                     <td class="center-align">{{ $index + 1 }}</td>
-                    <td><img src="{{ Storage::url('uploads/products_pdf/' . $item->product_code . '.jpg') }}" alt="" style="height: 60px; width: 60px;"></td>
-                    <td>{{ $item->product_name }}<br>Part No: {{ $item->product->product_code }}<br>Part No: {{ $item->remarks }}</td>
+                    <td><img src="{{ $item->product_image }}" alt="" style="height: 60px; width: 60px;"></td>
+                    <td>{{ $item->product_name }}<br>Part No: {{ $item->product->product_code }}<br>Remarks: {{ $item->remarks }}</td>
                     <td class="center-align">{{ $item->quantity }}</td>
                     <td class="right-align">₹ {{ $item->rate }}</td>
                     <td class="right-align">₹ {{ $item->total }}</td>
@@ -116,9 +119,9 @@
     </table>
 
     <!-- QR Code and Footer -->
-    <div style="position: fixed; bottom: 10px; width: 100%;">
+    <div style="position: fixed; bottom: 20px; width: 100%;">
         <div class="footer">
-            <p>Thank you for working with us</p>
+            <p style="font-size: 25px;">Thank you for working with us</p>
         </div>
     </div>
 

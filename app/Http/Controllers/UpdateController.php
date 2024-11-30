@@ -8,6 +8,10 @@ use App\Models\User;
 
 use App\Models\CartModel;
 
+use App\Models\OrderModel;
+
+use App\Models\OrderItemsModel;
+
 use App\Utils\sendWhatsAppUtility;
 
 use Illuminate\Support\Facades\Auth;
@@ -149,8 +153,8 @@ class UpdateController extends Controller
     public function cart(Request $request, $id)
     {
         $request->validate([
-            'product_code' => 'required',
-            'quantity' => 'required',
+            'product_code' => 'required|exists:t_products,product_code',
+            'quantity' => 'required|numeric',
         ]);
 
         $update_cart = CartModel::where('id', $id)
@@ -168,16 +172,25 @@ class UpdateController extends Controller
         : response()->json(['Failed to update cart'], 404); 
     }
 
-    public function verify_user($get_id)
+    public function verify_user(Request $request, $get_id)
     {
+        $request->validate([
+            'price_type' => 'required|string',
+        ]);
         $update_verify = User::where('id', $get_id)
             ->update([
-                'verified' => '1',
+                'is_verified' => '1',
+                'price_type' => $request->input('price_type')
             ]);
 
             $user = User::select('name', 'mobile')
                          ->where('id', $get_id)
                          ->first();
+
+            if(!$user)
+            {
+                return response()->json(['Sorry, user not found!'], 404); 
+            }
 
             if ($update_verify == 1) {
 
@@ -218,5 +231,192 @@ class UpdateController extends Controller
                     'message' => 'Failed to verify the user'
                 ], 400);
             }    
+    }
+
+    public function unverify_user($get_id)
+    {
+        $update_unverify = User::where('id', $get_id)
+            ->update([
+                'is_verified' => '0',
+            ]);
+
+            $user = User::select('name', 'mobile')
+                         ->where('id', $get_id)
+                         ->first();
+            
+            if(!$user)
+            {
+                return response()->json(['Sorry, user not found!'], 404); 
+            }
+
+            if ($update_unverify == 1) {
+
+                $templateParams = [
+                    'name' => 'ace_user_approved', // Replace with your WhatsApp template name
+                    'language' => ['code' => 'en'],
+                    'components' => [
+                        [
+                            'type' => 'body',
+                            'parameters' => [
+                                [
+                                    'type' => 'text',
+                                    'text' => $user->name,
+                                ],
+                                [
+                                    'type' => 'text',
+                                    'text' => substr($user->mobile, -10),
+                                ],
+                            ],
+                        ]
+                    ],
+                ];
+                
+                // Directly create an instance of SendWhatsAppUtility
+                $whatsAppUtility = new sendWhatsAppUtility();
+                
+                // Send OTP via WhatsApp
+                $response = $whatsAppUtility->sendWhatsApp('+918961043773', $templateParams, '', 'Approve Client');
+                
+                return response()->json([
+                    'message' => 'User un-verified successfully!',
+                    'data' => $update_unverify
+                ], 200);
+            }
+    
+            else {
+                return response()->json([
+                    'message' => 'Failed to un-verify the user'
+                ], 400);
+            }    
+    }
+
+    // update order
+    public function order(Request $request, $id)
+    {
+        // Validate incoming request data
+        $request->validate([
+            'order_id' => 'required|string',
+            'user_id' => 'required|integer',
+            'amount' => 'required|numeric',
+            'items' => 'required|array',
+            'items.*.product_code' => 'required|string|exists:t_products,product_code',
+            'items.*.product_name' => 'required|string',
+            'items.*.quantity' => 'required|integer',
+            'items.*.rate' => 'required|numeric',
+            'items.*.total' => 'required|numeric',
+            'items.*.remarks' => 'nullable|string',
+        ]);
+
+        // Find the order by its ID
+        $order = OrderModel::where('id',$id)
+                            ->where('user_id', $request->input('user_id'))
+                            ->first();
+
+        if ($order == null) {
+            return response()->json([
+                'message' => 'Order not found!'
+            ], 404);
+        }
+
+        // // Check if the order belongs to the provided user_id
+        // if ($order->user_id !== $request->input('user_id')) {
+        //     return response()->json([
+        //         'message' => 'Unauthorized action. This order does not belong to the specified user.'
+        //     ], 403);
+        // }
+
+        // Update the order details
+        $order->amount = $request->input('amount');
+        $order->save();
+
+        // Remove existing order items for the given order ID
+        OrderItemsModel::where('order_id', $id)->delete();
+
+        // Add the updated items to the order
+        $items = $request->input('items');
+        foreach ($items as $item) {
+            OrderItemsModel::create([
+                'order_id' => $id,
+                'product_code' => $item['product_code'],
+                'product_name' => $item['product_name'],
+                'quantity' => $item['quantity'],
+                'rate' => $item['rate'],
+                'total' => $item['total'],
+                'remarks' => $item['remarks'] ?? '',
+            ]);
+        }
+
+        $generate_order_invoice = new InvoiceController();
+        $generate_order_invoice->generateInvoice($id, true);
+
+        return response()->json([
+            'message' => 'Order updated successfully!',
+            'order' => $order,
+            'items' => $items
+        ], 200);
+    }
+
+    public function partial_order(Request $request)
+    {
+        // Validate incoming request data
+        $request->validate([
+            'order_id' => 'required|string',
+            'user_id' => 'required|integer'
+        ]);
+
+        // Find the order by its ID
+        // $order = OrderModel::find($id);
+        $order = OrderModel::where('id',$request->input('order_id'))
+                            ->where('user_id', $request->input('user_id'))
+                            ->first();
+
+        if ($order == null) {
+            return response()->json([
+                'message' => 'Order not found!'
+            ], 404);
+        }
+
+        // Update the status of the order to 'completed'
+        $order->status = 'partial';
+        $order->save();
+
+        unset($order['id'], $order['created_at'], $order['updated_at']);
+
+        return response()->json([
+            'message' => 'Order status updated to partial successfully!',
+            'order' => $order
+        ], 200);
+    }
+
+    public function paid_order(Request $request)
+    {
+        // Validate incoming request data
+        $request->validate([
+            'order_id' => 'required|string',
+            'user_id' => 'required|integer'
+        ]);
+
+        // Find the order by its ID
+        // $order = OrderModel::find($id);
+        $order = OrderModel::where('id',$request->input('order_id'))
+                            ->where('user_id', $request->input('user_id'))
+                            ->first();
+
+        if ($order == null) {
+            return response()->json([
+                'message' => 'Order not found!'
+            ], 404);
+        }
+
+        // Update the status of the order to 'completed'
+        $order->status = 'paid';
+        $order->save();
+
+        unset($order['id'], $order['created_at'], $order['updated_at']);
+
+        return response()->json([
+            'message' => 'Order status updated to paid successfully!',
+            'order' => $order
+        ], 200);
     }
 }

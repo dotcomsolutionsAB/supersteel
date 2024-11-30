@@ -584,6 +584,7 @@ class ViewController extends Controller
 					't_cart.rate',
 					't_cart.quantity',
 					't_cart.amount',
+                    't_cart.remarks',
 					// 't_cart.created_at',
 					// 't_cart.updated_at',
 					// 't_products.basic',

@@ -231,12 +231,17 @@ class CreateController extends Controller
 
         if($get_user->role == 'user') {
             $userId = $get_user->id;
+
+            $request->validate([
+                'remarks' => 'nullable|string'
+            ]);  
         }
 
         else 
         {
             $request->validate([
                 'user_id' => 'required',
+                'remarks' => 'nullable|string'
             ]);
             $userId = $request->input('user_id');
         }
@@ -373,21 +378,23 @@ class CreateController extends Controller
         if($get_user->role == 'admin')
         {
             $request->validate([
-                'user_id' => 'required',
-                'product_code' => 'required',
-                'product_name' => 'required',
-                'rate' => 'required',
-                'quantity' => 'required',
+                'user_id' => 'required|integer',
+                'product_code' => 'required|integer',
+                'product_name' => 'required|string',
+                'rate' => 'required|numeric',
+                'quantity' => 'required|numeric',
+                'remarks' => 'nullable|string',
             ]);
         }
 
         else
         {
             $request->validate([
-                'product_code' => 'required',
-                'product_name' => 'required',
-                'rate' => 'required',
-                'quantity' => 'required',
+                'product_code' => 'required|integer',
+                'product_name' => 'required|string',
+                'rate' => 'required|numeric',
+                'quantity' => 'required|integer',
+                'remarks' => 'nullable|string',
             ]);
 
             $request->merge(['user_id' => $get_user->id]);

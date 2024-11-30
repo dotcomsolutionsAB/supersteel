@@ -18,6 +18,7 @@ class OrderItemsModel extends Model
         // 'item',
         'product_code',
         'product_name',
+        'remarks',
         'rate',
         // 'discount',
         'quantity',

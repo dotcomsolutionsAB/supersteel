@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('product_code');
             $table->string('product_name');
             $table->float('rate');
+            $table->string('remarks')->nullable();
             $table->float('quantity');
             $table->float('total');
             $table->timestamps();

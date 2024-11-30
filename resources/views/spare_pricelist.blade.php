@@ -3,8 +3,8 @@
 <head>
     <title>VCL Items</title>
     <style>
-       /* Container for the header (image on the left, text on the right) */
-       .header-box {
+        /* Container for the header (image on the left, text on the right) */
+        .header-box {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -18,17 +18,24 @@
 
         /* Styling for the image */
         .header-box img {
-            width: 100px;
-            height: auto;
-            object-fit: contain;
-            margin-right: 20px; /* Space between the image and text */
+            height: 100px; /* Fixed height for the image */
+            width: auto; /* Maintain the aspect ratio */
+            object-fit: cover; /* Fill the container while maintaining aspect ratio */
+            margin-right: 10px; /* Add a smaller margin for better alignment */
+        }
+
+        /* Center align for the user name */
+        .username {
+            text-align: center;
+            flex: 1;
+            margin-left: 30px;
         }
 
         /* Right align for the text */
-        .header-box .product-details {
-            flex-grow: 1;
+        .product-details {
+            flex-grow: 2;
             text-align: right;
-            margin-left: 20px;
+            margin-left: 30px; /* Adjust margin for spacing */
         }
 
         /* Styling for the table */
@@ -60,14 +67,26 @@
             width: 80px;
             height: auto;
         }
+
+        /* Ensuring the ITEM and MODEL columns are centered and justified */
+        .center-text {
+            text-align: center;
+        }
+
+        .header-box {
+            width: auto;
+        }
     </style>
 </head>
 <body>
     <!-- Title Box -->
     <div class="header-box">
         <img src="{{ public_path($get_product_details->product_image) }}" alt="Product Image">
+        <div class="username">
+            {{ $user_name }}
+        </div>
         <div class="product-details">
-            {{ $get_product_details->product_name }} - {{$get_product_details->product_code}}
+            {{ $get_product_details->print_name }} - {{$get_product_details->product_code}}
         </div>
     </div>
 
@@ -75,12 +94,12 @@
     <table>
         <thead>
             <tr>
-                <th>S.NO</th>
-                <th>ITEM NO</th>
-                <th>ITEM</th>
-                <th>MODEL</th>
-                <th>PRICE</th>
-                <th>Image</th>
+                <th class="center-text">S.NO</th>
+                <th class="center-text">ITEM NO</th>
+                <th class="center-text">ITEM</th>
+                <th class="center-text">MODEL</th>
+                <th class="center-text">PRICE</th>
+                <th class="center-text">Image</th>
             </tr>
         </thead>
         <tbody>
@@ -89,7 +108,7 @@
                     <td>{{ $index + 1 }}</td> <!-- S.NO -->
                     <td>{{ $item->product_code }}</td>
                     <td class="print-column">{{ $item->print_name }}</td>
-                    <td>{{ $item->brand }}</td>
+                    <td>{{ $get_product_details->print_name }} - {{$get_product_details->product_code}}</td>
                     <td>{{ $item->price }}</td>
                     <td><img src="{{ public_path($item->product_image)}}" alt="{{ $item->print_name }}"></td>
                 </tr>

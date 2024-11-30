@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('user_id')->references('id')->on('users');
             $table->date('order_date');
             $table->float('amount');
+            $table->string('remarks')->nullable();
             $table->enum('status', ['pending', 'partial', 'paid']);
             $table->string('order_invoice')->nullable();
             $table->timestamps();

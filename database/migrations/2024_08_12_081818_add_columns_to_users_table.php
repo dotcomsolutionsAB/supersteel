@@ -15,18 +15,19 @@ return new class extends Migration
             //
             $table->string('email')->nullable()->default(null)->change();
             $table->string('mobile', 13)->after('remember_token');
-            $table->integer('otp')->after('mobile')->nullable();
-            $table->timestamp('expires_at')->after('otp')->nullable();
+            $table->integer('otp')->after('mobile');
+            $table->timestamp('expires_at')->after('otp');
             $table->enum('role', ['admin', 'manager', 'user'])->after('expires_at');
-            $table->integer('manager_id')->after('role')->nullable();
-            $table->string('address_line_1')->nullable()->after('manager_id')->nullable(); 
-            $table->string('address_line_2')->nullable()->after('address_line_1')->nullable(); 
-            $table->string('city')->nullable()->after('address_line_2')->nullable(); 
-            $table->integer('pincode')->nullable()->after('city')->nullable(); 
-            $table->string('gstin')->nullable()->after('pincode')->nullable(); 
-            $table->string('state')->nullable()->after('gstin')->nullable(); 
-            $table->string('country')->nullable()->after('state')->nullable(); 
+            $table->integer('manager_id')->after('role');
+            $table->string('address_line_1')->nullable()->after('manager_id'); 
+            $table->string('address_line_2')->nullable()->after('address_line_1'); 
+            $table->string('city')->nullable()->after('address_line_2'); 
+            $table->integer('pincode')->nullable()->after('city'); 
+            $table->string('gstin')->nullable()->after('pincode'); 
+            $table->string('state')->nullable()->after('gstin'); 
+            $table->string('country')->nullable()->after('state'); 
             $table->enum('price_type', ['a', 'b', 'c', 'd'])->after('country');
+            $table->string('transport')->nullable()->after('price_type'); 
         });
     }
 

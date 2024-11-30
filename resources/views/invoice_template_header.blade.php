@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order</title>
+    <title>Order Invoice</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -54,21 +54,9 @@
         .value {
             width: 35%; /* Wider values */
         }
-        .order-title {
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            margin-top: 20px;
-            margin-bottom: 10px;
-        }
     </style>
 </head>
 <body>
-
-    <!-- Order Title -->
-    <div class="order-title">
-        Order
-    </div>
 
     <!-- Header Section -->
     <div class="header">
@@ -87,7 +75,7 @@
             <td class="label">Address:</td>
             <td class="value">{{ $user->address_line_1 }}{{ !empty($user->address_line_1) && !empty($user->address_line_2) ? ', ' : '' }}{{ $user->address_line_2 }}</td>
             <td class="label">Order Date:</td>
-            <td class="value">{{ $order->order_date }}</td>
+            <td class="value">{{ \Carbon\Carbon::parse($order->order_date)->format('d-m-Y') }}</td>
         </tr>
         <tr>
             <td class="label">Transport:</td>
@@ -96,8 +84,7 @@
             <td class="value"></td>
         </tr>
         <tr>
-            <td class="label">Order Remarks:</td>
-            <td class="value" colspan="4">{{ $order->remarks }}</td>
+            <td colspan="4" class="value"><strong>Remarks:</strong> {{ $order->remarks }}</td>
         </tr>
     </table>
 
@@ -109,34 +96,8 @@
                 <th>Photo</th>
                 <th>Product Name</th>
                 <th class="center-align">Qty</th>
-                <th class="right-align">Unit Price (Rs.)</th>
+                <th class="right-align">Rate (Rs.)</th>
                 <th class="right-align">Total (Rs.)</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($order_items as $index => $item)
-                <tr>
-                    <td class="center-align">{{ $index + 1 }}</td>
-                    <td><img src="{{ Storage::url('uploads/products_pdf/' . $item->product_code . '.jpg') }}" alt="" style="height: 60px; width: 60px;"></td>
-                    <td>{{ $item->product_name }}<br>Part No: {{ $item->product->product_code }}<br>Part No: {{ $item->remarks }}</td>
-                    <td class="center-align">{{ $item->quantity }}</td>
-                    <td class="right-align">₹ {{ $item->rate }}</td>
-                    <td class="right-align">₹ {{ $item->total }}</td>
-                </tr>
-            @endforeach
-            <tr>
-                <td colspan="5" class="right-align">Total</td>
-                <td class="right-align">₹ {{ $order->amount }}</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <!-- QR Code and Footer -->
-    <div style="position: fixed; bottom: 10px; width: 100%;">
-        <div class="footer">
-            <p>Thank you for working with us</p>
-        </div>
-    </div>
-
-</body>
-</html>

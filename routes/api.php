@@ -14,7 +14,8 @@ Route::prefix('admin')->middleware(['auth:sanctum', GetUserRole::class . ':admin
 
     Route::post('/add_user', [CreateController::class, 'user']);
     Route::get('/view_user', [ViewController::class, 'user']);
-    Route::patch('/make_verify/{id}', [UpdateController::class, 'verify_user']);
+    Route::post('/make_verify/{id}', [UpdateController::class, 'verify_user']);
+    Route::patch('/make_unverify/{id}', [UpdateController::class, 'unverify_user']);
     Route::post('/update_user', [UpdateController::class, 'user']);
     Route::post('/update_password', [UpdateController::class, 'user_password']);
     Route::post('/logout', [CreateController::class, 'logout']);
@@ -29,6 +30,9 @@ Route::prefix('admin')->middleware(['auth:sanctum', GetUserRole::class . ':admin
     Route::post('/add_order_items', [CreateController::class, 'orders_items']);
     Route::get('/view_order_items', [ViewController::class, 'order_items']);
     Route::get('/view_items_orders/{id}', [ViewController::class, 'orders_items_order_id']);
+    Route::post('/edit_order/{id}', [UpdateController::class, 'order']);
+    Route::post('/make_partial', [UpdateController::class, 'partial_order']);
+    Route::post('/make_paid', [UpdateController::class, 'paid_order']);
 
     Route::post('/add_cart', [CreateController::class, 'cart']);
     Route::get('/view_cart', [ViewController::class, 'cart']);
@@ -105,7 +109,6 @@ Route::prefix('user')->middleware(['auth:sanctum', GetUserRole::class . ':user']
     Route::post('/spare_product/{code?}', [ViewController::class, 'get_spares']);
     Route::post('/spares_pricelist/{code}', [InvoiceController::class, 'price_spares']);
 });
-
 
 
 Route::post('/login/{otp?}', [CreateController::class, 'login']);
