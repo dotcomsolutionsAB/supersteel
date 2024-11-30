@@ -223,32 +223,50 @@ class CsvImportController extends Controller
 
         // Iterate through each record and create or update the product
         foreach ($category_records_csv as $category_records_csv) {
-            $category_csv = AppCategoryModel::where('name', $category_records_csv['Name'])->first();
+            $category_csv = CategoryModel::where('name', $category_records_csv['Name'])->first();
 
-            $filename = strtolower(str_replace(' ', '_', $category_records_csv['Name']));
+            // $filename = strtolower(str_replace(' ', '_', $category_records_csv['Name']));
+            $filename = $category_records_csv['PHOTO'];
 
-            // Define the product image path and check if the image exists
+            // Define the product and category image paths
             $categoryImagePath = "/storage/uploads/category/{$filename}.jpg";
-            $category_imagePath_for_not_available = "/storage/uploads/category/placeholder.jpg";
+            $productImagePath = "/storage/uploads/products_pdf/{$filename}.jpg";
+            $placeholderImagePath = "/storage/uploads/category/placeholder.jpg";
 
-            if (!file_exists(public_path($categoryImagePath))) {
-                $categoryImagePath = $category_imagePath_for_not_available; // Use placeholder if image not found
+            // Check if the category image exists
+            if (file_exists(public_path($categoryImagePath))) {
+                $imagePath = $categoryImagePath;
+            } elseif (file_exists(public_path($productImagePath))) {
+                // Check if the product image exists
+                $imagePath = $productImagePath;
+            } else {
+                // Use placeholder if no image is found
+                $imagePath = $placeholderImagePath;
             }
+
+            // Use $imagePath as the final image path
+
 
             if ($category_csv) 
             {
                 // If category exists, update it
                 $category_update_response = $category_csv->update([
                     'name' => $category_records_csv['Name'],
-                    'category_image' => $categoryImagePath,
+                    'cat_1' => $category_records_csv['CAT 1'],
+                    'cat_2' => $category_records_csv['CAT 2'],
+                    'cat_3' => $category_records_csv['CAT 3'],
+                    'category_image' => $imagePath,
                 ]);
             } 
             else 
             {
                 // If category does not exist, create a new one
-                $category_insert_response = AppCategoryModel::create([
+                $category_insert_response = CategoryModel::create([
                     'name' => $category_records_csv['Name'],
-                    'category_image' => $categoryImagePath,
+                    'cat_1' => $category_records_csv['CAT 1'],
+                    'cat_2' => $category_records_csv['CAT 2'],
+                    'cat_3' => $category_records_csv['CAT 3'],
+                    'category_image' => $imagePath,
                 ]);
             }
         }   
@@ -260,67 +278,67 @@ class CsvImportController extends Controller
         }
     }
 
-    public function importSubCategory()
-    {
-        // URL of the CSV file from Google Sheets
-        $get_category_csv_url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSoVot_t3TuRNSNBnz_vCeeeKpMXSap3pPvoers6QuVAIp3Gr32EbE56GSZitCrdGTLudR4vvATlPnD/pub?gid=836934966&single=true&output=csv';
+    // public function importSubCategory()
+    // {
+    //     // URL of the CSV file from Google Sheets
+    //     $get_category_csv_url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSoVot_t3TuRNSNBnz_vCeeeKpMXSap3pPvoers6QuVAIp3Gr32EbE56GSZitCrdGTLudR4vvATlPnD/pub?gid=836934966&single=true&output=csv';
 
-        // Fetch the CSV content using file_get_contents
-        $csvContent_category = file_get_contents($get_category_csv_url);
+    //     // Fetch the CSV content using file_get_contents
+    //     $csvContent_category = file_get_contents($get_category_csv_url);
 
-        // Fetch and parse the CSV
-        $csv_category = Reader::createFromString($csvContent_category);
+    //     // Fetch and parse the CSV
+    //     $csv_category = Reader::createFromString($csvContent_category);
 
-        $csv_category->setHeaderOffset(0); // Set the header offset
+    //     $csv_category->setHeaderOffset(0); // Set the header offset
         
 
-        $category_records_csv = (new Statement())->process($csv_category);
+    //     $category_records_csv = (new Statement())->process($csv_category);
 
-        $category_insert_response = null;
-        $category_update_response = null;
+    //     $category_insert_response = null;
+    //     $category_update_response = null;
 
-        // Iterate through each record and create or update the product
-        foreach ($category_records_csv as $category_records_csv) {
-            $category_csv = AppSubCategoryModel::where('name', $category_records_csv['Name'])
-                                                ->where('category_id', $category_records_csv['Category ID'])
-                                                ->first();
+    //     // Iterate through each record and create or update the product
+    //     foreach ($category_records_csv as $category_records_csv) {
+    //         $category_csv = AppSubCategoryModel::where('name', $category_records_csv['Name'])
+    //                                             ->where('category_id', $category_records_csv['Category ID'])
+    //                                             ->first();
 
 
-            $filename = strtolower(str_replace(' ', '_', $category_records_csv['Name']));
+    //         $filename = strtolower(str_replace(' ', '_', $category_records_csv['Name']));
 
-            // Define the product image path and check if the image exists
-            $categoryImagePath = "/storage/uploads/category/{$filename}.jpg";
-            $category_imagePath_for_not_available = "/storage/uploads/category/placeholder.jpg";
+    //         // Define the product image path and check if the image exists
+    //         $categoryImagePath = "/storage/uploads/category/{$filename}.jpg";
+    //         $category_imagePath_for_not_available = "/storage/uploads/category/placeholder.jpg";
 
-            if (!file_exists(public_path($categoryImagePath))) {
-                $categoryImagePath = $category_imagePath_for_not_available; // Use placeholder if image not found
-            }
+    //         if (!file_exists(public_path($categoryImagePath))) {
+    //             $categoryImagePath = $category_imagePath_for_not_available; // Use placeholder if image not found
+    //         }
 
-            if ($category_csv) 
-            {
-                // If category exists, update it
-                $category_update_response = $category_csv->update([
-                    'category_id' => $category_records_csv['Category ID'],
-                    'name' => $category_records_csv['Name'],
-                    'category_image' => $categoryImagePath,
-                ]);
-            } 
-            else 
-            {
-                // If category does not exist, create a new one
-                $category_insert_response = AppSubCategoryModel::create([
-                    'category_id' => $category_records_csv['Category ID'],
-                    'name' => $category_records_csv['Name'],
-                    'category_image' => $categoryImagePath,
-                ]);
-            }
-        }   
-        if ($category_update_response == 1 || isset($category_insert_response)) {
-            return response()->json(['message' => 'Sub Categories imported successfully'], 200);
-        }
-        else {
-            return response()->json(['message' => 'Sorry, failed to import'], 404);
-        }
-    }
+    //         if ($category_csv) 
+    //         {
+    //             // If category exists, update it
+    //             $category_update_response = $category_csv->update([
+    //                 'category_id' => $category_records_csv['Category ID'],
+    //                 'name' => $category_records_csv['Name'],
+    //                 'category_image' => $categoryImagePath,
+    //             ]);
+    //         } 
+    //         else 
+    //         {
+    //             // If category does not exist, create a new one
+    //             $category_insert_response = AppSubCategoryModel::create([
+    //                 'category_id' => $category_records_csv['Category ID'],
+    //                 'name' => $category_records_csv['Name'],
+    //                 'category_image' => $categoryImagePath,
+    //             ]);
+    //         }
+    //     }   
+    //     if ($category_update_response == 1 || isset($category_insert_response)) {
+    //         return response()->json(['message' => 'Sub Categories imported successfully'], 200);
+    //     }
+    //     else {
+    //         return response()->json(['message' => 'Sorry, failed to import'], 404);
+    //     }
+    // }
 
 }

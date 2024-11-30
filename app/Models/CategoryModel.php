@@ -12,7 +12,9 @@ class CategoryModel extends Model
     protected $table = 't_category';
 
     protected $fillable = [
-        'code',
+        'cat_1',
+        'cat_2',
+        'cat_3',
         'product_code',
         'level',
         'category_image',
