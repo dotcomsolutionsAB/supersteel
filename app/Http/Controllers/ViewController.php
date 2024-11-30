@@ -454,6 +454,7 @@ class ViewController extends Controller
             foreach($get_user_details as $user)
             {
                 // Calculate the time difference for last_viewed
+                $currentTimestamp = now();
                 $lastViewedTimestamp = Carbon::parse($user->last_viewed);
                 $differenceInSeconds = $currentTimestamp->diffInSeconds($lastViewedTimestamp);
                 $last_viewed = '';
