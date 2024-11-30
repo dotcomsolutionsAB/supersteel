@@ -300,23 +300,16 @@ class ViewController extends Controller
 
         // Format the response with category_id, category_name, category_image, and products_count
         $formattedCategories = $categories->map(function ($category) use ($parent) {
-            // Initialize product count to zero
-            $productsCount = 0;
-
+            // Count all products in the current category and its sub-categories
             if ($parent == $category->cat_1) {
-                // If parent is cat_1, we count products belonging to cat_2 and cat_3 subcategories
-                // Start with cat_2 products
-                $cat_2_ids = CategoryModel::where('cat_1', $category->cat_1)
-                    ->whereNotNull('cat_2')
-                    ->pluck('cat_2');  // Get all unique cat_2 IDs under this parent
-                
-                // Now count products for cat_2 and their respective cat_3 subcategories
-                $productsCount = ProductModel::whereIn('category', $cat_2_ids)
-                    ->orWhereIn('category', function ($query) use ($cat_2_ids) {
-                        $query->select('cat_3')
-                            ->from('categories')
-                            ->whereIn('cat_2', $cat_2_ids);
-                    })
+                // Case 1: Parent is cat_1, so count products for cat_1, cat_2, and cat_3 levels
+                $productsCount = ProductModel::where('category', $category->cat_1)
+                    ->orWhere('category', $category->cat_2)
+                    ->orWhere('category', $category->cat_3)
+                    ->count();
+            } else {
+                // Case 2: Parent is not cat_1, handle other logic for counting products
+                $productsCount = ProductModel::where('category', $category->id)
                     ->count();
             }
 
@@ -330,6 +323,7 @@ class ViewController extends Controller
                 'products_count' => $productsCount,
             ];
         });
+
 
 
         // Add slides object with links to images in the storage folder
