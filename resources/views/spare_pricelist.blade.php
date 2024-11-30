@@ -80,7 +80,7 @@
 </head>
 <body>
     <!-- Title Box -->
-    <div class="header-box">
+    <!-- <div class="header-box">
         <img src="{{ public_path($get_product_details->product_image) }}" alt="Product Image">
         <div class="username">
             {{ $user_name }}
@@ -88,6 +88,10 @@
         <div class="product-details">
             {{ $get_product_details->print_name }} - {{$get_product_details->product_code}}
         </div>
+    </div> -->
+
+    <div class="header">
+        <img src="{{ asset('storage/uploads/s1.jpg') }}" alt="Logo">
     </div>
 
     <!-- Table for the Items -->

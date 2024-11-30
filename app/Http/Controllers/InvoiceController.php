@@ -452,7 +452,9 @@ class InvoiceController extends Controller
             <div class="title-box" style="background-color: brown; color: white; text-align: center; padding: 20px; font-size: 24px; font-weight: bold; border-radius: 8px 8px 0 0;">
                 ' . $get_product_details->product_name . ' - ' . $get_product_details->product_code . '
             </div>
-            <h1 style="text-align: center; padding: 20px;">Sorry, no spare available</h1>';
+            <h1 style="text-align: center; padding: 20px;">Sorry, no spare available</h1>
+            ';
+            
             $mpdf->writeHTML($html);
 
             // Prepare the file path and name
