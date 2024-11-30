@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('gstin')->nullable()->after('pincode'); 
             $table->string('state')->nullable()->after('gstin'); 
             $table->string('country')->nullable()->after('state'); 
-            $table->enum('price_type', ['a', 'b', 'c', 'd'])->after('country');
+            $table->enum('price_type', ['a', 'b', 'c', 'd', 'i', 'zero_price'])->after('country');
             $table->string('transport')->nullable()->after('price_type'); 
             $table->string('app_status')->nullable()->after('transport'); 
             $table->string('last_viewed')->nullable()->after('app_status'); 

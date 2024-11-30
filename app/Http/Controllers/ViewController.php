@@ -100,6 +100,9 @@ class ViewController extends Controller
             case 'i':
                 $price_column = 'price_i';
 				break;
+            case 'zero_price':
+                // For zero_price, set the price to 0
+                $price_column = DB::raw('0 as price');
             // Add more cases as needed
             default:
             // In case of no matching price type, select all price columns
@@ -197,6 +200,9 @@ class ViewController extends Controller
             case 'i':
                 $price_column = 'price_i';
                 break;
+            case 'zero_price':
+                // For zero_price, set the price to 0
+                $price_column = DB::raw('0 as price');
             // Add more cases as needed
             default:
                 // In case of no matching price type, select all price columns
