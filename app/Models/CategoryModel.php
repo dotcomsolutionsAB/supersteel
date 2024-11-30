@@ -15,8 +15,7 @@ class CategoryModel extends Model
         'cat_1',
         'cat_2',
         'cat_3',
-        'product_code',
-        'level',
+        'name',
         'category_image',
     ];
 
