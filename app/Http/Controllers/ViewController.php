@@ -304,12 +304,13 @@ class ViewController extends Controller
             $productsCount = 0;
 
             if ($parent == $category->cat_1) {
-                // Get all cat_2 categories under the parent category
+                // If parent is cat_1, we count products belonging to cat_2 and cat_3 subcategories
+                // Start with cat_2 products
                 $cat_2_ids = CategoryModel::where('cat_1', $category->cat_1)
                     ->whereNotNull('cat_2')
                     ->pluck('cat_2');  // Get all unique cat_2 IDs under this parent
-
-                // Count products belonging to cat_2 and all cat_3 subcategories
+                
+                // Now count products for cat_2 and their respective cat_3 subcategories
                 $productsCount = ProductModel::whereIn('category', $cat_2_ids)
                     ->orWhereIn('category', function ($query) use ($cat_2_ids) {
                         $query->select('cat_3')
@@ -317,15 +318,6 @@ class ViewController extends Controller
                             ->whereIn('cat_2', $cat_2_ids);
                     })
                     ->count();
-                
-                // Optionally, if you want to ensure you also count subcategory products correctly
-                // by explicitly checking `cat_3` levels, you could do something like this:
-                // For the parent category (e.g., cat_1 = 2), you count all products in its `cat_3` levels:
-                $subcategoriesCount = ProductModel::whereIn('category', $category->cat_3)
-                    ->count();
-                
-                // Sum the counts if needed, e.g., for counting all products under the parent category and subcategories
-                $productsCount += $subcategoriesCount;
             }
 
             return [
@@ -338,6 +330,7 @@ class ViewController extends Controller
                 'products_count' => $productsCount,
             ];
         });
+
 
         // Add slides object with links to images in the storage folder
         $slides = [
