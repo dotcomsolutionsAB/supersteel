@@ -96,8 +96,6 @@
                 <th>Photo</th>
                 <th>Product Name</th>
                 <th class="center-align">Qty</th>
-                <th class="right-align">Rate (Rs.)</th>
-                <th class="right-align">Total (Rs.)</th>
             </tr>
         </thead>
         <tbody>
