@@ -247,7 +247,7 @@ class CreateController extends Controller
         }
 
         $current_user = User::select('type')->where('id', $userId)->first();
-        $user_type = $current_user->type;
+        $user_type = $current_user->price_type;
 
         if ($user_type == 'zeroprice') 
         {
@@ -309,7 +309,7 @@ class CreateController extends Controller
 
 
                         // Generate invoice for $create_order_basic
-                        $get_invoice = $generate_invoice->generateInvoice($create_order->id);
+                        $get_invoice = $generate_invoice_zp->generateorderInvoiceZP($create_order->id);
 
                         // Add invoices to the $data array under a specific key
                         $create_order['invoices'] = $get_invoice;
