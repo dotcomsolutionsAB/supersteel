@@ -254,7 +254,7 @@ class ViewController extends Controller
     {
         $parent = $request->input('parent');
 
-        // Case 1: If parent is empty, return top-level categories (cat_1 only, cat_2 and cat_3 are NULL)
+        // Case 1: If parent is empty, return top-level categories (cat_1 only, cat_2 and cat_3 are NULL or empty)
         if (is_null($parent)) {
             $categories = CategoryModel::where(function($query) {
                 $query->whereNull('cat_2')->orWhere('cat_2', '');
@@ -263,20 +263,42 @@ class ViewController extends Controller
                 $query->whereNull('cat_3')->orWhere('cat_3', '');
             })
             ->get();
-            
         } else {
-            // Case 2: If parent is provided, fetch child categories (cat_2 or cat_3)
-            // Fetch the child categories based on parent
-            $categories = CategoryModel::where('cat_1', $parent)
-                ->orWhere('cat_2', $parent)
-                ->orWhere('cat_3', $parent)
-                ->get();
+            // Case 2: Check where the parent exists in the categories (cat_1, cat_2, or cat_3)
+            if (CategoryModel::where('cat_1', $parent)->exists()) {
+                // Parent is found in cat_1
+                $categories = CategoryModel::where('cat_1', $parent)
+                    ->whereNotNull('cat_2')
+                    ->where(function($query) {
+                        $query->whereNull('cat_3')->orWhere('cat_3', '');
+                    })
+                    ->get();
+            } elseif (CategoryModel::where('cat_2', $parent)->exists()) {
+                // Parent is found in cat_2
+                $categories = CategoryModel::where('cat_1', $parent)
+                    ->whereNotNull('cat_3')
+                    ->get();
+            } elseif (CategoryModel::where('cat_3', $parent)->exists()) {
+                // If parent is found in cat_3, no further child categories, so return empty
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Parent category is at the lowest level (cat_3), no further children.',
+                    'data' => [],
+                ], 404);
+            } else {
+                // If parent not found in any category, return error
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid parent ID!',
+                    'data' => [],
+                ], 404);
+            }
         }
 
         // Format the response with category_id, category_name, category_image, and products_count
         $formattedCategories = $categories->map(function ($category) {
             // Count all products in the current category and its sub-categories
-            $productsCount = ProductModel::where('category', $category->id)
+            $productsCount = Product::where('category', $category->id)
                 ->orWhereHas('category', function ($query) use ($category) {
                     // Check for products that belong to any of the parent category levels
                     $query->where('cat_1', $category->id)
@@ -301,6 +323,7 @@ class ViewController extends Controller
             'count' => $formattedCategories->count(),
         ], 200);
     }
+
 
 
 
