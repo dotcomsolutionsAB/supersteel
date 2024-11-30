@@ -400,6 +400,8 @@ class InvoiceController extends Controller
                 'id' => 'required|integer'
             ]);  
 
+            $id = $request->input('id');
+
             $get_user_price = User::select('price_type', 'name')->where('id', $id)->first();
 
             $user_price = $get_user_price->price_type;
