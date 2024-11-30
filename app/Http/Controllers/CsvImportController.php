@@ -35,9 +35,9 @@ class CsvImportController extends Controller
 
         // Iterate through each record and create or update the product
         foreach ($records_csv as $record_csv) {
-            $product_csv = ProductModel::where('product_code', $record_csv['Product Code'])->first();
+            $product_csv = ProductModel::where('product_code', $record_csv['PRODUCT CODE'])->first();
 
-            $filename = $record_csv['Product Code'];
+            $filename = $record_csv['PRODUCT CODE'];
 
             // Define the product image paths
             $productImagePath = "/storage/uploads/products/{$filename}.jpg";
