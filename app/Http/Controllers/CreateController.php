@@ -249,9 +249,7 @@ class CreateController extends Controller
         $current_user = User::select('price_type')->where('id', $userId)->first();
         $user_type = $current_user->price_type;
 
-        dd($user_type);
-
-        if ($user_type == 'zeroprice') 
+        if ($user_type == 'zero_price') 
         {
             $get_product = CartModel::select('amount', 'quantity', 'product_code', 'product_name', 'remarks', 'rate')
                                        ->where('user_id', $userId)
