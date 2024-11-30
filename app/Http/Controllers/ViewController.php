@@ -344,49 +344,62 @@ class ViewController extends Controller
         });
 
 
+            if (is_null($parent)) {
+            // Add slides object with links to images in the storage folder
+            $slides = [
+                asset('/storage/uploads/slider/slide_01.jpg')
+            ];
 
-        // Add slides object with links to images in the storage folder
-        $slides = [
-            asset('/storage/uploads/slider/slide_01.jpg')
-        ];
+            $slides_below = [
+                asset('/storage/uploads/slider/slide_02.jpg')
+            ];
 
-        $slides_below = [
-            asset('/storage/uploads/slider/slide_02.jpg')
-        ];
+            $count = ProductModel::where('new_arrival', '1')->count();
+            // Add the two new items: "New Arrival" and "Special Offer"
+            $newArrivals = [
+                'category_id' => 'new_arrival', // Can use an ID if applicable
+                'category_name' => 'New Arrival',
+                'category_image' => '/storage/uploads/category/new_arrival.jpg',
+                'products_count' => $count
+            ];
 
-        $count = ProductModel::where('new_arrival', '1')->count();
-        // Add the two new items: "New Arrival" and "Special Offer"
-        $newArrivals = [
-            'category_id' => 'new_arrival', // Can use an ID if applicable
-            'category_name' => 'New Arrival',
-            'category_image' => '/storage/uploads/category/new_arrival.jpg',
-            'products_count' => $count
-        ];
+            $count = ProductModel::where('special_price', '1')->count();
+            $specialOffers = [
+                'category_id' => 'special_offer', // Can use an ID if applicable
+                'category_name' => 'Special Offer',
+                'category_image' => '/storage/uploads/category/special_offer.jpg',
+                'products_count' => $count
+            ];
 
-        $count = ProductModel::where('special_price', '1')->count();
-        $specialOffers = [
-            'category_id' => 'special_offer', // Can use an ID if applicable
-            'category_name' => 'Special Offer',
-            'category_image' => '/storage/uploads/category/special_offer.jpg',
-            'products_count' => $count
-        ];
+            // Append new items to the categories
+            $formattedCategories->push($newArrivals);
+            $formattedCategories->push($specialOffers);
 
-        // Append new items to the categories
-        $formattedCategories->push($newArrivals);
-        $formattedCategories->push($specialOffers);
-
-        if (isset($formattedCategories)) {
-            return response()->json([
-                'message' => 'Fetch data successfully!',
-                'data' => $formattedCategories,
-                'count' => count($formattedCategories),
-                'slides' => $slides, // Add slides to the response
-                'slides_below' => $slides_below, // Add slides to the response
-            ], 200);
+            if (isset($formattedCategories)) {
+                return response()->json([
+                    'message' => 'Fetch data successfully!',
+                    'data' => $formattedCategories,
+                    'count' => count($formattedCategories),
+                    'slides' => $slides, // Add slides to the response
+                    'slides_below' => $slides_below, // Add slides to the response
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => 'Failed to get data successfully!',
+                ], 404);
+            }
         } else {
-            return response()->json([
-                'message' => 'Failed to get data successfully!',
-            ], 404);
+            if (isset($formattedCategories)) {
+                return response()->json([
+                    'message' => 'Fetch data successfully!',
+                    'data' => $formattedCategories,
+                    'count' => count($formattedCategories),
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => 'Failed to get data successfully!',
+                ], 404);
+            }
         }
     }
 
