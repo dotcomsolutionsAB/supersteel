@@ -22,7 +22,7 @@ set_time_limit(300); // Increase timeout to 5 minutes or as needed
 class InvoiceControllerZP extends Controller
 {
     //
-    public function generateInvoice($orderId)
+    public function generateorderInvoiceZP($orderId)
     {
         // $get_user = Auth::id();
 
