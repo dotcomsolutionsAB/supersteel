@@ -254,44 +254,39 @@ class ViewController extends Controller
     {
         $parent = $request->input('parent');
 
+        // Case 1: If parent is empty, return top-level categories (cat_1 only, cat_2 and cat_3 are NULL)
         if (is_null($parent)) {
-            // Case 1: If parent is empty, return top-level categories (cat_1 only, cat_2 and cat_3 are NULL)
-            $categories = CategoryModel::whereNull('cat_2')
-                ->whereNull('cat_3')
-                ->get();
+            $categories = CategoryModel::whereNull('cat_2')->whereNull('cat_3')->get();
         } else {
-            // Case 2 & 3: If parent is provided, check level and fetch accordingly
-            if (CategoryModel::where('cat_1', $parent)->whereNull('cat_2')->exists()) {
-                // Parent is a top-level category, fetch second-level categories
-                $categories = CategoryModel::where('cat_1', $parent)
-                    ->whereNotNull('cat_2')
-                    ->whereNull('cat_3')
-                    ->get();
-            } elseif (CategoryModel::where('cat_2', $parent)->whereNull('cat_3')->exists()) {
-                // Parent is a second-level category, fetch third-level categories
-                $categories = CategoryModel::where('cat_2', $parent)
-                    ->whereNotNull('cat_3')
-                    ->get();
-            } else {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Invalid parent ID!',
-                    'data' => [],
-                ], 404);
-            }
+            // Case 2: If parent is provided, fetch child categories (cat_2 or cat_3)
+            // Fetch the child categories based on parent
+            $categories = CategoryModel::where('cat_1', $parent)
+                ->orWhere('cat_2', $parent)
+                ->orWhere('cat_3', $parent)
+                ->get();
         }
 
-        // Format the response
+        // Format the response with category_id, category_name, category_image, and products_count
         $formattedCategories = $categories->map(function ($category) {
+            // Count all products in the current category and its sub-categories
+            $productsCount = Product::where('category', $category->id)
+                ->orWhereHas('category', function ($query) use ($category) {
+                    // Check for products that belong to any of the parent category levels
+                    $query->where('cat_1', $category->id)
+                        ->orWhere('cat_2', $category->id)
+                        ->orWhere('cat_3', $category->id);
+                })
+                ->count();
+
             return [
                 'category_id' => $category->id,
                 'category_name' => $category->name,
                 'category_image' => $category->category_image,
-                'products_count' => $category->get_products()->count(), // Count products associated with this category
+                'products_count' => $productsCount,
             ];
         });
 
-        // Return response
+        // Return the response
         return response()->json([
             'success' => true,
             'message' => 'Categories fetched successfully!',
@@ -299,6 +294,7 @@ class ViewController extends Controller
             'count' => $formattedCategories->count(),
         ], 200);
     }
+
 
 
 
