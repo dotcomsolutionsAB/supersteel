@@ -4,6 +4,16 @@
     <title>VCL Items</title>
     <style>
         /* Container for the header (image on the left, text on the right) */
+
+        .header {
+            width: 100%;
+            padding-top: 15px;
+        }
+        .header img {
+            width: 100%;
+            display: block;
+            height: auto;
+        }
         .header-box {
             display: flex;
             justify-content: space-between;
