@@ -57,7 +57,7 @@ class CsvImportController extends Controller
             }
 
             // Merge common data for insertion or update
-            $productData = array_merge([
+            $productData = [
                 'product_code' => $record_csv['PRODUCT CODE'],
                 'product_name' => $record_csv['PRODUCT NAME'],
                 'print_name' => $record_csv['ITEM PRINT NAME'],
@@ -73,7 +73,7 @@ class CsvImportController extends Controller
                 'product_image' => $productImagePath,
                 'new_arrival' => $record_csv['New Arrival'] === 'TRUE' ? 1 : 0,
                 'special_price' => $record_csv['Special Price'] === 'TRUE' ? 1 : 0,
-            ], $category_column);
+            ];
 
             if ($product_csv) {
                 // If product exists, update it
