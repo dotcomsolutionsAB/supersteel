@@ -348,19 +348,21 @@ class ViewController extends Controller
             asset('/storage/uploads/slider/slide_02.jpg')
         ];
 
+        $count = ProductModel::whereIn('new_arrival', '1')->count();
         // Add the two new items: "New Arrival" and "Special Offer"
         $newArrivals = [
             'category_id' => 'new_arrival', // Can use an ID if applicable
             'category_name' => 'New Arrival',
             'category_image' => '/storage/uploads/category/new_arrival.jpg',
-            'products_count' => ProductModel::whereIn('new_arrival', '1')->count()
+            'products_count' => $count
         ];
 
+        $count = ProductModel::whereIn('special_price', '1')->count();
         $specialOffers = [
             'category_id' => 'special_offer', // Can use an ID if applicable
             'category_name' => 'Special Offer',
             'category_image' => '/storage/uploads/category/special_offer.jpg',
-            'products_count' => ProductModel::whereIn('special_price', '1')->count()
+            'products_count' => $count
         ];
 
         // Append new items to the categories
