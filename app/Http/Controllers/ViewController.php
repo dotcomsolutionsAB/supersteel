@@ -299,17 +299,27 @@ class ViewController extends Controller
         
 
         // Format the response with category_id, category_name, category_image, and products_count
-        $formattedCategories = $categories->map(function ($category) {
-            // Count all products in the current category and its sub-categories
-            $productsCount = ProductModel::where('category', $category->id)
-            ->orWhereHas('category', function ($query) use ($category) {
-                // Check for products that belong to any of the parent category levels
-                $query->where('cat_1', $category->cat_1)
-                    ->orWhere('cat_2', $category->cat_2)
-                    ->orWhere('cat_3', $category->cat_3);
-            })
-            ->count();
+        // Format the response with category_id, category_name, category_image, and products_count
+        $formattedCategories = $categories->map(function ($category) use ($parent) {
+            // Initialize product count to zero
+            $productsCount = 0;
 
+            if ($parent == $category->cat_1) {
+                // If parent is cat_1, we count products belonging to cat_2 and cat_3 subcategories
+                // Start with cat_2 products
+                $cat_2_ids = CategoryModel::where('cat_1', $category->cat_1)
+                    ->whereNotNull('cat_2')
+                    ->pluck('cat_2');  // Get all unique cat_2 IDs under this parent
+                
+                // Now count products for cat_2 and their respective cat_3 subcategories
+                $productsCount = ProductModel::whereIn('category', $cat_2_ids)
+                    ->orWhereIn('category', function ($query) use ($cat_2_ids) {
+                        $query->select('cat_3')
+                            ->from('categories')
+                            ->whereIn('cat_2', $cat_2_ids);
+                    })
+                    ->count();
+            }
 
             return [
                 'category_id' => $category->id,
@@ -321,6 +331,7 @@ class ViewController extends Controller
                 'products_count' => $productsCount,
             ];
         });
+
 
         // Return the response
         return response()->json([
