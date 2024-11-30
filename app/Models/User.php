@@ -33,6 +33,7 @@ class User extends Authenticatable
         'gstin',
         'state',
         'country',
+        'manager_id'
         // 'category_discount',
     ];
 

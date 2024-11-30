@@ -50,6 +50,11 @@ class ViewController extends Controller
 
         if ($get_user->role == 'user') {
             $user_id = $get_user->id;
+
+            User::where('id', $user_id)->update([
+                'app_status' => 1,
+                'last_viewed' => now(), // Set the current timestamp
+            ]);
         } else {
             $request->validate([
                 'user_id' => 'required',
@@ -438,7 +443,7 @@ class ViewController extends Controller
         {
         
             $get_user_details = User::with('manager:id,mobile')
-                                ->select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id')
+                                ->select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id', 'app_status', 'last_viewed')
                                 ->where('role', 'user')
                                 ->get();
 
@@ -446,6 +451,24 @@ class ViewController extends Controller
 
             foreach($get_user_details as $user)
             {
+                // Calculate the time difference for last_viewed
+                $lastViewedTimestamp = Carbon::parse($user->last_viewed);
+                $differenceInSeconds = $currentTimestamp->diffInSeconds($lastViewedTimestamp);
+                $last_viewed = '';
+
+                if ($differenceInSeconds < 60) {
+                    $last_viewed = (int) $differenceInSeconds . ' seconds ago';
+                } elseif ($differenceInSeconds < 3600) {
+                    $minutes = (int) floor($differenceInSeconds / 60);
+                    $last_viewed = $minutes . ' minutes ago';
+                } elseif ($differenceInSeconds < 86400) {
+                    $hours = (int) floor($differenceInSeconds / 3600);
+                    $last_viewed = $hours . ' hours ago';
+                } else {
+                    $days = (int) floor($differenceInSeconds / 86400);
+                    $last_viewed = $days . ' days ago';
+                }
+
                 $response[] = [
                     'user_id' => $user->id,
                     'name' => $user->name,
@@ -459,17 +482,37 @@ class ViewController extends Controller
                     'state' => $user->state,
                     'country' => $user->country,
                     'manager_phone' => $user->manager ? $user->manager->mobile : null,
+                    'app_status' => $user->app_status,
+                    'last_viewed' => $user->last_viewed,
                 ];
             }
         }
 
         elseif ($userRole == 'manager') 
         {
-            $get_user_details = User::select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country')
+            $get_user_details = User::select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country', 'app_status', 'last_viewed')
                                     ->where('manager_id', Auth::id())
                                     ->get();
 
-            $response = $get_user_details->map(function ($user) {
+            $response = $get_user_details->map(function ($user) use ($currentTimestamp) {
+                // Calculate the time difference for last_viewed
+                $lastViewedTimestamp = Carbon::parse($user->last_viewed);
+                $differenceInSeconds = $currentTimestamp->diffInSeconds($lastViewedTimestamp);
+                $last_viewed = '';
+    
+                if ($differenceInSeconds < 60) {
+                    $last_viewed = (int) $differenceInSeconds . ' seconds ago';
+                } elseif ($differenceInSeconds < 3600) {
+                    $minutes = (int) floor($differenceInSeconds / 60);
+                    $last_viewed = $minutes . ' minutes ago';
+                } elseif ($differenceInSeconds < 86400) {
+                    $hours = (int) floor($differenceInSeconds / 3600);
+                    $last_viewed = $hours . ' hours ago';
+                } else {
+                    $days = (int) floor($differenceInSeconds / 86400);
+                    $last_viewed = $days . ' days ago';
+                }
+                            
                 return [
                     'user_id' => $user->id,
                     'name' => $user->name,
@@ -482,14 +525,35 @@ class ViewController extends Controller
                     'gstin' => $user->gstin,
                     'state' => $user->state,
                     'country' => $user->country,
+                    'app_status' => $user->app_status,
+                    'last_viewed' => $user->last_viewed,
                 ];
             });
             
         }
 
+        $types = [
+            ['price_type' => 'a'],
+            ['price_type' => 'b'],
+            ['price_type' => 'c'],
+            ['price_type' => 'd'],
+            ['price_type' => 'e'],
+        ];
+
+        $get_managers = User::select('id', 'name')
+                            ->where('role', 'manager')
+                            ->get();
+        
+        $manager_records = $get_managers->map(function ($manager) {
+            return [
+                'id' => $manager->id,
+                'name' => $manager->name,
+            ];
+        });
+
         return empty($response)
         ? response()->json(['Sorry, Failed to get data'], 404)
-        : response()->json(['Fetch data successfully!', 'data' => $response], 200);
+        : response()->json(['Fetch data successfully!', 'data' => $response, 'types' => $types, 'namagers' => $manager_records], 200);
     }
 
     public function user_details()

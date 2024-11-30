@@ -28,6 +28,8 @@ return new class extends Migration
             $table->string('country')->nullable()->after('state'); 
             $table->enum('price_type', ['a', 'b', 'c', 'd'])->after('country');
             $table->string('transport')->nullable()->after('price_type'); 
+            $table->string('app_status')->nullable()->after('transport'); 
+            $table->string('last_viewed')->nullable()->after('app_status'); 
         });
     }
 

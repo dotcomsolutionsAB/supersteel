@@ -176,11 +176,13 @@ class UpdateController extends Controller
     {
         $request->validate([
             'price_type' => 'required|string',
+            'manager_id' => 'required|integer',
         ]);
         $update_verify = User::where('id', $get_id)
             ->update([
                 'is_verified' => '1',
-                'price_type' => $request->input('price_type')
+                'price_type' => $request->input('price_type'),
+                'manager_id' => $request->input('manager_id')
             ]);
 
             $user = User::select('name', 'mobile')

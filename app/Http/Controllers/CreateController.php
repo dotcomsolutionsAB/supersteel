@@ -246,94 +246,192 @@ class CreateController extends Controller
             $userId = $request->input('user_id');
         }
 
-        $get_product = CartModel::select('amount', 'quantity', 'product_code', 'product_name', 'remarks', 'rate')
+        $current_user = User::select('type')->where('id', $userId)->first();
+        $user_type = $current_user->type;
+
+        if ($user_type == 'zeroprice') 
+        {
+            $get_product = CartModel::select('amount', 'quantity', 'product_code', 'product_name', 'remarks', 'rate')
                                        ->where('user_id', $userId)
                                        ->get();
 
-        $get_counter_data = CounterModel::select('prefix', 'counter', 'postfix')->where('name', 'order')->get();
+            $get_counter_data = CounterModel::select('prefix', 'counter', 'postfix')->where('name', 'order_zeroprice')->get();
        
 
-        // Pad the number with leading zeros to make it a four-digit number
-        $formattedCounterNumber = str_pad($get_counter_data[0]->counter, 4, '0', STR_PAD_LEFT);
+            // Pad the number with leading zeros to make it a four-digit number
+            $formattedCounterNumber = str_pad($get_counter_data[0]->counter, 4, '0', STR_PAD_LEFT);
 
-        if ($get_counter_data->isNotEmpty()) 
-        {
-            $get_order_id = strtoupper($get_counter_data[0]->prefix).$formattedCounterNumber.$get_counter_data[0]->postfix;
-    
-            if ((count($get_product)) > 0) 
+            if ($get_counter_data->isNotEmpty()) 
             {
-                $product_amount = 0;
-                foreach ($get_product as $order) 
+                $get_order_id = strtoupper($get_counter_data[0]->prefix).$formattedCounterNumber.$get_counter_data[0]->postfix;
+        
+                if ((count($get_product)) > 0) 
                 {
-                    $product_amount += (($order->rate) * ($order->quantity));
-                }
-                
-                $create_order = OrderModel::create([
-                    'user_id' => $userId,
-                    'order_id' => $get_order_id,
-                    'order_date' => Carbon::now()->toDateString(),
-                    'amount' => $product_amount,
-                    'remarks' => $request->input('remarks'),
-                ]);
-                //order_table_id
-
-                if (!is_null($create_order) && isset($create_order->id)) 
-                {
+                    $product_amount = 0;
                     foreach ($get_product as $order) 
                     {
-                        // save every item in order_items with order_table_id
-                        $create_order_items = OrderItemsModel::create([
-                            'order_id' => $create_order->id,
-                            'product_code' => $order->product_code,
-                            'product_name' => $order->product_name,
-                            'remarks' => $order->remarks,
-                            'rate' => $order->rate,
-                            'quantity' => $order->quantity,
-                            'total' => $order->amount,
-                        ]);
+                        $product_amount += (($order->rate) * ($order->quantity));
+                    }
+                    
+                    $create_order = OrderModel::create([
+                        'user_id' => $userId,
+                        'order_id' => $get_order_id,
+                        'order_date' => Carbon::now()->toDateString(),
+                        'amount' => $product_amount,
+                        'remarks' => $request->input('remarks'),
+                    ]);
+                    //order_table_id
+
+                    if (!is_null($create_order) && isset($create_order->id)) 
+                    {
+                        foreach ($get_product as $order) 
+                        {
+                            // save every item in order_items with order_table_id
+                            $create_order_items = OrderItemsModel::create([
+                                'order_id' => $create_order->id,
+                                'product_code' => $order->product_code,
+                                'product_name' => $order->product_name,
+                                'remarks' => $order->remarks,
+                                'rate' => $order->rate,
+                                'quantity' => $order->quantity,
+                                'total' => $order->amount,
+                            ]);
+                        }
+
+                        $update_cart = CounterModel::where('name', 'order')
+                                                    ->update(['counter' => (($get_counter_data[0]->counter)+1),
+                                                    ]);
+
+                        // Remove items from the cart for the user
+                        $get_remove_items = CartModel::where('user_id', $userId)->delete();
+                        
+                        $generate_invoice_zp = new InvoiceControllerZP();
+
+
+                        // Generate invoice for $create_order_basic
+                        $get_invoice = $generate_invoice->generateInvoice($create_order->id);
+
+                        // Add invoices to the $data array under a specific key
+                        $create_order['invoices'] = $get_invoice;
+                        unset($create_order['id'], $create_order['created_at'], $create_order['updated_at']);
+
+                        return response()->json([
+                            'message' => 'Order created and Order invoice generated successfully!',
+                            'data' => $create_order
+                        ], 201);
+
                     }
 
-                    $update_cart = CounterModel::where('name', 'order')
-                                                ->update(['counter' => (($get_counter_data[0]->counter)+1),
-                                                ]);
-
-                    // Remove items from the cart for the user
-                    $get_remove_items = CartModel::where('user_id', $userId)->delete();
+                    else {
+                        return response()->json([
+                            'message' => 'Sorry, failed to place order!',
+                            'data' => 'Error!'
+                        ], 400);
+                    }
                     
-                    $generate_invoice = new InvoiceController();
-
-
-                    // Generate invoice for $create_order_basic
-                    $get_invoice = $generate_invoice->generateInvoice($create_order->id);
-
-                    // Add invoices to the $data array under a specific key
-                    $create_order['invoices'] = $get_invoice;
-                    unset($create_order['id'], $create_order['created_at'], $create_order['updated_at']);
-
-                    return response()->json([
-                        'message' => 'Order created and Order invoice generated successfully!',
-                        'data' => $create_order
-                    ], 201);
-
                 }
 
                 else {
-                    return response()->json([
-                        'message' => 'Sorry, failed to place order!',
-                        'data' => 'Error!'
-                    ], 400);
+                    return response()->json(['Sorry, no product available!', 'data' => 'Error'], 500);
                 }
-                
             }
-
-            else {
-                return response()->json(['Sorry, no product available!', 'data' => 'Error'], 500);
-            }
-        }
         
-        else {
-            return response()->json(['Sorry, something went wrong!', 'data' => 'Error'], 500);
-        }   
+            else {
+                return response()->json(['Sorry, something went wrong!', 'data' => 'Error'], 500);
+            }   
+        }
+
+        else
+        {
+            $get_product = CartModel::select('amount', 'quantity', 'product_code', 'product_name', 'remarks', 'rate')
+                                       ->where('user_id', $userId)
+                                       ->get();
+
+            $get_counter_data = CounterModel::select('prefix', 'counter', 'postfix')->where('name', 'order')->get();
+       
+
+            // Pad the number with leading zeros to make it a four-digit number
+            $formattedCounterNumber = str_pad($get_counter_data[0]->counter, 4, '0', STR_PAD_LEFT);
+
+            if ($get_counter_data->isNotEmpty()) 
+            {
+                $get_order_id = strtoupper($get_counter_data[0]->prefix).$formattedCounterNumber.$get_counter_data[0]->postfix;
+        
+                if ((count($get_product)) > 0) 
+                {
+                    $product_amount = 0;
+                    foreach ($get_product as $order) 
+                    {
+                        $product_amount += (($order->rate) * ($order->quantity));
+                    }
+                    
+                    $create_order = OrderModel::create([
+                        'user_id' => $userId,
+                        'order_id' => $get_order_id,
+                        'order_date' => Carbon::now()->toDateString(),
+                        'amount' => $product_amount,
+                        'remarks' => $request->input('remarks'),
+                    ]);
+                    //order_table_id
+
+                    if (!is_null($create_order) && isset($create_order->id)) 
+                    {
+                        foreach ($get_product as $order) 
+                        {
+                            // save every item in order_items with order_table_id
+                            $create_order_items = OrderItemsModel::create([
+                                'order_id' => $create_order->id,
+                                'product_code' => $order->product_code,
+                                'product_name' => $order->product_name,
+                                'remarks' => $order->remarks,
+                                'rate' => $order->rate,
+                                'quantity' => $order->quantity,
+                                'total' => $order->amount,
+                            ]);
+                        }
+
+                        $update_cart = CounterModel::where('name', 'order')
+                                                    ->update(['counter' => (($get_counter_data[0]->counter)+1),
+                                                    ]);
+
+                        // Remove items from the cart for the user
+                        $get_remove_items = CartModel::where('user_id', $userId)->delete();
+                        
+                        $generate_invoice = new InvoiceController();
+
+
+                        // Generate invoice for $create_order_basic
+                        $get_invoice = $generate_invoice->generateInvoice($create_order->id);
+
+                        // Add invoices to the $data array under a specific key
+                        $create_order['invoices'] = $get_invoice;
+                        unset($create_order['id'], $create_order['created_at'], $create_order['updated_at']);
+
+                        return response()->json([
+                            'message' => 'Order created and Order invoice generated successfully!',
+                            'data' => $create_order
+                        ], 201);
+
+                    }
+
+                    else {
+                        return response()->json([
+                            'message' => 'Sorry, failed to place order!',
+                            'data' => 'Error!'
+                        ], 400);
+                    }
+                    
+                }
+
+                else {
+                    return response()->json(['Sorry, no product available!', 'data' => 'Error'], 500);
+                }
+            }
+        
+            else {
+                return response()->json(['Sorry, something went wrong!', 'data' => 'Error'], 500);
+            }   
+        }
     }
 
     public function orders_items(Request $request)
