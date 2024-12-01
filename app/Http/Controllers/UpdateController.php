@@ -18,7 +18,6 @@ use Illuminate\Support\Facades\Auth;
 
 class UpdateController extends Controller
 {
-    //
     public function user(Request $request)
     {
         $get_user = Auth::id();
