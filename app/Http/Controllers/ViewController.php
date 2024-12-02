@@ -417,7 +417,7 @@ class ViewController extends Controller
         {
         
             $get_user_details = User::with('manager:id,mobile')
-                                ->select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id','is_verified', 'app_status', 'last_viewed', 'type')
+                                ->select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id','is_verified', 'app_status', 'last_viewed', 'price_type')
                                 ->where('role', 'user')
                                 ->get();
 
@@ -444,7 +444,7 @@ class ViewController extends Controller
                     $last_viewed = $days . ' days ago';
                 }
 
-                $type = $user->type;
+                $type = $user->price_type;
                 $priceLabel = '';
 
                 switch ($type) {
