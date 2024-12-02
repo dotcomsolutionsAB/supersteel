@@ -458,7 +458,7 @@ class ViewController extends Controller
                     'country' => $user->country,
                     'manager_phone' => $user->manager ? $user->manager->mobile : null,
                     'app_status' => $user->app_status,
-                    'verified' => $record->is_verified,
+                    'verified' => $user->is_verified,
                     'last_viewed' => $user->last_viewed,
                 ];
             }
