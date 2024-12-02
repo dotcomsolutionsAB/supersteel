@@ -470,9 +470,6 @@ class ViewController extends Controller
                         $priceLabel = 'Unknown Price Type';
                 }
 
-                echo $priceLabel;
-
-
                 $response[] = [
                     'user_id' => $user->id,
                     'name' => $user->name,
