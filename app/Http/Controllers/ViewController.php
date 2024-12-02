@@ -417,7 +417,7 @@ class ViewController extends Controller
         {
         
             $get_user_details = User::with('manager:id,mobile')
-                                ->select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id', 'app_status', 'last_viewed')
+                                ->select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id','is_verified', 'app_status', 'last_viewed')
                                 ->where('role', 'user')
                                 ->get();
 
