@@ -417,7 +417,7 @@ class ViewController extends Controller
         {
         
             $get_user_details = User::with('manager:id,mobile')
-                                ->select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id','is_verified', 'app_status', 'last_viewed')
+                                ->select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id','is_verified', 'app_status', 'last_viewed', 'type')
                                 ->where('role', 'user')
                                 ->get();
 
@@ -444,6 +444,35 @@ class ViewController extends Controller
                     $last_viewed = $days . ' days ago';
                 }
 
+                $type = $user->type;
+                $priceLabel = '';
+
+                switch ($type) {
+                    case 'a':
+                        $priceLabel = 'Price - A';
+                        break;
+                    case 'b':
+                        $priceLabel = 'Price - B';
+                        break;
+                    case 'c':
+                        $priceLabel = 'Price - C';
+                        break;
+                    case 'd':
+                        $priceLabel = 'Price - D';
+                        break;
+                    case 'i':
+                        $priceLabel = 'Price - I';
+                        break;
+                    case 'zero_price':
+                        $priceLabel = 'Zero Price';
+                        break;
+                    default:
+                        $priceLabel = 'Unknown Price Type';
+                }
+
+                echo $priceLabel;
+
+
                 $response[] = [
                     'user_id' => $user->id,
                     'name' => $user->name,
@@ -460,6 +489,7 @@ class ViewController extends Controller
                     'app_status' => $user->app_status,
                     'verified' => $user->is_verified,
                     'last_viewed' => $user->last_viewed,
+                    'type' => $priceLabel,
                 ];
             }
         }
