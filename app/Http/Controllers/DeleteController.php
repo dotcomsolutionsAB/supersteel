@@ -37,4 +37,42 @@ class DeleteController extends Controller
             ], 500);
         }
     }
+
+    // delete user
+    public function user($id = null)
+    {
+        $getRole = (Auth::user())->role;
+
+        if ($getRole == 'user') {
+            $id = Auth::id();
+        }
+
+        // Fetch the record by ID
+        // Check if the record exists
+        $get_user = User::find($id);
+
+        if (!$get_user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, User not found!',
+            ], 200);
+        }
+               
+        else{
+            $delete_user_records = $get_user->delete();
+
+            if ($delete_user_records == true ) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'User Deleted Successfully.',
+                ], 200);
+            }
+            else{
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Sorry, Failed to delete user!',
+                ], 200);
+            }
+        }
+    }
 }

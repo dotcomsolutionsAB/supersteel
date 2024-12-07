@@ -45,6 +45,8 @@ Route::prefix('admin')->middleware(['auth:sanctum', GetUserRole::class . ':admin
     Route::get('/view_counter', [ViewController::class, 'counter']);
     Route::get('/dashboard', [ViewController::class, 'dashboard_details']);
 
+    Route::delete('/delete_user/{id}', [DeleteController::class, 'user']);
+    
     Route::post('/generate_invoice/{orderId}', [InvoiceController::class, 'generateInvoice']);
     Route::get('/return_order/{orderId}', [ViewController::class, 'return_order']);
     Route::post('/add_invoice', [CreateController::class, 'make_invoice']);
