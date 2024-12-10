@@ -155,7 +155,7 @@ class CsvImportController extends Controller
                     'pincode' => $pincode_user,// Ensure this is a valid number
                     'gstin' => $record_user['GSTIN'],
                     'state' => $record_user['State'],
-                    'country' => $record_user['Country'],
+                    // 'country' => $record_user['Country'],
                     'billing_style' => $record_user['Billing Style'],
                     'transport' => $record_user['Transport'],
                     'price_type' => strtolower($record_user['PRICE CAT']),
@@ -179,7 +179,7 @@ class CsvImportController extends Controller
                     'pincode' => $pincode_user,// Ensure this is a valid number
                     'gstin' => $record_user['GSTIN'],
                     'state' => $record_user['State'],
-                    'country' => $record_user['Country'],
+                    // 'country' => $record_user['Country'],
                     'billing_style' => $record_user['Billing Style'],
                     'transport' => $record_user['Transport'],
                     'price_type' => strtolower($record_user['PRICE CAT']),
