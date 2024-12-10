@@ -95,7 +95,7 @@ class CsvImportController extends Controller
     public function importUser()
     {
         // URL of the CSV file from Google Sheets
-        $get_product_user_url = 'https://docs.google.com/spreadsheets/d/1_4XMqLfR7EqOWMxrilnCZq5-YuYn1dRLlPbFIl41OsU/pub?gid=1797389278&single=true&output=csv';
+        $get_product_user_url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSoVot_t3TuRNSNBnz_vCeeeKpMXSap3pPvoers6QuVAIp3Gr32EbE56GSZitCrdGTLudR4vvATlPnD/pub?gid=1797389278&single=true&output=csv';
         // $get_product_user_url = 'C:\Users\Dot com\Downloads\dummy_invoice_data.csv';
 
         // Fetch the CSV content using file_get_contents
