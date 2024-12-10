@@ -472,7 +472,7 @@ class ViewController extends Controller
 
                 $response[] = [
                     'user_id' => $user->id,
-                    'name' => $user->name,
+                    'name' => $user->name.' - '.$user->alias,
                     'email' => $user->email,
                     'mobile' => $user->mobile,
                     'address_line_1' => $user->address_line_1,
