@@ -28,13 +28,17 @@ class User extends Authenticatable
         'otp',
         'address_line_1',
         'address_line_2',
+        'address_line_3',
         'city',
         'pincode',
         'gstin',
         'state',
         'country',
-        'manager_id'
-        // 'category_discount',
+        'manager_id',
+        'alias',
+        'billing_style',
+        'transport',
+        'price_type'
     ];
 
     /**

@@ -95,8 +95,8 @@ class CsvImportController extends Controller
     public function importUser()
     {
         // URL of the CSV file from Google Sheets
-        // $get_product_user_url = 'https://docs.google.com/spreadsheets/d/1_4XMqLfR7EqOWMxrilnCZq5-YuYn1dRLlPbFIl41OsU/pub?gid=1797389278&single=true&output=csv';
-        $get_product_user_url = 'C:\Users\Dot com\Downloads\dummy_invoice_data.csv';
+        $get_product_user_url = 'https://docs.google.com/spreadsheets/d/1_4XMqLfR7EqOWMxrilnCZq5-YuYn1dRLlPbFIl41OsU/pub?gid=1797389278&single=true&output=csv';
+        // $get_product_user_url = 'C:\Users\Dot com\Downloads\dummy_invoice_data.csv';
 
         // Fetch the CSV content using file_get_contents
         $csvContent_user = file_get_contents($get_product_user_url);
@@ -126,24 +126,40 @@ class CsvImportController extends Controller
 
             $user_csv = User::where('mobile', $mobile)->first();
 
+            $manager_name = $record_user['Manager'];
+
+            $manager = User::where('name', $manager_name)->first();
+            if ($manager) {
+                $manager_id = $manager->id; // Get the manager ID
+            } else {
+                $manager_id = null;
+            }
+
             // Handle potential empty values for email, pincode, and markup
             $email_user = !empty($record_user['Email']) ? $record_user['Email'] : null;
-            $pincode_user = $record_user['Pincode'] !== '' ? $record_user['Pincode'] : 0;
+            $pincode_user = $record_user['Pincode'] !== '' ? $record_user['Pincode'] : null;
 
             if ($user_csv) 
             {
                 // If user exists, update it
                 $get_update_response = $user_csv->update([
-                    'name' => $record_user['Name'],
+                    'name' => $record_user['Print Name'],
+                    'manager_id' => $manager_id,
+                    'alias' => $record_user['Alias'],
                     'email' => $email_user,
                     'password' => bcrypt($mobile),
                     'address_line_1' => $record_user['Address Line 1'],
                     'address_line_2' => $record_user['Address Line 2'],
+                    'address_line_3' => $record_user['Address Line 3'],
                     'city' => $record_user['City'],
                     'pincode' => $pincode_user,// Ensure this is a valid number
                     'gstin' => $record_user['GSTIN'],
                     'state' => $record_user['State'],
                     'country' => $record_user['Country'],
+                    'billing_style' => $record_user['Billing Style'],
+                    'transport' => $record_user['Transport'],
+                    'price_type' => strtolower($record_user['PRICE CAT']),
+
                 ]);
             } 
             else 
@@ -151,16 +167,22 @@ class CsvImportController extends Controller
                 // If user does not exist, create a new one
                 $get_insert_response = User::create([
                     'mobile' => $mobile,
-                    'name' => $record_user['Name'],
+                    'name' => $record_user['Print Name'],
+                    'manager_id' => $manager_id,
+                    'alias' => $record_user['Alias'],
                     'email' => $email_user,
                     'password' => bcrypt($mobile),
                     'address_line_1' => $record_user['Address Line 1'],
                     'address_line_2' => $record_user['Address Line 2'],
+                    'address_line_3' => $record_user['Address Line 3'],
                     'city' => $record_user['City'],
                     'pincode' => $pincode_user,// Ensure this is a valid number
                     'gstin' => $record_user['GSTIN'],
                     'state' => $record_user['State'],
                     'country' => $record_user['Country'],
+                    'billing_style' => $record_user['Billing Style'],
+                    'transport' => $record_user['Transport'],
+                    'price_type' => strtolower($record_user['PRICE CAT']),
                 ]);
             }
         }   
