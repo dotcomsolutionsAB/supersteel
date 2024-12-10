@@ -470,9 +470,11 @@ class ViewController extends Controller
                         $priceLabel = 'Unknown Price Type';
                 }
 
+                $name = $user->name.' - '.$user->alias;
+
                 $response[] = [
                     'user_id' => $user->id,
-                    'name' => $user->name.' - '.$user->alias,
+                    'name' => $name,
                     'email' => $user->email,
                     'mobile' => $user->mobile,
                     'address_line_1' => $user->address_line_1,
@@ -515,10 +517,13 @@ class ViewController extends Controller
                     $days = (int) floor($differenceInSeconds / 86400);
                     $last_viewed = $days . ' days ago';
                 }
+
+                $name = $user->name.' - '.$user->alias;
+
                             
                 return [
                     'user_id' => $user->id,
-                    'name' => $user->name,
+                    'name' => $name,
                     'email' => $user->email,
                     'mobile' => $user->mobile,
                     'address_line_1' => $user->address_line_1,
