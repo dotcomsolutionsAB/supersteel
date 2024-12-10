@@ -139,51 +139,54 @@ class CsvImportController extends Controller
             $email_user = !empty($record_user['Email']) ? $record_user['Email'] : null;
             $pincode_user = $record_user['Pincode'] !== '' ? $record_user['Pincode'] : null;
 
-            if ($user_csv) 
-            {
-                // If user exists, update it
-                $get_update_response = $user_csv->update([
-                    'name' => $record_user['Print Name'],
-                    'manager_id' => $manager_id,
-                    'alias' => $record_user['Alias'],
-                    'email' => $email_user,
-                    'password' => bcrypt($mobile),
-                    'address_line_1' => $record_user['Address Line 1'],
-                    'address_line_2' => $record_user['Address Line 2'],
-                    'address_line_3' => $record_user['Address Line 3'],
-                    'city' => $record_user['City'],
-                    'pincode' => $pincode_user,// Ensure this is a valid number
-                    'gstin' => $record_user['GSTIN'],
-                    'state' => $record_user['State'],
-                    // 'country' => $record_user['Country'],
-                    'billing_style' => $record_user['Billing Style'],
-                    'transport' => $record_user['Transport'],
-                    'price_type' => strtolower($record_user['PRICE CAT']),
+            if($mobile != '')
+                {
+                if ($user_csv) 
+                {
+                    // If user exists, update it
+                    $get_update_response = $user_csv->update([
+                        'name' => $record_user['Print Name'],
+                        'manager_id' => $manager_id,
+                        'alias' => $record_user['Alias'],
+                        'email' => $email_user,
+                        'password' => bcrypt($mobile),
+                        'address_line_1' => $record_user['Address Line 1'],
+                        'address_line_2' => $record_user['Address Line 2'],
+                        'address_line_3' => $record_user['Address Line 3'],
+                        'city' => $record_user['City'],
+                        'pincode' => $pincode_user,// Ensure this is a valid number
+                        'gstin' => $record_user['GSTIN'],
+                        'state' => $record_user['State'],
+                        // 'country' => $record_user['Country'],
+                        'billing_style' => $record_user['Billing Style'],
+                        'transport' => $record_user['Transport'],
+                        'price_type' => strtolower($record_user['PRICE CAT']),
 
-                ]);
-            } 
-            else 
-            {
-                // If user does not exist, create a new one
-                $get_insert_response = User::create([
-                    'mobile' => $mobile,
-                    'name' => $record_user['Print Name'],
-                    'manager_id' => $manager_id,
-                    'alias' => $record_user['Alias'],
-                    'email' => $email_user,
-                    'password' => bcrypt($mobile),
-                    'address_line_1' => $record_user['Address Line 1'],
-                    'address_line_2' => $record_user['Address Line 2'],
-                    'address_line_3' => $record_user['Address Line 3'],
-                    'city' => $record_user['City'],
-                    'pincode' => $pincode_user,// Ensure this is a valid number
-                    'gstin' => $record_user['GSTIN'],
-                    'state' => $record_user['State'],
-                    // 'country' => $record_user['Country'],
-                    'billing_style' => $record_user['Billing Style'],
-                    'transport' => $record_user['Transport'],
-                    'price_type' => strtolower($record_user['PRICE CAT']),
-                ]);
+                    ]);
+                } 
+                else 
+                {
+                    // If user does not exist, create a new one
+                    $get_insert_response = User::create([
+                        'mobile' => $mobile,
+                        'name' => $record_user['Print Name'],
+                        'manager_id' => $manager_id,
+                        'alias' => $record_user['Alias'],
+                        'email' => $email_user,
+                        'password' => bcrypt($mobile),
+                        'address_line_1' => $record_user['Address Line 1'],
+                        'address_line_2' => $record_user['Address Line 2'],
+                        'address_line_3' => $record_user['Address Line 3'],
+                        'city' => $record_user['City'],
+                        'pincode' => $pincode_user,// Ensure this is a valid number
+                        'gstin' => $record_user['GSTIN'],
+                        'state' => $record_user['State'],
+                        // 'country' => $record_user['Country'],
+                        'billing_style' => $record_user['Billing Style'],
+                        'transport' => $record_user['Transport'],
+                        'price_type' => strtolower($record_user['PRICE CAT']),
+                    ]);
+                }
             }
         }   
 
