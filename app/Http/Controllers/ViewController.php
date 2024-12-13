@@ -353,11 +353,14 @@ class ViewController extends Controller
         if (is_null($parent)) {
             // Add slides object with links to images in the storage folder
             $slides = [
-                asset('/storage/uploads/slider/slide_01.jpg')
+                asset('/storage/uploads/slider/slide01.jpg'),
+                asset('/storage/uploads/slider/slide02.jpg'),
+                asset('/storage/uploads/slider/slide03.jpg')
             ];
 
             $slides_below = [
-                asset('/storage/uploads/slider/slide_02.jpg')
+                asset('/storage/uploads/slider/slide04.jpg'),
+                asset('/storage/uploads/slider/slide05.jpg')
             ];
 
             $count = ProductModel::where('new_arrival', '1')->count();
