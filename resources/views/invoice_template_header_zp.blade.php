@@ -78,12 +78,6 @@
             <td class="value">{{ \Carbon\Carbon::parse($order->order_date)->format('d-m-Y') }}</td>
         </tr>
         <tr>
-            <td class="label">Transport:</td>
-            <td class="value">{{ $user->transport }}</td>
-            <td class="label">Billing Style:</td>
-            <td class="value"></td>
-        </tr>
-        <tr>
             <td colspan="4" class="value"><strong>Remarks:</strong> {{ $order->remarks }}</td>
         </tr>
     </table>

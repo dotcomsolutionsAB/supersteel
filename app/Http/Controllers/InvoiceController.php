@@ -33,7 +33,7 @@ class InvoiceController extends Controller
         $get_user = $order->user_id;
         $manager_id = $order->manager_id;
         
-        $user = User::select('name', 'mobile', 'email', 'address_line_1', 'address_line_2', 'gstin')
+        $user = User::select('name', 'mobile', 'email', 'address_line_1', 'address_line_2', 'gstin','transport', 'billing_style')
                     ->where('id', $get_user)
                     ->first();
         

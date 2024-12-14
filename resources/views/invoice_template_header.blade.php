@@ -81,7 +81,7 @@
             <td class="label">Transport:</td>
             <td class="value">{{ $user->transport }}</td>
             <td class="label">Billing Style:</td>
-            <td class="value"></td>
+            <td class="value">{{ $user->billing_style }}</td>
         </tr>
         <tr>
             <td colspan="4" class="value"><strong>Remarks:</strong> {{ $order->remarks }}</td>

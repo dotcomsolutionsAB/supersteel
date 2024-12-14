@@ -1,12 +1,13 @@
-        </tbody>
-    </table>
+<tr>
+            <td colspan="5" class="right-align">Total</td>
+            <td class="right-align">₹ {{ number_format((float)$order->amount, 2) }}</td>
+        </tr>
+    </tbody>
+</table>
 
-    <!-- QR Code and Footer -->
-    <div style="position: fixed; bottom: 20px; width: 100%;">
-        <div class="footer">
-            <p style="font-size: 25px;">Thank you for working with us</p>
-        </div>
-    </div>
+<div class="footer">
+    <p>Thank you for working with us</p>
+</div>
 
 </body>
 </html>
