@@ -380,6 +380,13 @@ class ViewController extends Controller
                 'products_count' => $count
             ];
 
+            $links = [
+                asset('/storage/uploads/catalog/power_tools.pdf'),
+                asset('/storage/uploads/catalog/garden_tools.pdf'),
+                asset('/storage/uploads/catalog/supersteel.pdf'),
+                "+917396895410",
+            ];
+
             // Append new items to the categories
             $formattedCategories->push($newArrivals);
             $formattedCategories->push($specialOffers);
@@ -391,6 +398,7 @@ class ViewController extends Controller
                     'count' => count($formattedCategories),
                     'slides' => $slides, // Add slides to the response
                     'slides_below' => $slides_below, // Add slides to the response
+                    'links' => $links, // Add slides to the response
                 ], 200);
             } else {
                 return response()->json([
