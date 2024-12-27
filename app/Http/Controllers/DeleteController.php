@@ -13,7 +13,27 @@ class DeleteController extends Controller
     {
         return view('delete-account');
     }
-    
+
+    // Handle the delete account request
+    public function deleteAccount(Request $request)
+    {
+        // Validate the mobile number
+        $request->validate([
+            'mobile' => 'required|digits:10', // Assuming a 10-digit mobile number
+        ]);
+
+        $user = Auth::user();
+
+        if ($user && $user->mobile === $request->mobile) {
+            //$user->delete(); // Delete the user account
+            //Auth::logout(); // Log the user out
+
+            return redirect('/')->with('success', 'Your account has been deleted successfully.');
+        }
+
+        return redirect()->back()->with('error', 'The provided mobile number does not match our records.');
+    }
+
     //Delete Cart 
     public function cart($id)
     {

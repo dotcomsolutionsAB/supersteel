@@ -117,6 +117,7 @@ Route::prefix('user')->middleware(['auth:sanctum', GetUserRole::class . ':user']
 });
 
 Route::get('/delete-account', [DeleteController::class, 'showDeleteAccountForm'])->name('delete.account.form');
+Route::post('/delete-account', [UserController::class, 'deleteAccount'])->name('delete.account');
 
 Route::post('/login/{otp?}', [CreateController::class, 'login']);
 Route::post('/register_user', [CreateController::class, 'user']);
