@@ -483,6 +483,49 @@ class UpdateController extends Controller
         $order->status = 'cancelled';
         $order->save();
 
+        $user = User::find($order->user_id);
+        $mobileNumbers = User::where('role', 'admin')->pluck('mobile')->toArray();
+
+        $whatsAppUtility = new sendWhatsAppUtility();
+
+        $templateParams = [
+            'name' => 'ss_order_cancelled', // Replace with your WhatsApp template name
+            'language' => ['code' => 'en'],
+            'components' => [[
+                    'type' => 'body',
+                    'parameters' => [
+                        [
+                            'type' => 'text',
+                            'text' => $user->name,
+                        ],
+                        [
+                            'type' => 'text',
+                            'text' => $order->order_id,
+                        ],
+                        [
+                            'type' => 'text',
+                            'text' => Carbon::parse($order->order_date)->format('d-m-Y'),
+                        ],
+                        [
+                            'type' => 'text',
+                            'text' => $order->amount,
+                        ],
+                    ],
+                ]
+            ],
+        ];
+
+        foreach ($mobileNumbers as $mobileNumber) 
+        {
+            if($mobileNumber == '+917003541353' || true)
+            {
+                // Send message for each number
+                $response = $whatsAppUtility->sendWhatsApp($mobileNumber, $templateParams, '', 'Order Cancel Notification');
+            }
+        }
+
+        $response = $whatsAppUtility->sendWhatsApp($user->mobile, $templateParams, '', 'Order Cancel Notification');
+
         return response()->json([
             'message' => 'Order status updated to cancelled successfully!',
             'order' => $order
