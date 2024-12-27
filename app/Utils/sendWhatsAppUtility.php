@@ -27,7 +27,7 @@ class sendWhatsAppUtility
             $response = null;
 
             curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://graph.facebook.com/v19.0/357370407455461/messages',
+            CURLOPT_URL => 'https://graph.facebook.com/v21.0/503571932842387/messages',
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
