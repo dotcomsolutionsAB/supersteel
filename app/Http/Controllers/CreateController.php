@@ -122,6 +122,11 @@ class CreateController extends Controller
                         'message' => 'OTP has expired.',
                     ], 200);
                 } else {
+
+                    // Retrieve the user
+                    $user = User::with('manager:id,mobile')
+                                ->where('mobile', $request->mobile)->first();
+
                     // Check if user is verified
                     if ($user->is_verified == '0') {
 
@@ -147,22 +152,13 @@ class CreateController extends Controller
                             ],
                         ];
 
-                        $adminNumbers = User::where('role', 'admin')->pluck('mobile')->toArray();
-                        $managerNumbers = User::where('id', $manager_id)->pluck('mobile')->toArray();
-
-                        $mobileNumbers = array_unique(array_merge($adminNumbers, $managerNumbers));
+                        $mobileNumbers = User::where('role', 'admin')->pluck('mobile')->toArray();
                         foreach ($mobileNumbers as $mobileNumber) 
                         {
-                            if($mobileNumber == '+918961043773' || true)
+                            if($mobileNumber == '+917003541353' || true)
                             {
                                 // Send message for each number
                                 $response = $whatsAppUtility->sendWhatsApp($mobileNumber, $templateParams, '', 'Admin Order Invoice');
-
-                                // Check if the response has an error or was successful
-                                if (isset($responseArray['error'])) 
-                                {
-                                    echo "Failed to send order to Whatsapp!";
-                                }
                             }
                         }
                         
@@ -171,10 +167,6 @@ class CreateController extends Controller
                             'message' => 'Account not verified, you will receive a notification once your account is verified.',
                         ], 200);
                     }
-
-                    // Retrieve the user
-                    $user = User::with('manager:id,mobile')
-                                ->where('mobile', $request->mobile)->first();
 
                     // Remove OTP record after successful validation
                     User::select('otp')->where('mobile', $request->mobile)->update(['otp' => null, 'expires_at' => null]);
