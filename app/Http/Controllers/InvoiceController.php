@@ -223,6 +223,7 @@ class InvoiceController extends Controller
             
             // $response = $whatsAppUtility->sendWhatsApp($user->mobile, $templateParams, '', 'User Order Invoice');
         }else{
+            $fileUrlWithTimestamp = $fileUrl . '?t=' . time();
             $templateParams = [
                 'name' => 'ss_edit_order_admin', // Replace with your WhatsApp template name
                 'language' => ['code' => 'en'],
