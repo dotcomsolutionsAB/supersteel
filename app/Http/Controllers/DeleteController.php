@@ -8,6 +8,12 @@ use App\Models\CartModel;
 
 class DeleteController extends Controller
 {
+    // Show the delete account form
+    public function showDeleteAccountForm()
+    {
+        return view('delete-account');
+    }
+    
     //Delete Cart 
     public function cart($id)
     {

@@ -113,9 +113,10 @@ Route::prefix('user')->middleware(['auth:sanctum', GetUserRole::class . ':user']
 
     Route::post('/spare_product/{code?}', [ViewController::class, 'get_spares']);
     Route::post('/spares_pricelist/{code}', [InvoiceController::class, 'price_spares']);
+    Route::delete('/delete_user/{id}', [DeleteController::class, 'user']);
 });
 
-Route::delete('/delete_user/{id}', [DeleteController::class, 'user']);
+Route::get('/delete-account', [DeleteController::class, 'showDeleteAccountForm'])->name('delete.account.form');
 
 Route::post('/login/{otp?}', [CreateController::class, 'login']);
 Route::post('/register_user', [CreateController::class, 'user']);
