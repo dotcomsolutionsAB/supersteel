@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://www.supersteel.in/wp-content/uploads/2024/06/Favicon.svg" sizes="32x32" />
     <title>Delete Account - Super Steel</title>
     <style>
         /* General Styles */
