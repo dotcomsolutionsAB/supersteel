@@ -59,7 +59,7 @@ class DeleteController extends Controller
         }
                
         else{
-            $delete_user_records = $get_user->delete();
+            //$delete_user_records = $get_user->delete();
 
             if ($delete_user_records == true ) {
                 return response()->json([
