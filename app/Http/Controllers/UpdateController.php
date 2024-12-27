@@ -196,7 +196,7 @@ class UpdateController extends Controller
             if ($update_verify == 1) {
 
                 $templateParams = [
-                    'name' => 'ace_user_approved', // Replace with your WhatsApp template name
+                    'name' => 'ss_user_approved', // Replace with your WhatsApp template name
                     'language' => ['code' => 'en'],
                     'components' => [
                         [
@@ -253,7 +253,7 @@ class UpdateController extends Controller
             if ($update_unverify == 1) {
 
                 $templateParams = [
-                    'name' => 'ace_user_approved', // Replace with your WhatsApp template name
+                    'name' => 'ss_user_approved', // Replace with your WhatsApp template name
                     'language' => ['code' => 'en'],
                     'components' => [
                         [

@@ -41,6 +41,8 @@ class InvoiceControllerZP extends Controller
                                     ->where('order_id', $orderId)
                                     ->get();
 
+        $mobileNumbers = array_unique(array_merge($adminNumbers, $managerNumbers));
+
         foreach($order_items as $item)
         {
             $filename = $item->product_code;
@@ -114,7 +116,7 @@ class InvoiceControllerZP extends Controller
         ]);
 
         $templateParams = [
-            'name' => 'ace_new_order_user', // Replace with your WhatsApp template name
+            'name' => 'ss_new_order_user', // Replace with your WhatsApp template name
             'language' => ['code' => 'en'],
             'components' => [
                 [
@@ -155,10 +157,12 @@ class InvoiceControllerZP extends Controller
         // Directly create an instance of SendWhatsAppUtility
         $whatsAppUtility = new sendWhatsAppUtility();
         
-        $response = $whatsAppUtility->sendWhatsApp('+918961043773', $templateParams, '', 'User Order Invoice');
+        // $response = $whatsAppUtility->sendWhatsApp($user->mobile, $templateParams, '', 'User Order Invoice');
+
+        $fileUrlWithTimestamp = $fileUrl . '?t=' . time();
 
         $templateParams = [
-            'name' => 'ace_new_order_admin', // Replace with your WhatsApp template name
+            'name' => 'ss_new_order_admin', // Replace with your WhatsApp template name
             'language' => ['code' => 'en'],
             'components' => [
                 [
@@ -167,7 +171,7 @@ class InvoiceControllerZP extends Controller
                         [
                             'type' => 'document',
                             'document' => [
-                                'link' =>  $fileUrl, // Replace with the actual URL to the PDF document
+                                'link' =>  $fileUrlWithTimestamp, // Replace with the actual URL to the PDF document
                                 'filename' => $sanitizedOrderId.'.pdf' // Optional: Set a custom file name for the PDF document
                             ]
                         ]
@@ -200,13 +204,23 @@ class InvoiceControllerZP extends Controller
             ],
         ];
 
-        $response = $whatsAppUtility->sendWhatsApp('+917003541353', $templateParams, '', 'Admin Order Invoice');
+        foreach ($mobileNumbers as $mobileNumber) 
+        {
+            if($mobileNumber == '+917003541353' || true)
+            {
+                // Send message for each number
+                $response = $whatsAppUtility->sendWhatsApp($mobileNumber, $templateParams, '', 'Admin Order Invoice');
 
-        $response = $whatsAppUtility->sendWhatsApp('+919908570858', $templateParams, '', 'Admin Order Invoice');
-        
+                // Check if the response has an error or was successful
+                if (isset($responseArray['error'])) 
+                {
+                    echo "Failed to send order to Whatsapp!";
+                }
+            }
+        }
 
         // // Assuming additional functionality such as WhatsApp integration etc.
-        // return $mpdf->Output('invoice.pdf', 'I');
-        return $fileUrl;
+        return $mpdf->Output('invoice.pdf', 'I');
+        // return $fileUrl;
     }
 }

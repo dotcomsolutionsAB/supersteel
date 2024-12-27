@@ -54,7 +54,7 @@ class CreateController extends Controller
 
 
             $templateParams = [
-                'name' => 'ace_new_user_registered', // Replace with your WhatsApp template name
+                'name' => 'ss_new_user_registered', // Replace with your WhatsApp template name
                 'language' => ['code' => 'en'],
                 'components' => [
                     [
@@ -133,7 +133,7 @@ class CreateController extends Controller
                         $whatsAppUtility = new sendWhatsAppUtility();
 
                         $templateParams = [
-                            'name' => 'ace_login_attempt', // Replace with your WhatsApp template name
+                            'name' => 'ss_login_attempt', // Replace with your WhatsApp template name
                             'language' => ['code' => 'en'],
                             'components' => [
                                 [
@@ -614,7 +614,7 @@ class CreateController extends Controller
             ->increment('counter');
 
             $templateParams = [
-                'name' => 'ace_new_invoice_user', // Replace with your WhatsApp template name
+                'name' => 'ss_new_invoice_user', // Replace with your WhatsApp template name
                 'language' => ['code' => 'en'],
                 'components' => [
                     [
