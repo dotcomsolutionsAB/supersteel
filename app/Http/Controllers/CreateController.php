@@ -32,20 +32,20 @@ class CreateController extends Controller
             'pincode' => 'required',
         ]);
         
-            $create_user = User::create([
-                'name' => $request->input('name'),
-                'password' => bcrypt($request->input('password')),
-                'email' => strtolower($request->input('email')),
-                'mobile' => $request->input('mobile'),
-                'role' => 'user',
-                'address_line_1' => $request->input('address_line_1'),
-                'address_line_2' => $request->input('address_line_2'),
-                'city' => $request->input('city'),
-                'pincode' => $request->input('pincode'),
-                'gstin' => $request->input('gstin'),
-                'state' => $request->input('state'),
-                'country' => $request->input('country'),
-            ]);
+        $create_user = User::create([
+            'name' => $request->input('name'),
+            'password' => bcrypt($request->input('password')),
+            'email' => strtolower($request->input('email')),
+            'mobile' => $request->input('mobile'),
+            'role' => 'user',
+            'address_line_1' => $request->input('address_line_1'),
+            'address_line_2' => $request->input('address_line_2'),
+            'city' => $request->input('city'),
+            'pincode' => $request->input('pincode'),
+            'gstin' => $request->input('gstin'),
+            'state' => $request->input('state'),
+            'country' => $request->input('country'),
+        ]);
 
         unset($create_user['id'], $create_user['created_at'], $create_user['updated_at']);
 
@@ -122,11 +122,6 @@ class CreateController extends Controller
                         'message' => 'OTP has expired.',
                     ], 200);
                 } else {
-
-                    // Retrieve the user
-                    $user = User::with('manager:id,mobile')
-                                ->where('mobile', $request->mobile)->first();
-
                     // Check if user is verified
                     if ($user->is_verified == '0') {
 
@@ -176,6 +171,10 @@ class CreateController extends Controller
                             'message' => 'Account not verified, you will receive a notification once your account is verified.',
                         ], 200);
                     }
+
+                    // Retrieve the user
+                    $user = User::with('manager:id,mobile')
+                                ->where('mobile', $request->mobile)->first();
 
                     // Remove OTP record after successful validation
                     User::select('otp')->where('mobile', $request->mobile)->update(['otp' => null, 'expires_at' => null]);
