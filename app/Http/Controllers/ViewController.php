@@ -127,6 +127,19 @@ class ViewController extends Controller
 
             // Loop through each product to check if it's in the cart
             foreach ($get_products as $product) {
+                // Extract video ID from video_link
+                if (!empty($product->video_link)) {
+                    // Parse the URL to get the query parameters
+                    parse_str(parse_url($product->video_link, PHP_URL_QUERY), $query_params);
+                    // Extract 'v' parameter (YouTube video ID) or other identifiers from shorts
+                    if (isset($query_params['v'])) {
+                        $product->video_link = $query_params['v'];
+                    } else {
+                        // For YouTube Shorts, get the last part of the URL
+                        $product->video_link = basename(parse_url($product->video_link, PHP_URL_PATH));
+                    }
+                }
+                
                 // Check if the product is in the user's cart
                 $cart_item = CartModel::where('user_id', $user_id)
                     ->where('product_code', $product->product_code)
