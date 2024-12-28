@@ -522,10 +522,10 @@ class ViewController extends Controller
             $get_user_details = User::select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country', 'app_status', 'last_viewed', 'alias')
                                     ->where('manager_id', Auth::id())
                                     ->get();
-
+            $currentTimestamp = now();
             $response = $get_user_details->map(function ($user) use ($currentTimestamp) {
                 // Calculate the time difference for last_viewed
-                $currentTimestamp = now();
+                
                 $lastViewedTimestamp = Carbon::parse($user->last_viewed);
                 $differenceInSeconds = $currentTimestamp->diffInSeconds($lastViewedTimestamp);
                 $last_viewed = '';
