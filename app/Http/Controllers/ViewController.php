@@ -721,7 +721,7 @@ class ViewController extends Controller
     {
         $get_user = Auth::User();
 
-        if($get_user->role == 'admin')
+        if($get_user->role == 'admin' || $get_user->role == 'manager')
         {
             //$get_items_for_user = CartModel::where('user_id', $id)->get();
 			$get_items_for_user = CartModel::where('t_cart.user_id', $id)
