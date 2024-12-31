@@ -41,7 +41,7 @@ class InvoiceControllerZP extends Controller
                                     ->where('order_id', $orderId)
                                     ->get();
 
-        $mobileNumbers = array_unique(array_merge($adminNumbers, $managerNumbers));
+        // $mobileNumbers = array_unique(array_merge($adminNumbers, $managerNumbers));
 
         foreach($order_items as $item)
         {

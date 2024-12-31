@@ -25,6 +25,7 @@ Route::prefix('admin')->middleware(['auth:sanctum', GetUserRole::class . ':admin
     Route::post('/category', [ViewController::class, 'categories']);
 
     Route::post('/add_order', [CreateController::class, 'orders']);
+    Route::post('/add_quotation', [CreateController::class, 'orders']);
     Route::post('/view_user_order/{id?}', [ViewController::class, 'orders_user_id']);
     Route::post('/add_order_items', [CreateController::class, 'orders_items']);
     Route::get('/view_order_items', [ViewController::class, 'order_items']);
@@ -66,6 +67,7 @@ Route::prefix('manager')->middleware(['auth:sanctum', GetUserRole::class . ':man
     Route::post('/sub_category', [ViewController::class, 'sub_category']);
 
     Route::post('/add_order', [CreateController::class, 'orders']);
+    Route::post('/add_quotation', [CreateController::class, 'orders']);
     Route::post('/view_user_order/{id?}', [ViewController::class, 'orders_user_id']);
     Route::post('/update_order/{id?}', [UpdateController::class, 'order']);
     Route::post('/complete_order/{id?}', [UpdateController::class, 'complete_order']);
