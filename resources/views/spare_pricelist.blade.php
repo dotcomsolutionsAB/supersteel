@@ -82,10 +82,6 @@
         .center-text {
             text-align: center;
         }
-
-        .header {
-            width: 100%;
-        }
     </style>
 </head>
 <body>
