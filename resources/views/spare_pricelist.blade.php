@@ -101,7 +101,7 @@
                     <td class="print-column">{{ $item->print_name }}</td>
                     <td>{{ $get_product_details->print_name }} - {{$get_product_details->product_code}}</td>
                     <td>{{ $item->price }}</td>
-                    <td><img src="{{ public_path($item->product_image)}}" alt="{{ $item->print_name }}"></td>
+                    <td><img width="80px" src="{{ public_path($item->product_image)}}" alt="{{ $item->print_name }}"></td>
                 </tr>
             @endforeach
         </tbody>
