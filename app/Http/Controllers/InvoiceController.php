@@ -352,10 +352,10 @@ class InvoiceController extends Controller
 
         else{
             $request->validate([
-                'user_id' => 'required|integer'
+                'id' => 'required|integer'
             ]);  
 
-            $id = $request->input('user_id');
+            $id = $request->input('id');
 
             $get_user_price = User::select('price_type', 'name')->where('id', $id)->first();
 
@@ -383,9 +383,7 @@ class InvoiceController extends Controller
             case 'e':
                 $price_column = 'price_e';
                 break;
-            // Add more cases as needed
             default:
-            // In case of no matching price type, select all price columns
                 $price_column = 'price_a';
                 break;
         }
