@@ -55,7 +55,7 @@
 
         /* Image styling */
         img {
-            width: 80px;
+            /* width: 80px; */
             height: auto;
         }
 
