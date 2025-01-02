@@ -380,8 +380,8 @@ class InvoiceController extends Controller
             case 'd':
                 $price_column = 'price_d';
                 break;
-            case 'e':
-                $price_column = 'price_e';
+            case 'i':
+                $price_column = 'price_i';
                 break;
             default:
                 $price_column = 'price_a';

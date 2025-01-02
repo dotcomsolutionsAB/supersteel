@@ -83,8 +83,8 @@
             text-align: center;
         }
 
-        .header-box {
-            width: auto;
+        .header {
+            width: 100%;
         }
     </style>
 </head>
