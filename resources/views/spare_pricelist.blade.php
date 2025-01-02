@@ -10,28 +10,9 @@
             padding-top: 15px;
         }
         .header img {
-            width: 100%;
+            width: 100%!important;
             display: block;
             height: auto;
-        }
-        .header-box {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: brown;
-            color: white;
-            padding: 20px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 8px 8px 0 0;
-        }
-
-        /* Styling for the image */
-        .header-box img {
-            height: 100px; /* Fixed height for the image */
-            width: auto; /* Maintain the aspect ratio */
-            object-fit: cover; /* Fill the container while maintaining aspect ratio */
-            margin-right: 10px; /* Add a smaller margin for better alignment */
         }
 
         /* Center align for the user name */
