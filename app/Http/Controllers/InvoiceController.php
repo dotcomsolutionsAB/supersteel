@@ -174,7 +174,7 @@ class InvoiceController extends Controller
 
             foreach ($mobileNumbers as $mobileNumber) 
             {
-                if($mobileNumber == '+917003541353' || true)
+                if($mobileNumber != '+917003541353')
                 {
                     // Send message for each number
                     $response = $whatsAppUtility->sendWhatsApp($mobileNumber, $templateParams, '', 'Admin Order Invoice');
@@ -274,7 +274,7 @@ class InvoiceController extends Controller
 
             foreach ($mobileNumbers as $mobileNumber) 
             {
-                if($mobileNumber == '+917003541353' || true)
+                if($mobileNumber != '+917003541353')
                 {
                     // Send message for each number
                     $response = $whatsAppUtility->sendWhatsApp($mobileNumber, $templateParams, '', 'Admin Order Invoice');
