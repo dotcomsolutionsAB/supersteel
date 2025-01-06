@@ -225,7 +225,7 @@ class CsvImportController extends Controller
             ->first();
 
             // $filename = strtolower(str_replace(' ', '_', $category_records_csv['Name']));
-            $filename = $category_records_csv['CAT 1'].$category_records_csv['CAT 2'].$category_records_csv['CAT 3'].".jpg";
+            $filename = $category_records_csv['CAT 1'].$category_records_csv['CAT 2'].$category_records_csv['CAT 3'];
 
             // Define the product and category image paths
             $categoryImagePath = "/storage/uploads/category/{$filename}.jpg";
@@ -235,7 +235,8 @@ class CsvImportController extends Controller
             // Check if the category image exists
             if (file_exists(public_path($categoryImagePath))) {
                 $imagePath = $categoryImagePath;
-            } elseif (file_exists(public_path($productImagePath))) {
+            } 
+            elseif (file_exists(public_path($productImagePath))) {
                 // Check if the product image exists
                 $imagePath = $productImagePath;
             } else {
