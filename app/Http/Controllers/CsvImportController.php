@@ -224,9 +224,8 @@ class CsvImportController extends Controller
             ->where('cat_1', $category_records_csv['CAT 1'])
             ->first();
 
-
             // $filename = strtolower(str_replace(' ', '_', $category_records_csv['Name']));
-            $filename = $category_records_csv['PHOTO'];
+            $filename = $category_records_csv['CAT 1'].$category_records_csv['CAT 2'].$category_records_csv['CAT 3'].".jpg";
 
             // Define the product and category image paths
             $categoryImagePath = "/storage/uploads/category/{$filename}.jpg";
