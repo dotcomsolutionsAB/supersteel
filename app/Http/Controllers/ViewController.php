@@ -204,8 +204,9 @@ class ViewController extends Controller
         }
 
         // Logic for getting spares
-        $user_price_type = User::where('id', $user_id)
-            ->value('price_type'); // Fetch price_type as a single value
+        $user_price_type = User::select('price_type')
+                                ->where('id', $user_id)
+                                ->get();
 
         
         $price_type = $user_price_type[0]['price_type'];
