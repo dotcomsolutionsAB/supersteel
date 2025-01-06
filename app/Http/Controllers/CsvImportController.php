@@ -98,38 +98,25 @@ class CsvImportController extends Controller
         // URL of the CSV file from Google Sheets
         $get_product_user_url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSoVot_t3TuRNSNBnz_vCeeeKpMXSap3pPvoers6QuVAIp3Gr32EbE56GSZitCrdGTLudR4vvATlPnD/pub?gid=1797389278&single=true&output=csv';
 
-        // Fetch the CSV content using file_get_contents
+        // Fetch the CSV content
         $csvContent_user = file_get_contents($get_product_user_url);
 
-        // Fetch and parse the CSV
+        // Parse the CSV
         $csv_user = Reader::createFromString($csvContent_user);
         $csv_user->setHeaderOffset(0);
 
-        $records_user = (new Statement())->process($csv_user);
+        $records_user = collect((new Statement())->process($csv_user)->getRecords());
 
-        // Pre-fetch existing users and managers
-        $existingUsers = User::whereIn('mobile', collect($records_user)->pluck('Mobile')->map(function ($mobile) {
-            return strlen($mobile) == 10 ? '+91' . $mobile : (strlen($mobile) == 12 ? '+' . $mobile : $mobile);
-        }))->get()->keyBy('mobile');
-
-        $managerNames = collect($records_user)->pluck('Manager')->unique()->filter();
-        $existingManagers = User::whereIn('name', $managerNames)->get()->keyBy('name');
-
-        $insertData = [];
-        $updateData = [];
-
-        foreach ($records_user as $record_user) {
-            $mobile = strlen($record_user['Mobile']) == 10 ? '+91' . $record_user['Mobile'] : (strlen($record_user['Mobile']) == 12 ? '+' . $record_user['Mobile'] : $record_user['Mobile']);
-
-            if (!$mobile) continue; // Skip invalid mobile numbers
-
-            $manager_id = isset($existingManagers[$record_user['Manager']]) ? $existingManagers[$record_user['Manager']]->id : null;
-
-            $user = $existingUsers[$mobile] ?? null;
-
-            $commonData = [
+        // Normalize mobiles and prepare data
+        $users = $records_user->map(function ($record_user) {
+            $mobile = strlen($record_user['Mobile']) == 10 
+                ? '+91' . $record_user['Mobile'] 
+                : (strlen($record_user['Mobile']) == 12 ? '+' . $record_user['Mobile'] : $record_user['Mobile']);
+            
+            return [
+                'mobile' => $mobile,
                 'name' => $record_user['Print Name'],
-                'manager_id' => $manager_id,
+                'manager' => $record_user['Manager'],
                 'alias' => $record_user['Alias'],
                 'email' => $record_user['Email'] ?? null,
                 'password' => bcrypt($mobile),
@@ -144,26 +131,71 @@ class CsvImportController extends Controller
                 'transport' => $record_user['Transport'],
                 'price_type' => strtolower($record_user['PRICE CAT']),
             ];
+        });
 
-            if ($user) {
-                // Prepare for bulk update if any data has changed
-                $updateData[$mobile] = array_merge($commonData, ['id' => $user->id]);
+        // Fetch existing users and managers
+        $mobiles = $users->pluck('mobile');
+        $existingUsers = User::whereIn('mobile', $mobiles)->get()->keyBy('mobile');
+
+        $managers = $users->pluck('manager')->filter()->unique();
+        $existingManagers = User::whereIn('name', $managers)->get()->keyBy('name');
+
+        $insertData = [];
+        $updateData = [];
+
+        foreach ($users as $user) {
+            $manager_id = $existingManagers[$user['manager']]->id ?? null;
+
+            if (isset($existingUsers[$user['mobile']])) {
+                // Prepare update data
+                $updateData[] = [
+                    'id' => $existingUsers[$user['mobile']]->id,
+                    'name' => $user['name'],
+                    'manager_id' => $manager_id,
+                    'alias' => $user['alias'],
+                    'email' => $user['email'],
+                    'password' => $user['password'],
+                    'address_line_1' => $user['address_line_1'],
+                    'address_line_2' => $user['address_line_2'],
+                    'address_line_3' => $user['address_line_3'],
+                    'city' => $user['city'],
+                    'pincode' => $user['pincode'],
+                    'gstin' => $user['gstin'],
+                    'state' => $user['state'],
+                    'billing_style' => $user['billing_style'],
+                    'transport' => $user['transport'],
+                    'price_type' => $user['price_type'],
+                ];
             } else {
-                // Prepare for bulk insert
-                $insertData[] = array_merge(['mobile' => $mobile], $commonData);
+                // Prepare insert data
+                $insertData[] = array_merge($user, ['manager_id' => $manager_id]);
             }
         }
 
-        // Bulk insert new users
+        // Perform bulk insert for new records
         if (!empty($insertData)) {
             User::insert($insertData);
         }
 
-        // Bulk update existing users
+        // Perform bulk update using raw query
         if (!empty($updateData)) {
+            $updateQuery = '';
             foreach ($updateData as $data) {
-                User::where('id', $data['id'])->update($data);
+                $updateQuery .= sprintf(
+                    "UPDATE users SET 
+                        name = '%s', manager_id = %d, alias = '%s', email = '%s',
+                        password = '%s', address_line_1 = '%s', address_line_2 = '%s',
+                        address_line_3 = '%s', city = '%s', pincode = %s, gstin = '%s',
+                        state = '%s', billing_style = '%s', transport = '%s', price_type = '%s'
+                    WHERE id = %d;",
+                    addslashes($data['name']), $data['manager_id'], addslashes($data['alias']), addslashes($data['email']),
+                    addslashes($data['password']), addslashes($data['address_line_1']), addslashes($data['address_line_2']),
+                    addslashes($data['address_line_3']), addslashes($data['city']), $data['pincode'], addslashes($data['gstin']),
+                    addslashes($data['state']), addslashes($data['billing_style']), addslashes($data['transport']), 
+                    addslashes($data['price_type']), $data['id']
+                );
             }
+            DB::unprepared($updateQuery); // Execute the raw query in one go
         }
 
         return response()->json(['message' => 'Users imported successfully'], 200);
