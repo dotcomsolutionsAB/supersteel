@@ -185,11 +185,28 @@ class ViewController extends Controller
 	
     public function get_spares(Request $request, $code = null)
     {
-        $user_id = $request->input('user_id');  // Assuming the user ID is provided in the request
+        // $user_id = $request->input('user_id');  // Assuming the user ID is provided in the request
 
-        $user_price_type = User::select('price_type')
-                                ->where('id', $user_id)
-                                ->get();
+        // $user_price_type = User::select('price_type')
+        //                         ->where('id', $user_id)
+        //                         ->get();
+
+        $get_user = Auth::user(); // Get the authenticated user
+
+        if ($get_user->role === 'user') {
+            $user_id = $get_user->id;
+        } else {
+            // Validate and retrieve the user_id for non-user roles
+            $request->validate([
+                'user_id' => 'required|exists:users,id', // Ensure user_id exists in the users table
+            ]);
+            $user_id = $request->input('user_id');
+        }
+
+        // Logic for getting spares
+        $user_price_type = User::where('id', $user_id)
+            ->value('price_type'); // Fetch price_type as a single value
+
         
         $price_type = $user_price_type[0]['price_type'];
         // Initialize the default query
