@@ -207,7 +207,6 @@ class ViewController extends Controller
         $user_price_type = User::select('price_type')
                                 ->where('id', $user_id)
                                 ->get();
-
         
         $price_type = $user_price_type[0]['price_type'];
         // Initialize the default query
