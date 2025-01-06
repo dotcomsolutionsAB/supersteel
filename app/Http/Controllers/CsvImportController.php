@@ -97,107 +97,78 @@ class CsvImportController extends Controller
     {
         // URL of the CSV file from Google Sheets
         $get_product_user_url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSoVot_t3TuRNSNBnz_vCeeeKpMXSap3pPvoers6QuVAIp3Gr32EbE56GSZitCrdGTLudR4vvATlPnD/pub?gid=1797389278&single=true&output=csv';
-        // $get_product_user_url = 'C:\Users\Dot com\Downloads\dummy_invoice_data.csv';
 
         // Fetch the CSV content using file_get_contents
         $csvContent_user = file_get_contents($get_product_user_url);
 
         // Fetch and parse the CSV
         $csv_user = Reader::createFromString($csvContent_user);
-
-        $csv_user->setHeaderOffset(0); // Set the header offset
+        $csv_user->setHeaderOffset(0);
 
         $records_user = (new Statement())->process($csv_user);
 
-        $get_insert_response = null;
-        $get_update_response = null;
+        // Pre-fetch existing users and managers
+        $existingUsers = User::whereIn('mobile', collect($records_user)->pluck('Mobile')->map(function ($mobile) {
+            return strlen($mobile) == 10 ? '+91' . $mobile : (strlen($mobile) == 12 ? '+' . $mobile : $mobile);
+        }))->get()->keyBy('mobile');
 
-        // Iterate through each record and create or update the product
+        $managerNames = collect($records_user)->pluck('Manager')->unique()->filter();
+        $existingManagers = User::whereIn('name', $managerNames)->get()->keyBy('name');
+
+        $insertData = [];
+        $updateData = [];
+
         foreach ($records_user as $record_user) {
+            $mobile = strlen($record_user['Mobile']) == 10 ? '+91' . $record_user['Mobile'] : (strlen($record_user['Mobile']) == 12 ? '+' . $record_user['Mobile'] : $record_user['Mobile']);
 
-            if (strlen($record_user['Mobile']) == 10) {
-                // If it's 10 digits, add '+91' prefix
-                $mobile = '+91' . $record_user['Mobile'];
-            } elseif (strlen($record_user['Mobile']) == 12) {
-                // If it's 12 digits, add '+' prefix
-                $mobile = '+' . $record_user['Mobile'];
+            if (!$mobile) continue; // Skip invalid mobile numbers
+
+            $manager_id = isset($existingManagers[$record_user['Manager']]) ? $existingManagers[$record_user['Manager']]->id : null;
+
+            $user = $existingUsers[$mobile] ?? null;
+
+            $commonData = [
+                'name' => $record_user['Print Name'],
+                'manager_id' => $manager_id,
+                'alias' => $record_user['Alias'],
+                'email' => $record_user['Email'] ?? null,
+                'password' => bcrypt($mobile),
+                'address_line_1' => $record_user['Address Line 1'],
+                'address_line_2' => $record_user['Address Line 2'],
+                'address_line_3' => $record_user['Address Line 3'],
+                'city' => $record_user['City'],
+                'pincode' => $record_user['Pincode'] !== '' ? $record_user['Pincode'] : null,
+                'gstin' => $record_user['GSTIN'],
+                'state' => $record_user['State'],
+                'billing_style' => $record_user['Billing Style'],
+                'transport' => $record_user['Transport'],
+                'price_type' => strtolower($record_user['PRICE CAT']),
+            ];
+
+            if ($user) {
+                // Prepare for bulk update if any data has changed
+                $updateData[$mobile] = array_merge($commonData, ['id' => $user->id]);
             } else {
-                $mobile = $record_user['Mobile'];
+                // Prepare for bulk insert
+                $insertData[] = array_merge(['mobile' => $mobile], $commonData);
             }
-
-            $user_csv = User::where('mobile', $mobile)->first();
-
-            $manager_name = $record_user['Manager'];
-
-            $manager = User::where('name', $manager_name)->first();
-            if ($manager) {
-                $manager_id = $manager->id; // Get the manager ID
-            } else {
-                $manager_id = null;
-            }
-
-            // Handle potential empty values for email, pincode, and markup
-            $email_user = !empty($record_user['Email']) ? $record_user['Email'] : null;
-            $pincode_user = $record_user['Pincode'] !== '' ? $record_user['Pincode'] : null;
-
-            if($mobile != '')
-                {
-                if ($user_csv) 
-                {
-                    // If user exists, update it
-                    $get_update_response = $user_csv->update([
-                        'name' => $record_user['Print Name'],
-                        'manager_id' => $manager_id,
-                        'alias' => $record_user['Alias'],
-                        'email' => $email_user,
-                        'password' => bcrypt($mobile),
-                        'address_line_1' => $record_user['Address Line 1'],
-                        'address_line_2' => $record_user['Address Line 2'],
-                        'address_line_3' => $record_user['Address Line 3'],
-                        'city' => $record_user['City'],
-                        'pincode' => $pincode_user,// Ensure this is a valid number
-                        'gstin' => $record_user['GSTIN'],
-                        'state' => $record_user['State'],
-                        // 'country' => $record_user['Country'],
-                        'billing_style' => $record_user['Billing Style'],
-                        'transport' => $record_user['Transport'],
-                        'price_type' => strtolower($record_user['PRICE CAT']),
-
-                    ]);
-                } 
-                else 
-                {
-                    // If user does not exist, create a new one
-                    $get_insert_response = User::create([
-                        'mobile' => $mobile,
-                        'name' => $record_user['Print Name'],
-                        'manager_id' => $manager_id,
-                        'alias' => $record_user['Alias'],
-                        'email' => $email_user,
-                        'password' => bcrypt($mobile),
-                        'address_line_1' => $record_user['Address Line 1'],
-                        'address_line_2' => $record_user['Address Line 2'],
-                        'address_line_3' => $record_user['Address Line 3'],
-                        'city' => $record_user['City'],
-                        'pincode' => $pincode_user,// Ensure this is a valid number
-                        'gstin' => $record_user['GSTIN'],
-                        'state' => $record_user['State'],
-                        // 'country' => $record_user['Country'],
-                        'billing_style' => $record_user['Billing Style'],
-                        'transport' => $record_user['Transport'],
-                        'price_type' => strtolower($record_user['PRICE CAT']),
-                    ]);
-                }
-            }
-        }   
-
-        if ($get_update_response == 1 || isset($get_insert_response)) {
-            return response()->json(['message' => 'Users imported successfully'], 200);
         }
-        else {
-            return response()->json(['message' => 'Sorry, failed to imported successfully'], 404);
+
+        // Bulk insert new users
+        if (!empty($insertData)) {
+            User::insert($insertData);
         }
+
+        // Bulk update existing users
+        if (!empty($updateData)) {
+            foreach ($updateData as $data) {
+                User::where('id', $data['id'])->update($data);
+            }
+        }
+
+        return response()->json(['message' => 'Users imported successfully'], 200);
     }
+
 
     public function importCategory()
     {
