@@ -430,9 +430,13 @@ class InvoiceController extends Controller
 
             return $fileUrl; // Return the file URL for the blank PDF
         }
-              
-        // Load the Blade view and pass the data
-        $html = view('spare_pricelist', compact('get_product_details', 'get_record', 'user_name'))->render();
+        
+        if($get_user->role == 'user') {
+            // Load the Blade view and pass the data
+            $html = view('spare_pricelist_user', compact('get_product_details', 'get_record', 'user_name'))->render();
+        }else{
+            $html = view('spare_pricelist', compact('get_product_details', 'get_record', 'user_name'))->render();
+        }
 
         // create the instance of Mpdf
         $mpdf = new Mpdf();
