@@ -110,6 +110,8 @@ class CsvImportController extends Controller
         // Pre-fetch existing users and managers
         $existingUsers = User::whereIn('mobile', collect($records_user)->pluck('Mobile')->map(function ($mobile) {
             return strlen($mobile) == 10 ? '+91' . $mobile : (strlen($mobile) == 12 ? '+' . $mobile : $mobile);
+        }))->orWhereIn('mobile', collect($records_user)->pluck('Secondary Mobile')->map(function ($mobile) {
+            return strlen($mobile) == 10 ? '+91' . $mobile : (strlen($mobile) == 12 ? '+' . $mobile : $mobile);
         }))->get()->keyBy('mobile');
 
         $managerNames = collect($records_user)->pluck('Manager')->unique()->filter();
@@ -120,12 +122,15 @@ class CsvImportController extends Controller
 
         foreach ($records_user as $record_user) {
             $mobile = strlen($record_user['Mobile']) == 10 ? '+91' . $record_user['Mobile'] : (strlen($record_user['Mobile']) == 12 ? '+' . $record_user['Mobile'] : $record_user['Mobile']);
+            $secondaryMobile = isset($record_user['Secondary Mobile']) && $record_user['Secondary Mobile'] !== ''
+                ? (strlen($record_user['Secondary Mobile']) == 10 ? '+91' . $record_user['Secondary Mobile'] : (strlen($record_user['Secondary Mobile']) == 12 ? '+' . $record_user['Secondary Mobile'] : $record_user['Secondary Mobile']))
+                : null;
 
-            if (!$mobile) continue; // Skip invalid mobile numbers
+            if (!$mobile) continue; // Skip invalid primary mobile numbers
 
             $manager_id = isset($existingManagers[$record_user['Manager']]) ? $existingManagers[$record_user['Manager']]->id : null;
 
-            $user = $existingUsers[$mobile] ?? null;
+            $notifications = isset($record_user['Notifications']) && strtolower($record_user['Notifications']) === 'yes' ? 1 : 0;
 
             $commonData = [
                 'name' => $record_user['Print Name'],
@@ -142,15 +147,31 @@ class CsvImportController extends Controller
                 'state' => $record_user['State'],
                 'billing_style' => $record_user['Billing Style'],
                 'transport' => $record_user['Transport'],
-                'price_type' => strtolower($record_user['PRICE CAT']),
+                'notifications' => $notifications,
             ];
+
+            // Update or insert primary mobile user
+            $user = $existingUsers[$mobile] ?? null;
+            $primaryData = array_merge($commonData, ['price_type' => strtolower($record_user['PRICE CAT'])]);
 
             if ($user) {
                 // Prepare for bulk update if any data has changed
-                $updateData[$mobile] = array_merge($commonData, ['id' => $user->id]);
+                $updateData[$mobile] = array_merge($primaryData, ['id' => $user->id]);
             } else {
                 // Prepare for bulk insert
-                $insertData[] = array_merge(['mobile' => $mobile], $commonData);
+                $insertData[] = array_merge(['mobile' => $mobile], $primaryData);
+            }
+
+            // Update or insert secondary mobile user
+            if ($secondaryMobile) {
+                $secondaryUser = $existingUsers[$secondaryMobile] ?? null;
+                $secondaryData = array_merge($commonData, ['price_type' => 'zero_price']);
+
+                if ($secondaryUser) {
+                    $updateData[$secondaryMobile] = array_merge($secondaryData, ['id' => $secondaryUser->id]);
+                } else {
+                    $insertData[] = array_merge(['mobile' => $secondaryMobile], $secondaryData);
+                }
             }
         }
 
@@ -168,6 +189,7 @@ class CsvImportController extends Controller
 
         return response()->json(['message' => 'Users imported successfully'], 200);
     }
+
 
 
     public function importCategory()
