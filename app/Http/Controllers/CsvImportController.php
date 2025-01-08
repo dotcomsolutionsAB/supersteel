@@ -130,7 +130,7 @@ class CsvImportController extends Controller
 
             $manager_id = isset($existingManagers[$record_user['Manager']]) ? $existingManagers[$record_user['Manager']]->id : null;
 
-            $notifications = isset($record_user['Notifications']) && strtolower($record_user['Notifications']) === 'yes' ? 1 : 0;
+            $notifications = isset($record_user['Notifications']) && strtolower($record_user['Notifications']) === 'true' ? 1 : 0;
 
             $commonData = [
                 'name' => $record_user['Print Name'],
