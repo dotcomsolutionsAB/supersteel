@@ -225,8 +225,11 @@ class InvoiceController extends Controller
                     ]
                 ],
             ];
+            if($user->notifications === 1)
+            {
+                $response = $whatsAppUtility->sendWhatsApp($user->mobile, $templateParams, '', 'User Order Invoice');
+            }
             
-            // $response = $whatsAppUtility->sendWhatsApp($user->mobile, $templateParams, '', 'User Order Invoice');
         }else{
             $fileUrlWithTimestamp = $fileUrl . '?t=' . time();
             $templateParams = [
@@ -325,8 +328,10 @@ class InvoiceController extends Controller
                     ]
                 ],
             ];
-
-            // $response = $whatsAppUtility->sendWhatsApp($user->mobile, $templateParams, '', 'User Order Invoice');
+            if($user->notifications === 1)
+            {
+                $response = $whatsAppUtility->sendWhatsApp($user->mobile, $templateParams, '', 'User Order Invoice');
+            }
         }
         
 

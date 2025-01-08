@@ -38,7 +38,8 @@ class User extends Authenticatable
         'alias',
         'billing_style',
         'transport',
-        'price_type'
+        'price_type',
+        'notifications'
     ];
 
     /**
