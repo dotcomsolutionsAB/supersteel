@@ -514,19 +514,17 @@ class InvoiceController extends Controller
                 break;
         }
 
-        // $get_product_details = ProductModel::select('product_name', 'print_name', 'product_code', 'product_image')
-        //                                     ->where('product_code', $code)
-        //                                     ->first();
+        
 
         // Build the query
-        $get_product_details = ProductModel::select('product_name', 'product_code', 'brand', DB::raw("$price_column as price"), 'product_image');
+        $query = ProductModel::select('product_name', 'product_code', 'brand', DB::raw("$price_column as price"), 'product_image');
 
         if ($category) {
-            $get_product_details->where('category', $category);
+            $query->where('category', $category);
         }
 
         if ($search_text) {
-            $get_product_details->where(function ($q) use ($search_text) {
+            $query->where(function ($q) use ($search_text) {
                 $q->where('product_name', 'LIKE', "%$search_text%")
                 ->orWhere('product_code', 'LIKE', "%$search_text%")
                 ->orWhere('name_in_hindi', 'LIKE', "%$search_text%")
@@ -535,9 +533,9 @@ class InvoiceController extends Controller
         }
 
         // Limit the results to 200
-        $products = $get_product_details->take(200)->get();
+        $get_product_details = $query->take(200)->get();
 
-        if ($products->isEmpty()) {
+        if ($get_product_details->isEmpty()) {
             return response()->json(['message' => 'No products found.'], 404);
         }
 
