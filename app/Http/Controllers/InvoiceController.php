@@ -397,13 +397,6 @@ class InvoiceController extends Controller
                                             ->where('product_code', $code)
                                             ->first();
 
-
-        $get_record = $query->select('product_code', 'print_name', 'brand', DB::raw("$price_column as price"), 'product_image')
-              ->where('machine_part_no', $code)
-              ->skip(1) // Skip the first record
-              ->take(PHP_INT_MAX) // Take all remaining records
-              ->get();
-
         if (count($get_record) == 0)
         {
             $mpdf = new Mpdf();
@@ -519,6 +512,7 @@ class InvoiceController extends Controller
         // Build the query
         $query = ProductModel::select('product_name', 'product_code', 'brand', DB::raw("$price_column as price"), 'product_image');
 
+        
         if ($category) {
             $query->where('category', $category);
         }
@@ -534,6 +528,12 @@ class InvoiceController extends Controller
 
         // Limit the results to 200
         $get_product_details = $query->take(200)->get();
+
+        $get_record = $query->select('product_code', 'print_name', 'brand', DB::raw("$price_column as price"), 'product_image')
+              ->where('machine_part_no', $code)
+              ->skip(1) // Skip the first record
+              ->take(PHP_INT_MAX) // Take all remaining records
+              ->get();
 
         if ($get_product_details->isEmpty()) {
             return response()->json(['message' => 'No products found.'], 404);

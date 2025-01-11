@@ -94,13 +94,13 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($get_record as $index => $item)
+            @foreach($get_product_details as $index => $item)
                 <tr>
                     <td>{{ $index + 1 }}</td> <!-- S.NO -->
-                    <td><img width="80px" src="{{ public_path($get_product_details->product_image)}}" alt="{{ $item->print_name }}"></td>
+                    <td><img width="80px" src="{{ public_path($item->product_image)}}" alt="{{ $item->print_name }}"></td>
                     <td>{{ $item->product_code }}</td>
                     <td class="print-column">{{ $item->print_name }}</td>
-                    <td>{{ $get_product_details->print_name }} - {{$get_product_details->product_code}}</td>
+                    <td>{{ $item->print_name }} - {{$item->product_code}}</td>
                     <td>{{ $item->price }}</td>
                 </tr>
             @endforeach
