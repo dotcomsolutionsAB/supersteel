@@ -540,7 +540,7 @@ class InvoiceController extends Controller
         }
 
         // Generate HTML content for the PDF
-        $html = view('price_list', compact('products', 'user_name'))->render();
+        $html = view('price_list', compact('get_product_details', 'user_name'))->render();
 
         // Create an instance of Mpdf
         $mpdf = new Mpdf();
