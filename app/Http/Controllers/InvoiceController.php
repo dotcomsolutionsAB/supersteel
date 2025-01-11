@@ -517,7 +517,9 @@ class InvoiceController extends Controller
         
 
         // Build the query
-        $query = ProductModel::select('product_name', 'product_code', 'brand', DB::raw("$price_column as price"), 'product_image');
+        $query = ProductModel::select('product_name','print_name', 'product_code', 'brand', DB::raw("$price_column as price"), 'product_image')
+    ->where('product_image', '!=', '');
+
 
         if ($category) {
             $query->where('category', $category);
@@ -534,6 +536,7 @@ class InvoiceController extends Controller
 
         // Limit the results to 200
         $get_product_details = $query->take(200)->get();
+		//dd($get_product_details[0]->product_image);
 
         if ($get_product_details->isEmpty()) {
             return response()->json(['message' => 'No products found.'], 404);

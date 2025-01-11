@@ -67,15 +67,6 @@
 </head>
 <body>
     <!-- Title Box -->
-    <!-- <div class="header-box">
-        <img src="{{ public_path($get_product_details->product_image) }}" alt="Product Image">
-        <div class="username">
-            {{ $user_name }}
-        </div>
-        <div class="product-details">
-            {{ $get_product_details->print_name }} - {{$get_product_details->product_code}}
-        </div>
-    </div> -->
 
     <div class="header">
         <img src="{{ asset('storage/uploads/s1.jpg') }}" alt="Logo" width="100%">
@@ -86,23 +77,21 @@
         <thead>
             <tr>
                 <th class="center-text">S.NO</th>
-                <th class="center-text">Image</th>
+                <th class="center-text">IMAGE</th>
                 <th class="center-text">ITEM NO</th>
                 <th class="center-text">ITEM</th>
-                <th class="center-text">MODEL</th>
                 <th class="center-text">PRICE</th>
             </tr>
         </thead>
         <tbody>
             @foreach($get_product_details as $index => $item)
-                <tr>
-                    <td>{{ $index + 1 }}</td> <!-- S.NO -->
-                    <td><img width="80px" src="{{ public_path($item->product_image)}}" alt="{{ $item->print_name }}"></td>
-                    <td>{{ $item->product_code }}</td>
-                    <td class="print-column">{{ $item->print_name }}</td>
-                    <td>{{ $item->print_name }} - {{$item->product_code}}</td>
-                    <td>{{ $item->price }}</td>
-                </tr>
+				<tr>
+					<td class="center-text">{{ $index + 1 }}</td>
+					<td class="center-text"><img width="80px" src="{{ public_path($item->product_image)}}" alt="{{ $item->print_name }}"></td>
+					<td class="center-text">{{ $item->product_code }}</td>
+					<td class="center-text">{{ $item->print_name }}</td>
+					<td class="center-text">{{ $item->price }}</td>
+				</tr>
             @endforeach
         </tbody>
     </table>
