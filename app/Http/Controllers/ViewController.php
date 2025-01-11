@@ -621,20 +621,22 @@ class ViewController extends Controller
 
     public function orders()
     {
-        $get_all_orders = OrderModel::with('user')->get();
-        
-        $formatted_order = $get_all_orders->map(function ($order_rec)
-        {
+        // Fetch all orders with the user relationship, ordered by id descending
+        $get_all_orders = OrderModel::with('user')->orderBy('id', 'desc')->get();
+
+        // Format the orders by removing specific fields
+        $formatted_order = $get_all_orders->map(function ($order_rec) {
             $order_rec_arr = $order_rec->toArray();
             unset($order_rec_arr['created_at'], $order_rec_arr['updated_at']);
             return $order_rec_arr;
         });
 
+        // Return the response
         return isset($formatted_order) && $formatted_order !== null
-        ? response()->json(['Fetch data successfully!', 'data' => $formatted_order], 200)
-        : response()->json(['Sorry, Failed to fetch data'], 404);
-
+            ? response()->json(['message' => 'Fetch data successfully!', 'data' => $formatted_order], 200)
+            : response()->json(['message' => 'Sorry, failed to fetch data'], 404);
     }
+
 
     public function orders_user_id(Request $request, $id = null)
     {
