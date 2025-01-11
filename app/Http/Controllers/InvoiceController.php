@@ -465,4 +465,106 @@ class InvoiceController extends Controller
         return $fileUrl;
 
     }
+
+    public function price_list(Request $request)
+    {
+        // Accept parameters
+        $category = $request->input('category');
+        $search_text = $request->input('search_text');
+
+        // Get the authenticated user
+        $get_user = Auth::User();
+
+        // Determine price type and user name based on role
+        if ($get_user->role == 'user') {
+            $user_price = $get_user->price_type;
+            $user_name = $get_user->name;
+        } else {
+            $request->validate([
+                'id' => 'required|integer'
+            ]);
+
+            $id = $request->input('id');
+            $get_user_price = User::select('price_type', 'name')->where('id', $id)->first();
+
+            $user_price = $get_user_price->price_type;
+            $user_name = $get_user_price->name;
+        }
+
+        // Map price type to the corresponding column
+        $price_column = '';
+        switch ($user_price) {
+            case 'a':
+                $price_column = 'price_a';
+                break;
+            case 'b':
+                $price_column = 'price_b';
+                break;
+            case 'c':
+                $price_column = 'price_c';
+                break;
+            case 'd':
+                $price_column = 'price_d';
+                break;
+            case 'i':
+                $price_column = 'price_i';
+                break;
+            default:
+                $price_column = 'price_a';
+                break;
+        }
+
+        // Build the query
+        $query = ProductModel::select('product_name', 'product_code', 'brand', DB::raw("$price_column as price"), 'product_image');
+
+        if ($category) {
+            $query->where('category', $category);
+        }
+
+        if ($search_text) {
+            $query->where(function ($q) use ($search_text) {
+                $q->where('product_name', 'LIKE', "%$search_text%")
+                ->orWhere('product_code', 'LIKE', "%$search_text%")
+                ->orWhere('name_in_hindi', 'LIKE', "%$search_text%")
+                ->orWhere('name_in_telugu', 'LIKE', "%$search_text%");
+            });
+        }
+
+        // Limit the results to 200
+        $products = $query->take(200)->get();
+
+        if ($products->isEmpty()) {
+            return response()->json(['message' => 'No products found.'], 404);
+        }
+
+        // Generate HTML content for the PDF
+        $html = view('price_list', compact('products', 'user_name'))->render();
+
+        // Create an instance of Mpdf
+        $mpdf = new Mpdf();
+
+        // Write the HTML content to the PDF
+        $mpdf->writeHTML($html);
+
+        // Define the file path and name
+        $publicPath = 'uploads/price_list/';
+        $timestamp = now()->format('Ymd_His'); // Generate a timestamp
+        $fileName = 'price_list_' . $timestamp . '.pdf'; // Append timestamp to the file name
+        $filePath = storage_path('app/public/' . $publicPath . $fileName);
+
+        // Create the directory if it doesn't exist
+        if (!File::isDirectory($storage_path = storage_path('app/public/' . $publicPath))) {
+            File::makeDirectory($storage_path, 0755, true);
+        }
+
+        // Save the PDF to the file system
+        $mpdf->Output($filePath, 'F');
+
+        // Generate the file URL
+        $fileUrl = asset('storage/' . $publicPath . $fileName);
+
+        return $fileUrl;
+    }
+
+
 }

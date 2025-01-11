@@ -52,6 +52,7 @@ Route::prefix('admin')->middleware(['auth:sanctum', GetUserRole::class . ':admin
 
     Route::post('/spare_product/{code?}', [ViewController::class, 'get_spares']);
     Route::post('/spares_pricelist/{code}', [InvoiceController::class, 'price_spares']);
+    Route::post('/pricelist', [InvoiceController::class, 'price_list']);
 });
 
 Route::prefix('manager')->middleware(['auth:sanctum', GetUserRole::class . ':manager'])->group(function () {
@@ -91,6 +92,7 @@ Route::prefix('manager')->middleware(['auth:sanctum', GetUserRole::class . ':man
 
     Route::post('/spare_product/{code?}', [ViewController::class, 'get_spares']);
     Route::post('/spares_pricelist/{code}', [InvoiceController::class, 'price_spares']);
+    Route::post('/pricelist', [InvoiceController::class, 'price_list']);
 });
 
 Route::prefix('user')->middleware(['auth:sanctum', GetUserRole::class . ':user'])->group(function () {
@@ -115,6 +117,7 @@ Route::prefix('user')->middleware(['auth:sanctum', GetUserRole::class . ':user']
 
     Route::post('/spare_product/{code?}', [ViewController::class, 'get_spares']);
     Route::post('/spares_pricelist/{code}', [InvoiceController::class, 'price_spares']);
+    Route::post('/pricelist', [InvoiceController::class, 'price_list']);
     Route::delete('/delete_user/{id}', [DeleteController::class, 'user']);
 });
 
