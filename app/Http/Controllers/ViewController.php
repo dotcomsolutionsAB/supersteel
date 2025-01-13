@@ -466,24 +466,31 @@ class ViewController extends Controller
 
             foreach($get_user_details as $user)
             {
-                // Calculate the time difference for last_viewed
-                $currentTimestamp = now();
-                $lastViewedTimestamp = Carbon::parse($user->last_viewed);
-                $differenceInSeconds = $currentTimestamp->diffInSeconds($lastViewedTimestamp);
-                $last_viewed = '';
 
-                if ($differenceInSeconds < 60) {
-                    $last_viewed = (int) $differenceInSeconds . ' seconds ago';
-                } elseif ($differenceInSeconds < 3600) {
-                    $minutes = (int) floor($differenceInSeconds / 60);
-                    $last_viewed = $minutes . ' minutes ago';
-                } elseif ($differenceInSeconds < 86400) {
-                    $hours = (int) floor($differenceInSeconds / 3600);
-                    $last_viewed = $hours . ' hours ago';
-                } else {
-                    $days = (int) floor($differenceInSeconds / 86400);
-                    $last_viewed = $days . ' days ago';
-                }
+                // Assume $user->last_viewed contains the datetime string
+                $lastViewed = $user->last_viewed;
+
+                // Convert and format the datetime
+                $formattedLastViewed = Carbon::parse($lastViewed)->format('d-m-Y h:i A');
+
+                // Calculate the time difference for last_viewed
+                // $currentTimestamp = now();
+                // $lastViewedTimestamp = Carbon::parse($user->last_viewed);
+                // $differenceInSeconds = $currentTimestamp->diffInSeconds($lastViewedTimestamp);
+                // $last_viewed = '';
+
+                // if ($differenceInSeconds < 60) {
+                //     $last_viewed = (int) $differenceInSeconds . ' seconds ago';
+                // } elseif ($differenceInSeconds < 3600) {
+                //     $minutes = (int) floor($differenceInSeconds / 60);
+                //     $last_viewed = $minutes . ' minutes ago';
+                // } elseif ($differenceInSeconds < 86400) {
+                //     $hours = (int) floor($differenceInSeconds / 3600);
+                //     $last_viewed = $hours . ' hours ago';
+                // } else {
+                //     $days = (int) floor($differenceInSeconds / 86400);
+                //     $last_viewed = $days . ' days ago';
+                // }
 
                 $type = $user->price_type;
                 $priceLabel = '';
@@ -528,7 +535,7 @@ class ViewController extends Controller
                     'manager_phone' => $user->manager ? $user->manager->mobile : null,
                     'app_status' => $user->app_status,
                     'verified' => $user->is_verified,
-                    'last_viewed' => $user->last_viewed,
+                    'last_viewed' => $formattedLastViewed,
                     'type' => $priceLabel,
                 ];
             }
@@ -539,26 +546,33 @@ class ViewController extends Controller
             $get_user_details = User::select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country', 'app_status', 'last_viewed', 'alias')
                                     // ->where('manager_id', Auth::id())
                                     ->get();
-            $currentTimestamp = now();
+
+            // $currentTimestamp = now();
             $response = $get_user_details->map(function ($user) use ($currentTimestamp) {
+
+                // Assume $user->last_viewed contains the datetime string
+                $lastViewed = $user->last_viewed;
+
+                // Convert and format the datetime
+                $formattedLastViewed = Carbon::parse($lastViewed)->format('d-m-Y h:i A');
                 // Calculate the time difference for last_viewed
                 
-                $lastViewedTimestamp = Carbon::parse($user->last_viewed);
-                $differenceInSeconds = $currentTimestamp->diffInSeconds($lastViewedTimestamp);
-                $last_viewed = '';
+                // $lastViewedTimestamp = Carbon::parse($user->last_viewed);
+                // $differenceInSeconds = $currentTimestamp->diffInSeconds($lastViewedTimestamp);
+                // $last_viewed = '';
     
-                if ($differenceInSeconds < 60) {
-                    $last_viewed = (int) $differenceInSeconds . ' seconds ago';
-                } elseif ($differenceInSeconds < 3600) {
-                    $minutes = (int) floor($differenceInSeconds / 60);
-                    $last_viewed = $minutes . ' minutes ago';
-                } elseif ($differenceInSeconds < 86400) {
-                    $hours = (int) floor($differenceInSeconds / 3600);
-                    $last_viewed = $hours . ' hours ago';
-                } else {
-                    $days = (int) floor($differenceInSeconds / 86400);
-                    $last_viewed = $days . ' days ago';
-                }
+                // if ($differenceInSeconds < 60) {
+                //     $last_viewed = (int) $differenceInSeconds . ' seconds ago';
+                // } elseif ($differenceInSeconds < 3600) {
+                //     $minutes = (int) floor($differenceInSeconds / 60);
+                //     $last_viewed = $minutes . ' minutes ago';
+                // } elseif ($differenceInSeconds < 86400) {
+                //     $hours = (int) floor($differenceInSeconds / 3600);
+                //     $last_viewed = $hours . ' hours ago';
+                // } else {
+                //     $days = (int) floor($differenceInSeconds / 86400);
+                //     $last_viewed = $days . ' days ago';
+                // }
 
                 $name = $user->name.' - '.$user->alias;
 
@@ -576,7 +590,7 @@ class ViewController extends Controller
                     'state' => $user->state,
                     'country' => $user->country,
                     'app_status' => $user->app_status,
-                    'last_viewed' => $user->last_viewed,
+                    'last_viewed' => $formattedLastViewed,
                 ];
             });
             
