@@ -518,7 +518,7 @@ class InvoiceController extends Controller
 
         // Build the query
         $query = ProductModel::select('product_name','print_name', 'product_code', 'brand', DB::raw("$price_column as price"), 'product_image')
-    ->where('product_image', '!=', '');
+        ->where('product_image', '!=', '');
 
 
         if ($category) {
@@ -540,8 +540,13 @@ class InvoiceController extends Controller
             return response()->json(['message' => 'No products found.'], 404);
         }
 
-        // Generate HTML content for the PDF
-        $html = view('price_list', compact('get_product_details', 'user_name'))->render();
+        if($get_user->role == 'user') {
+            // Generate HTML content for the PDF
+            $html = view('price_list_user', compact('get_product_details', 'user_name'))->render();
+        }else{
+            // Generate HTML content for the PDF
+            $html = view('price_list', compact('get_product_details', 'user_name'))->render();
+        }
 
         // Create an instance of Mpdf
         $mpdf = new Mpdf();
