@@ -55,7 +55,7 @@ class ViewController extends Controller
 
             User::where('id', $user_id)->update([
                 'app_status' => 1,
-                'user->last_viewed' => now()->setTimezone('Asia/Kolkata'),
+                'last_viewed' => now()->setTimezone('Asia/Kolkata'),
             ]);
         } else {
             $request->validate([
