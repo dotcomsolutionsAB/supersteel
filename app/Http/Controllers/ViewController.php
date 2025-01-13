@@ -548,7 +548,7 @@ class ViewController extends Controller
                                     ->get();
 
             // $currentTimestamp = now();
-            $response = $get_user_details->map(function ($user) use ($currentTimestamp) {
+            $response = $get_user_details->map(function ($user) {
 
                 // Assume $user->last_viewed contains the datetime string
                 $lastViewed = $user->last_viewed;
