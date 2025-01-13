@@ -537,7 +537,7 @@ class InvoiceController extends Controller
 		//dd($get_product_details[0]->product_image);
 
         if ($get_product_details->isEmpty()) {
-            return response()->json(['message' => 'No products found.'], 404);
+            return response()->json(['message' => 'No products found.'], 200);
         }
 
         if($get_user->role == 'user') {
