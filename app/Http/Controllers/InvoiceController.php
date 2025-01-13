@@ -474,8 +474,14 @@ class InvoiceController extends Controller
         $search_text = $request->input('search_text');
 
         // Fetch the category model using the provided ID
-        $category = CategoryModel::find($categoryId);
-        $category_id = $category->category_id;
+        $categoryArr = CategoryModel::find($category);
+        $category_id = '';
+
+        if ($categoryArr) {
+            // Dynamically determine the category_id based on the logic
+            $category_id = $categoryArr->category_id;
+            // Proceed with $category_id
+        } 
 
         // Get the authenticated user
         $get_user = Auth::User();
@@ -527,7 +533,7 @@ class InvoiceController extends Controller
 
 
         if ($category) {
-            $query->where('category', $category_id);
+            $query->where('category', $category);
         }
 
         if ($search_text) {
