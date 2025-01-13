@@ -533,7 +533,7 @@ class InvoiceController extends Controller
 
 
         if ($category) {
-            $query->where('category', $category);
+            $query->where('category', $category_id);
         }
 
         if ($search_text) {
