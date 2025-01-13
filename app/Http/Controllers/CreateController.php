@@ -150,7 +150,7 @@ class CreateController extends Controller
                     ], 200);
                 }
 
-                if ($otpRecord->expires_at < now() && false) {
+                if ($otpRecord->expires_at < now()) {
                     return response()->json([
                         'success' => false,
                         'message' => 'OTP has expired.',
