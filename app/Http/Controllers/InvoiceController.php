@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;        
 use App\Models\OrderModel;    
 use App\Models\OrderItemsModel;
+use App\Models\CategoryModel;
 use App\Models\ProductModel;
 use Mpdf\Mpdf;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
@@ -472,6 +473,10 @@ class InvoiceController extends Controller
         $category = $request->input('category');
         $search_text = $request->input('search_text');
 
+        // Fetch the category model using the provided ID
+        $category = CategoryModel::find($categoryId);
+        $category_id = $category->category_id;
+
         // Get the authenticated user
         $get_user = Auth::User();
 
@@ -522,7 +527,7 @@ class InvoiceController extends Controller
 
 
         if ($category) {
-            $query->where('category', $category);
+            $query->where('category', $category_id);
         }
 
         if ($search_text) {

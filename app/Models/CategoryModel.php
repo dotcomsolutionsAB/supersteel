@@ -24,4 +24,15 @@ class CategoryModel extends Model
     {
         return $this->hasMany(ProductModel::class, 'c1', 'code');
     }
+
+    // Method to determine the category_id dynamically
+    public function getCategoryIdAttribute()
+    {
+        if (!empty($this->cat_3)) {
+            return $this->cat_3;
+        } elseif (!empty($this->cat_2)) {
+            return $this->cat_2;
+        }
+        return $this->cat_1;
+    }
 }
