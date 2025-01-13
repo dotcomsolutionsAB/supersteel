@@ -230,7 +230,7 @@ class InvoiceController extends Controller
                 ],
             ];
 
-            if($user->notifications === "1")
+            if($user->notifications === 1)
             {
                 $response = $whatsAppUtility->sendWhatsApp($user->mobile, $templateParams, '', 'User Order Invoice');
             }
