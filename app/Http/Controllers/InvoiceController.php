@@ -173,17 +173,20 @@ class InvoiceController extends Controller
                 ],
             ];
 
-            foreach ($mobileNumbers as $mobileNumber) 
+            if($user->mobile != "+918961043773")
             {
-                if($mobileNumber != '+917003541353')
+                foreach ($mobileNumbers as $mobileNumber) 
                 {
-                    // Send message for each number
-                    $response = $whatsAppUtility->sendWhatsApp($mobileNumber, $templateParams, '', 'Admin Order Invoice');
-
-                    // Check if the response has an error or was successful
-                    if (isset($responseArray['error'])) 
+                    if($mobileNumber != '+917003541353')
                     {
-                        echo "Failed to send order to Whatsapp!";
+                        // Send message for each number
+                        $response = $whatsAppUtility->sendWhatsApp($mobileNumber, $templateParams, '', 'Admin Order Invoice');
+
+                        // Check if the response has an error or was successful
+                        if (isset($responseArray['error'])) 
+                        {
+                            echo "Failed to send order to Whatsapp!";
+                        }
                     }
                 }
             }
@@ -226,10 +229,11 @@ class InvoiceController extends Controller
                     ]
                 ],
             ];
-            // if($user->notifications === 1)
-            // {
-            //     $response = $whatsAppUtility->sendWhatsApp($user->mobile, $templateParams, '', 'User Order Invoice');
-            // }
+
+            if($user->mobile === "+918961043773")
+            {
+                $response = $whatsAppUtility->sendWhatsApp($user->mobile, $templateParams, '', 'User Order Invoice');
+            }
             
         }else{
             $fileUrlWithTimestamp = $fileUrl . '?t=' . time();
