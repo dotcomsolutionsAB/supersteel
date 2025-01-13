@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>VCL Items</title>
+    <title>Super Steel</title>
     <style>
         /* Container for the header (image on the left, text on the right) */
 
