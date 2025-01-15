@@ -1,7 +1,4 @@
-<tr>
-            <td colspan="5" class="right-align">Total</td>
-            <td class="right-align">₹ {{ number_format((float)$order->amount, 2) }}</td>
-        </tr>
+
     </tbody>
 </table>
 
