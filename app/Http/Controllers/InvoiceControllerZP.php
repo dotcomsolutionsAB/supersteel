@@ -42,6 +42,10 @@ class InvoiceControllerZP extends Controller
                                     ->get();
 
         // $mobileNumbers = array_unique(array_merge($adminNumbers, $managerNumbers));
+        $adminNumbers = User::where('role', 'admin')->pluck('mobile')->toArray();
+        $managerNumbers = User::where('id', $manager_id)->pluck('mobile')->toArray();
+
+        $mobileNumbers = array_unique(array_merge($adminNumbers, $managerNumbers));
 
         foreach($order_items as $item)
         {
@@ -164,7 +168,7 @@ class InvoiceControllerZP extends Controller
                     ]
                 ],
             ];
-
+            
             foreach ($mobileNumbers as $mobileNumber) 
             {
                 if($mobileNumber != '+917003541353' || true)
