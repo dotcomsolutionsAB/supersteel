@@ -349,8 +349,14 @@ class UpdateController extends Controller
             ]);
         }
 
-        $generate_order_invoice = new InvoiceController();
-        $generate_order_invoice->generateInvoice($id, true);
+        if($order->type == 'order')
+        {
+            $generate_invoice_zp = new InvoiceControllerZP();
+            $generate_invoice_zp->generateorderInvoiceZP($id, true, 'order');
+        }else {
+            $generate_order_invoice = new InvoiceController();
+            $generate_order_invoice->generateInvoice($id, true, 'quotation');
+        }
 
         return response()->json([
             'message' => 'Order updated successfully!',

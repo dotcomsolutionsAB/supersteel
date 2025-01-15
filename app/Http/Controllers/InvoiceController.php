@@ -23,7 +23,7 @@ set_time_limit(300); // Increase timeout to 5 minutes or as needed
 class InvoiceController extends Controller
 {
 
-    public function generateInvoice($orderId, $is_edited = false)
+    public function generateInvoice($orderId, $is_edited = false, $type = 'quotation')
     {
         // $get_user = Auth::id();
 
@@ -173,20 +173,17 @@ class InvoiceController extends Controller
                 ],
             ];
 
-            if($user->mobile != "+918961043773")
+            foreach ($mobileNumbers as $mobileNumber) 
             {
-                foreach ($mobileNumbers as $mobileNumber) 
+                if($mobileNumber != '+917003541353' || true)
                 {
-                    if($mobileNumber != '+917003541353' || true)
-                    {
-                        // Send message for each number
-                        $response = $whatsAppUtility->sendWhatsApp($mobileNumber, $templateParams, '', 'Admin Order Invoice');
+                    // Send message for each number
+                    $response = $whatsAppUtility->sendWhatsApp($mobileNumber, $templateParams, '', 'Admin Order Invoice');
 
-                        // Check if the response has an error or was successful
-                        if (isset($responseArray['error'])) 
-                        {
-                            echo "Failed to send order to Whatsapp!";
-                        }
+                    // Check if the response has an error or was successful
+                    if (isset($responseArray['error'])) 
+                    {
+                        echo "Failed to send order to Whatsapp!";
                     }
                 }
             }
@@ -230,7 +227,7 @@ class InvoiceController extends Controller
                 ],
             ];
 
-            if($user->notifications === 1)
+            if($user->notifications === 1 && $type == 'order')
             {
                 $response = $whatsAppUtility->sendWhatsApp($user->mobile, $templateParams, '', 'User Order Invoice');
             }
@@ -333,7 +330,8 @@ class InvoiceController extends Controller
                     ]
                 ],
             ];
-            if($user->notifications === 1)
+            
+            if($user->notifications === 1&& $type == 'order')
             {
                 $response = $whatsAppUtility->sendWhatsApp($user->mobile, $templateParams, '', 'User Order Invoice');
             }
