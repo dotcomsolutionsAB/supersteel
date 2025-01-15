@@ -292,6 +292,32 @@ class CreateController extends Controller
         ], 204);
     }
 
+    public function generateOrderId()
+    {
+        $date = Carbon::now()->format('dmy'); // Current date in ddmmyy format
+        $prefix = 'SS';
+
+        // Fetch the last order for the current day
+        $lastOrder = OrderModel::where('order_id', 'like', $prefix . '%/' . $date)
+            ->orderBy('order_id', 'desc')
+            ->first();
+
+        // Extract the last number and increment it
+        if ($lastOrder) {
+            $lastNumber = (int) substr(explode('/', $lastOrder->order_id)[1], 0, 3);
+            $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+        } else {
+            // Start from 001 if no orders exist for the day
+            $newNumber = str_pad(1, 3, '0', STR_PAD_LEFT);
+        }
+
+        // Construct the new order ID
+        $newOrderId = "{$prefix}/{$newNumber}/{$date}";
+
+        return $newOrderId;
+    }
+
+
     public function orders(Request $request)
     {
         $get_user = Auth::User();
@@ -316,22 +342,16 @@ class CreateController extends Controller
         $current_user = User::select('price_type')->where('id', $userId)->first();
         $user_type = $current_user->price_type;
 
+        $get_order_id = $this->generateOrderId();
+
         if ($user_type == 'zero_price') 
         {
             $get_product = CartModel::select('amount', 'quantity', 'product_code', 'product_name', 'remarks', 'rate')
                                        ->where('user_id', $userId)
                                        ->get();
 
-            $get_counter_data = CounterModel::select('prefix', 'counter', 'postfix')->where('name', 'order_zeroprice')->get();
-       
-
-            // Pad the number with leading zeros to make it a four-digit number
-            $formattedCounterNumber = str_pad($get_counter_data[0]->counter, 4, '0', STR_PAD_LEFT);
-
             if ($get_counter_data->isNotEmpty()) 
             {
-                $get_order_id = strtoupper($get_counter_data[0]->prefix).$formattedCounterNumber.$get_counter_data[0]->postfix;
-        
                 if ((count($get_product)) > 0) 
                 {
                     $product_amount = 0;
@@ -365,15 +385,10 @@ class CreateController extends Controller
                             ]);
                         }
 
-                        $update_cart = CounterModel::where('name', 'order')
-                                                    ->update(['counter' => (($get_counter_data[0]->counter)+1),
-                                                    ]);
-
                         // Remove items from the cart for the user
                         $get_remove_items = CartModel::where('user_id', $userId)->delete();
                         
                         $generate_invoice_zp = new InvoiceControllerZP();
-
 
                         // Generate invoice for $create_order_basic
                         $get_invoice = $generate_invoice_zp->generateorderInvoiceZP($create_order->id);
@@ -414,16 +429,8 @@ class CreateController extends Controller
                                        ->where('user_id', $userId)
                                        ->get();
 
-            $get_counter_data = CounterModel::select('prefix', 'counter', 'postfix')->where('name', 'order')->get();
-       
-
-            // Pad the number with leading zeros to make it a four-digit number
-            $formattedCounterNumber = str_pad($get_counter_data[0]->counter, 4, '0', STR_PAD_LEFT);
-
             if ($get_counter_data->isNotEmpty()) 
             {
-                $get_order_id = strtoupper($get_counter_data[0]->prefix).$formattedCounterNumber.$get_counter_data[0]->postfix;
-        
                 if ((count($get_product)) > 0) 
                 {
                     $product_amount = 0;
@@ -456,10 +463,6 @@ class CreateController extends Controller
                                 'total' => $order->amount,
                             ]);
                         }
-
-                        $update_cart = CounterModel::where('name', 'order')
-                                                    ->update(['counter' => (($get_counter_data[0]->counter)+1),
-                                                    ]);
 
                         // Remove items from the cart for the user
                         $get_remove_items = CartModel::where('user_id', $userId)->delete();
