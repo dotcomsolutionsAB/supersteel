@@ -32,9 +32,11 @@ class InvoiceControllerZP extends Controller
 
         $get_user = $order->user_id;
         
-        $user = User::select('name', 'mobile', 'email', 'address_line_1', 'address_line_2', 'gstin')
+        $user = User::select('name', 'mobile', 'email', 'address_line_1', 'address_line_2', 'gstin','manager_id')
                     ->where('id', $get_user)
                     ->first();
+
+        $manager_id = $user ? $user->manager_id : null;
         
         $order_items = OrderItemsModel::with('product:product_code,print_name')
                                     ->select('product_code', 'product_name', 'rate', 'quantity', 'total', 'remarks')
