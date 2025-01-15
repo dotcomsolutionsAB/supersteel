@@ -476,6 +476,7 @@ class InvoiceController extends Controller
         // Accept parameters
         $category = $request->input('category');
         $search_text = $request->input('search_text');
+        $type = $request->input('type');
 
         // Fetch the category model using the provided ID
         $categoryArr = CategoryModel::find($category);
@@ -559,8 +560,12 @@ class InvoiceController extends Controller
             // Generate HTML content for the PDF
             $html = view('price_list_user', compact('get_product_details', 'user_name'))->render();
         }else{
-            // Generate HTML content for the PDF
-            $html = view('price_list', compact('get_product_details', 'user_name'))->render();
+            if($type === 'without_price')
+            {
+                $html = view('price_list_user', compact('get_product_details', 'user_name'))->render();
+            } else {
+                $html = view('price_list', compact('get_product_details', 'user_name'))->render();
+            }
         }
 
         // Create an instance of Mpdf
