@@ -665,15 +665,44 @@ class ViewController extends Controller
             $id = $request->input('user_id');
         }
 
-        // Fetch all orders and their associated order items with product image
-        $get_user_orders = OrderModel::when($id, function ($query, $id) {
-                return $query->where('user_id', $id);
+        // // Fetch all orders and their associated order items with product image
+        // $get_user_orders = OrderModel::when($id, function ($query, $id) {
+        //         return $query->where('user_id', $id);
+        //     })
+        //     ->with(['order_items' => function($query) {
+        //         // Eager load product relationship and append the product_image field
+        //         $query->with('product:id,product_code,product_image');
+        //     }])
+        //     ->orderBy('id', 'desc')->get();
+
+        // Fetch the user's alias and price_type
+        $user = User::select('alias', 'price_type')->find($id);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found!',
+            ], 404);
+        }
+
+        $alias = $user->alias;
+        $priceType = $user->price_type;
+
+        // Fetch orders based on price_type
+        $get_user_orders = OrderModel::when($priceType !== 'zero_price', function ($query) use ($alias) {
+                // Fetch orders for users with the same alias
+                $query->whereHas('user', function ($subQuery) use ($alias) {
+                    $subQuery->where('alias', $alias);
+                });
+            }, function ($query) use ($id) {
+                // Fetch orders for the specific user
+                $query->where('user_id', $id);
             })
-            ->with(['order_items' => function($query) {
+            ->with(['order_items' => function ($query) {
                 // Eager load product relationship and append the product_image field
                 $query->with('product:id,product_code,product_image');
             }])
-            ->orderBy('id', 'desc')->get();
+            ->orderBy('id', 'desc')
+            ->get();
 
         // Modify the order items to append the product image directly
         $get_user_orders->each(function($order) {
