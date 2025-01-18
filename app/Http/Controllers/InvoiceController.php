@@ -554,8 +554,8 @@ class InvoiceController extends Controller
             return response()->json(['message' => 'No products found.'], 200);
         }
 
+        die($get_product_details);
         if (strpos($user_name, "DUMMY") !== false) {
-            die($get_product_details);
         }
 
         if($get_user->role == 'user') {
