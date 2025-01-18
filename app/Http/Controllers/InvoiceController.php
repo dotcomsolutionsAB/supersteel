@@ -554,6 +554,10 @@ class InvoiceController extends Controller
             return response()->json(['message' => 'No products found.'], 200);
         }
 
+        if (strpos($user_name, "DUMMY") !== false) {
+            die($get_product_details);
+        }
+
         if($get_user->role == 'user') {
             // Generate HTML content for the PDF
             $html = view('price_list_user', compact('get_product_details', 'user_name'))->render();
