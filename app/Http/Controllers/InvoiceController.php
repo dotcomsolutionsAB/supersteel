@@ -555,7 +555,6 @@ class InvoiceController extends Controller
         }
 
         if (strpos($user_name, "DUMMY") !== false) {
-            die($get_product_details);
             foreach ($get_product_details as &$product) {
                 $product['price'] = $product['price'] * 1.6;
             }
