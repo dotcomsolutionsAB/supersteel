@@ -24,6 +24,7 @@ class ProductModel extends Model
         'price_i',
         'ppc',
         'product_image',
+        'extra_images',
         'new_arrival',
         'special_price',
         'video_link',
