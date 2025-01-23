@@ -54,6 +54,20 @@ class CsvImportController extends Controller
                 $productImagePath = $product_imagePath_for_not_available;
             }
 
+            // Handle extra images
+            $extraImages = [];
+            $extraImagePath = public_path("/storage/uploads/extra");
+            $i = 1;
+
+            // Check for extra images in the format PRODUCT_CODE-1, PRODUCT_CODE-2, etc.
+            while (file_exists("{$extraImagePath}/{$filename}-{$i}.jpg")) {
+                $extraImages[] = "/storage/uploads/extra/{$filename}-{$i}.jpg";
+                $i++;
+            }
+
+            // Convert extra images array to a comma-separated string
+            $extraImagesCsv = implode(',', $extraImages);
+
             $productData = [
                 'product_code' => $record_csv['PRODUCT CODE'],
                 'product_name' => $record_csv['PRODUCT NAME'],
@@ -68,6 +82,7 @@ class CsvImportController extends Controller
                 'price_i' => str_replace([',', '.00'], '', $record_csv['PRICE I']),
                 'ppc' => !empty($record_csv['PCS/CTN']) && $record_csv['PCS/CTN'] !== '-' ? $record_csv['PCS/CTN'] : '1', // Avoid (int) conversion
                 'product_image' => $productImagePath,
+                'extra_images' => $extraImagesCsv, // Set the extra images
                 'new_arrival' => $record_csv['New Arrival'] === 'TRUE' ? 1 : 0,
                 'special_price' => $record_csv['Special Price'] === 'TRUE' ? 1 : 0,
                 'video_link' => $record_csv['YouTube Link'],
