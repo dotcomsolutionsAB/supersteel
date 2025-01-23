@@ -669,16 +669,6 @@ class ViewController extends Controller
             $id = $request->input('user_id');
         }
 
-        // // Fetch all orders and their associated order items with product image
-        // $get_user_orders = OrderModel::when($id, function ($query, $id) {
-        //         return $query->where('user_id', $id);
-        //     })
-        //     ->with(['order_items' => function($query) {
-        //         // Eager load product relationship and append the product_image field
-        //         $query->with('product:id,product_code,product_image');
-        //     }])
-        //     ->orderBy('id', 'desc')->get();
-
         // Fetch the user's alias and price_type
         $user = User::select('alias', 'price_type')->find($id);
 
