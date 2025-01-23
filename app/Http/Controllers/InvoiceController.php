@@ -349,6 +349,7 @@ class InvoiceController extends Controller
         $query = ProductModel::query();
 
         $get_user = Auth::User();
+        $type = $request->input('type');
 
         if($get_user->role == 'user') {
             $get_user = Auth::User();
@@ -443,7 +444,12 @@ class InvoiceController extends Controller
             // Load the Blade view and pass the data
             $html = view('spare_pricelist_user', compact('get_product_details', 'get_record', 'user_name'))->render();
         }else{
-            $html = view('spare_pricelist', compact('get_product_details', 'get_record', 'user_name'))->render();
+            if($type === 'without_price')
+            {
+                $html = view('spare_pricelist_user', compact('get_product_details', 'user_name'))->render();
+            } else {
+                $html = view('spare_pricelist', compact('get_product_details', 'user_name'))->render();
+            }
         }
 
         // create the instance of Mpdf
