@@ -651,7 +651,6 @@ class ViewController extends Controller
             : response()->json(['message' => 'Sorry, failed to fetch data'], 404);
     }
 
-
     public function orders_user_id(Request $request, $id = null)
     {
         $get_user = Auth::User();
