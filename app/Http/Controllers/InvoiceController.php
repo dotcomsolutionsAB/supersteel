@@ -582,6 +582,7 @@ class InvoiceController extends Controller
         $publicPath = 'uploads/price_list/';
         $timestamp = now()->format('Ymd_His'); // Generate a timestamp
         $fileName = 'price_list_' . $timestamp . '.pdf'; // Append timestamp to the file name
+        $fileName = $categoryArr->name . '.pdf';
         $filePath = storage_path('app/public/' . $publicPath . $fileName);
 
         // Create the directory if it doesn't exist
