@@ -23,7 +23,7 @@ set_time_limit(300); // Increase timeout to 5 minutes or as needed
 class InvoiceController extends Controller
 {
 
-    public function generateInvoice($orderId, $is_edited = false, $type = 'quotation')
+    public function generateInvoice($orderId, $is_edited = false, $type = 'quotation', $notification_flag = false)
     {
         // $get_user = Auth::id();
 
@@ -227,7 +227,7 @@ class InvoiceController extends Controller
                 ],
             ];
 
-            if($user->notifications === 1 && $type == 'order')
+            if(($user->notifications === 1 && $type == 'order') || $notification_flag)
             {
                 $response = $whatsAppUtility->sendWhatsApp($user->mobile, $templateParams, '', 'User Order Invoice');
             }
@@ -331,7 +331,7 @@ class InvoiceController extends Controller
                 ],
             ];
             
-            if($user->notifications === 1 && $type == 'order')
+            if(($user->notifications === 1 && $type == 'order') || $notification_flag)
             {
                 $response = $whatsAppUtility->sendWhatsApp($user->mobile, $templateParams, '', 'User Order Invoice');
             }

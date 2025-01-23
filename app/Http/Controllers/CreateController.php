@@ -338,6 +338,8 @@ class CreateController extends Controller
             $userId = $request->input('user_id');
         }
 
+        $notification_flag = $request->send_message;
+
         $current_user = User::select('price_type')->where('id', $userId)->first();
         $user_type = $current_user->price_type;
 
@@ -387,7 +389,7 @@ class CreateController extends Controller
                 $generate_invoice_zp = new InvoiceControllerZP();
 
                 // Generate invoice for $create_order_basic
-                $get_invoice = $generate_invoice_zp->generateorderInvoiceZP($create_order->id, false, 'order');
+                $get_invoice = $generate_invoice_zp->generateorderInvoiceZP($create_order->id, false, 'order', $notification_flag);
 
                 // Add invoices to the $data array under a specific key
                 $create_order['invoices'] = $get_invoice;
@@ -434,6 +436,8 @@ class CreateController extends Controller
             ]);
             $userId = $request->input('user_id');
         }
+
+        $notification_flag = $request->send_message;
 
         $current_user = User::select('price_type')->where('id', $userId)->first();
         $user_type = $current_user->price_type;
@@ -485,7 +489,7 @@ class CreateController extends Controller
 
 
                 // Generate invoice for $create_order_basic
-                $get_invoice = $generate_invoice->generateInvoice($create_order->id, false, 'quotation');
+                $get_invoice = $generate_invoice->generateInvoice($create_order->id, false, 'quotation', $notification_flag);
 
                 // Add invoices to the $data array under a specific key
                 $create_order['invoices'] = $get_invoice;
