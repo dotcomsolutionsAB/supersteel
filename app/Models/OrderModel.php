@@ -18,6 +18,7 @@ class OrderModel extends Model
         'amount',
         // 'log_date',
         // 'log_user',
+        'created_by',
         'status',
         'type',
         'remarks',
