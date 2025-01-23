@@ -423,6 +423,8 @@ class CreateController extends Controller
     {
         $get_user = Auth::User();
 
+        $created_by = $get_user->id;
+
         if($get_user->role == 'user') {
             $userId = $get_user->id;
 
@@ -466,6 +468,7 @@ class CreateController extends Controller
                 'amount' => $product_amount,
                 'type' => 'quotation',
                 'remarks' => $request->input('remarks'),
+                'created_by' => $created_by,
             ]);
             //order_table_id
 
