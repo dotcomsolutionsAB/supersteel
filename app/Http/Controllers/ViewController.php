@@ -139,6 +139,11 @@ class ViewController extends Controller
                         $product->video_link = basename(parse_url($product->video_link, PHP_URL_PATH));
                     }
                 }
+
+                // Parse extra_images from the database column
+                $product->extra_images = !empty($product->extra_images)
+                ? explode(',', $product->extra_images)
+                : [];
                 
                 // Check if the product is in the user's cart
                 $cart_item = CartModel::where('user_id', $user_id)
