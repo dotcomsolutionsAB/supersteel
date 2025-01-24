@@ -446,9 +446,9 @@ class InvoiceController extends Controller
         }else{
             if($type === 'without_price')
             {
-                $html = view('spare_pricelist_user', compact('get_product_details', 'user_name'))->render();
+                $html = view('spare_pricelist_user', compact('get_product_details', 'get_record', 'user_name'))->render();
             } else {
-                $html = view('spare_pricelist', compact('get_product_details', 'user_name'))->render();
+                $html = view('spare_pricelist', compact('get_product_details',  'get_record','user_name'))->render();
             }
         }
 

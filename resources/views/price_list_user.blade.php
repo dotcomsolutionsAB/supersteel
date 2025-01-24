@@ -5,7 +5,7 @@
     <style>
         /* Container for the header (image on the left, text on the right) */
 
-        .header {
+        /* .header {
             width: 100%;
             padding-top: 15px;
         }
@@ -13,7 +13,7 @@
             width: 100%!important;
             display: block;
             height: auto;
-        }
+        } */
 
         /* Center align for the user name */
         .username {
