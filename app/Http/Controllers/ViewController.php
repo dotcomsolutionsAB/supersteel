@@ -698,7 +698,7 @@ class ViewController extends Controller
         }
 
         // Fetch the user's alias and price_type
-        $user = User::select('alias', 'price_type')->find($id);
+        $user = User::select('alias', 'price_type', 'user_type')->find($id);
 
         if (!$user) {
             return response()->json([
@@ -708,6 +708,7 @@ class ViewController extends Controller
 
         $alias = $user->alias;
         $priceType = $user->price_type;
+        $userType = $user->user_type;
 
         // Fetch orders based on price_type
         $get_user_orders = OrderModel::when($priceType !== 'zero_price', function ($query) use ($alias) {
@@ -726,6 +727,10 @@ class ViewController extends Controller
             'createdBy' => function ($query) {
                 // Fetch the user who created the order
                 $query->select('id', 'name');
+            },
+            'user' => function ($query) {
+                // Fetch user details for user_type
+                $query->select('id', 'user_type');
             }
             ])
             ->orderBy('id', 'desc')
