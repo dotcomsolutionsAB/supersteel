@@ -463,7 +463,7 @@ class ViewController extends Controller
         {
         
             $get_user_details = User::with('manager:id,mobile')
-                                ->select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id','is_verified', 'app_status', 'last_viewed', 'price_type', 'alias')
+                                ->select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id','is_verified', 'app_status', 'last_viewed', 'price_type', 'alias','user_type')
                                 ->where('role', 'user')
                                 ->get();
 
@@ -549,7 +549,7 @@ class ViewController extends Controller
 
         elseif ($userRole == 'manager') 
         {
-            $get_user_details = User::select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country', 'app_status', 'last_viewed', 'alias')
+            $get_user_details = User::select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country', 'app_status', 'last_viewed', 'price_type','alias','user_type')
                                     // ->where('manager_id', Auth::id())
                                     ->get();
 
