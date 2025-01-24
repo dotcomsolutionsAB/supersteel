@@ -63,6 +63,33 @@
         .center-text {
             text-align: center;
         }
+
+
+        .header {
+            position: relative;
+            width: 100%;
+        }
+
+        .header img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .overlay-text {
+            position: absolute;
+            top: 50%; /* Center vertically */
+            left: 50%; /* Center horizontally */
+            transform: translate(-50%, -50%); /* Adjust for perfect centering */
+            color: white; /* Text color */
+            font-size: 24px; /* Adjust font size as needed */
+            font-weight: bold;
+            text-align: center;
+            color: white;
+            background: rgba(0, 0, 0, 0.5); /* Optional: Add a semi-transparent background */
+            padding: 10px 20px; /* Add padding to the text */
+            border-radius: 5px; /* Optional: Round corners of the background */
+        }
     </style>
 </head>
 <body>
@@ -70,6 +97,10 @@
 
     <div class="header">
         <img src="{{ asset('storage/uploads/s1.jpg') }}" alt="Logo" width="100%">
+
+        <div class="overlay-text">
+            ...
+        </div>
     </div>
 
     <!-- Table for the Items -->
