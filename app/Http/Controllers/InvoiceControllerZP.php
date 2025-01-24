@@ -151,7 +151,7 @@ class InvoiceControllerZP extends Controller
                         'parameters' => [
                             [
                                 'type' => 'text',
-                                'text' => $order->type,
+                                'text' => '*'.strtoupper($order->type).'*',
                             ],
                             [
                                 'type' => 'text',
