@@ -597,7 +597,7 @@ class InvoiceController extends Controller
         $publicPath = 'uploads/price_list/';
         $timestamp = now()->format('Ymd_His'); // Generate a timestamp
         $fileName = 'price_list_' . $timestamp . '.pdf'; // Append timestamp to the file name
-        if($categoryArr->name != ''){
+        if($categoryArr){
             $fileName = $categoryArr->name . '.pdf';
         }
         if($search_text != ''){
