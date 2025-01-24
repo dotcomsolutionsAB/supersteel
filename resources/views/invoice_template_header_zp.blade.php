@@ -78,7 +78,7 @@
             <td class="value">{{ \Carbon\Carbon::parse($order->order_date)->format('d-m-Y') }}</td>
         </tr>
         <tr>
-            <td colspan="4" class="value"><strong>Remarks:</strong> {{ $order->remarks }}</td>
+            <td colspan="4" class="value" style="background: yellow;"><strong>Remarks:</strong> {{ $order->remarks }}</td>
         </tr>
     </table>
 
