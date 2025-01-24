@@ -109,7 +109,7 @@ class ViewController extends Controller
 
         // If a valid price type is found, select that column as 'price'
         if (!empty($price_column)) {
-            $query->select('id', 'product_code', 'product_name', 'print_name', 'brand', 'category', 'type', 'machine_part_no', DB::raw("$price_column as price"),'ppc', 'product_image', 'new_arrival','special_price','video_link','extra_images');
+            $query->select('id', 'product_code', 'product_name', 'print_name', 'brand', 'category', 'type', 'machine_part_no', DB::raw("$price_column as price"),'ppc', 'product_image', 'new_arrival','special_price','video_link','extra_images', 'stock');
         }
 
 
@@ -251,7 +251,8 @@ class ViewController extends Controller
             'category',
             DB::raw("$price_column as price"),
             'product_image',
-            'ppc'
+            'ppc',
+            'stock'
         )->where('product_code', '!=', "{$code}");
 
         if ($code !== null) {

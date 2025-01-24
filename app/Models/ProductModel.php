@@ -23,6 +23,7 @@ class ProductModel extends Model
         'price_d',
         'price_i',
         'ppc',
+        'stock',
         'product_image',
         'extra_images',
         'new_arrival',
