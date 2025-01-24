@@ -695,7 +695,7 @@ class ViewController extends Controller
                 // Eager load product relationship and append the product_image field
                 $query->with('product:id,product_code,product_image');
             },
-            'created_by' => function ($query) {
+            'createdBy' => function ($query) {
                 // Fetch the user who created the order
                 $query->select('id', 'name');
             }
