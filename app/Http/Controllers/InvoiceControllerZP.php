@@ -26,7 +26,7 @@ class InvoiceControllerZP extends Controller
     {
         // $get_user = Auth::id();
 
-        $order = OrderModel::select('user_id','order_id', 'amount', 'order_date', 'remarks')
+        $order = OrderModel::select('user_id','order_id','type','created_by', 'amount', 'order_date', 'remarks')
                             ->where('id', $orderId)
                             ->first();
 
@@ -35,6 +35,9 @@ class InvoiceControllerZP extends Controller
         $user = User::select('name', 'mobile', 'email', 'address_line_1', 'address_line_2', 'gstin','manager_id')
                     ->where('id', $get_user)
                     ->first();
+
+        $created_by = $order->created_by;
+        $created_by_user = User::find($created_by);
 
         $manager_id = $user ? $user->manager_id : null;
         
@@ -129,7 +132,7 @@ class InvoiceControllerZP extends Controller
             $fileUrlWithTimestamp = $fileUrl . '?t=' . time();
 
             $templateParams = [
-                'name' => 'ss_new_order_admin', // Replace with your WhatsApp template name
+                'name' => 'ss_new_order_admin_2', // Replace with your WhatsApp template name
                 'language' => ['code' => 'en'],
                 'components' => [
                     [
@@ -146,6 +149,10 @@ class InvoiceControllerZP extends Controller
                     ],[
                         'type' => 'body',
                         'parameters' => [
+                            [
+                                'type' => 'text',
+                                'text' => $order->type,
+                            ],
                             [
                                 'type' => 'text',
                                 'text' => $user->name,
@@ -165,6 +172,10 @@ class InvoiceControllerZP extends Controller
                             [
                                 'type' => 'text',
                                 'text' => $order->amount,
+                            ],
+                            [
+                                'type' => 'text',
+                                'text' => $created_by_user->name,
                             ],
                         ],
                     ]
