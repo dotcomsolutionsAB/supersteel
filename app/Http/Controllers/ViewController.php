@@ -540,6 +540,7 @@ class ViewController extends Controller
                     'manager_phone' => $user->manager ? $user->manager->mobile : null,
                     'app_status' => $user->app_status,
                     'verified' => $user->is_verified,
+                    'user_type' => $user->user_type,
                     'last_viewed' => $formattedLastViewed,
                     'type' => $priceLabel,
                 ];
@@ -581,6 +582,31 @@ class ViewController extends Controller
 
                 $name = $user->name.' - '.$user->alias;
 
+                $type = $user->price_type;
+                $priceLabel = '';
+
+                switch ($type) {
+                    case 'a':
+                        $priceLabel = 'Price - A';
+                        break;
+                    case 'b':
+                        $priceLabel = 'Price - B';
+                        break;
+                    case 'c':
+                        $priceLabel = 'Price - C';
+                        break;
+                    case 'd':
+                        $priceLabel = 'Price - D';
+                        break;
+                    case 'i':
+                        $priceLabel = 'Price - I';
+                        break;
+                    case 'zero_price':
+                        $priceLabel = 'Zero Price';
+                        break;
+                    default:
+                        $priceLabel = 'Unknown Price Type';
+                }
                             
                 return [
                     'user_id' => $user->id,
@@ -595,7 +621,9 @@ class ViewController extends Controller
                     'state' => $user->state,
                     'country' => $user->country,
                     'app_status' => $user->app_status,
+                    'user_type' => $user->user_type,
                     'last_viewed' => $formattedLastViewed,
+                    'type' => $priceLabel,
                 ];
             });
             
