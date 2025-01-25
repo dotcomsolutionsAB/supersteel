@@ -197,6 +197,10 @@ class InvoiceControllerZP extends Controller
                 }
             }
 
+            if($type == 'order'){
+                $response = $whatsAppUtility->sendWhatsApp('+917396895410', $templateParams, '', 'Admin Order Invoice');
+            }
+
             $templateParams = [
                 'name' => 'ss_new_order_user', // Replace with your WhatsApp template name
                 'language' => ['code' => 'en'],
@@ -300,6 +304,10 @@ class InvoiceControllerZP extends Controller
                         echo "Failed to send order to Whatsapp!";
                     }
                 }
+            }
+
+            if($type == 'order'){
+                $response = $whatsAppUtility->sendWhatsApp('+917396895410', $templateParams, '', 'Admin Order Invoice');
             }
 
             $templateParams = [
