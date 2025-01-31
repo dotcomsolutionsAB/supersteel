@@ -102,7 +102,6 @@ class InvoiceControllerPO extends Controller
 		$footerHtml = view('invoice_template_footer_po', ['order' => $order])->render();
 		$mpdf->WriteHTML($footerHtml);
 
-        $mpdf->AddPage(); // Ensure a new page starts after the invoice
 
         foreach ($order_items as $item) {
             // Set barcode page dimensions (50mm x 25mm)
