@@ -253,6 +253,7 @@ class ViewController extends Controller
             'product_image',
             'ppc',
             'stock',
+            'in_transit',
             'pending'
         )->where('product_code', '!=', "{$code}");
 
