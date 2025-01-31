@@ -82,6 +82,7 @@ class CsvImportController extends Controller
                 'price_i' => str_replace([',', '.00'], '', $record_csv['PRICE I']),
                 'ppc' => !empty($record_csv['PCS/CTN']) && $record_csv['PCS/CTN'] !== '-' ? $record_csv['PCS/CTN'] : '1', // Avoid (int) conversion
                 'stock' => $record_csv['STOCK'],
+                'in_transit' => $record_csv['IN TRANSIT'],
                 'pending' => $record_csv['PENDING'],
                 'product_image' => $productImagePath,
                 'extra_images' => $extraImagesCsv, // Set the extra images

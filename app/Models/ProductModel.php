@@ -24,6 +24,7 @@ class ProductModel extends Model
         'price_i',
         'ppc',
         'stock',
+        'in_transit',
         'pending',
         'product_image',
         'extra_images',
