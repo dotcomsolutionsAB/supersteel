@@ -106,8 +106,8 @@ class InvoiceControllerPO extends Controller
         foreach ($order_items as $item) {
             // Set barcode page dimensions (50mm x 25mm)
             $mpdf->AddPageByArray([
-                'margin-left' => 2,
-                'margin-right' => 2,
+                'margin-left' => 4,
+                'margin-right' => 4,
                 'margin-top' => 2,
                 'margin-bottom' => 2,
                 'orientation' => 'P', // Portrait
