@@ -9,6 +9,8 @@ use App\Models\OrderModel;
 use App\Models\OrderItemsModel;
 use App\Models\ProductModel;
 use Mpdf\Mpdf;
+use Mpdf\Barcode\Barcode;
+use Mpdf\Image\ImageProcessor;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -100,6 +102,48 @@ class InvoiceControllerPO extends Controller
 		$footerHtml = view('invoice_template_footer_po', ['order' => $order])->render();
 		$mpdf->WriteHTML($footerHtml);
 
+        $mpdf->AddPage(); // Ensure a new page starts after the invoice
+
+        foreach ($order_items as $item) {
+            // Set barcode page dimensions (50mm x 25mm)
+            $mpdf->AddPageByArray([
+                'margin-left' => 2,
+                'margin-right' => 2,
+                'margin-top' => 2,
+                'margin-bottom' => 2,
+                'orientation' => 'P', // Portrait
+                'sheet-size' => [50, 25], // Width x Height in mm
+            ]);
+
+            // Super Steel Logo (Top Left) & Qty (Top Right)
+            $headerHtml = '<div style="display:flex; justify-content:space-between; align-items:center;">
+                                <img src="'.public_path('/storage/uploads/super_steel_logo.png').'" width="20" height="10" />
+                                <span style="font-size:8px; font-weight:bold;">Qty: </span>
+                        </div>';
+
+            // Generate Barcode using Code 39
+            $barcodeHtml = '<div style="text-align:center;">
+                                <barcode code="'.$item->product_code.'" type="C39" size="0.9" height="1.0"/>
+                                <div style="font-size:7px;">' . $item->product_code . '</div>
+                            </div>';
+
+            // Item & Model Details (Bottom)
+            $itemDetailsHtml = '<div style="text-align:center; font-size:8px;">
+                                    <b>Item:</b> '.$item->product->print_name.'<br>
+                                    <b>Model:</b> '.$item->product_name.'
+                                </div>';
+
+            // Wrap in a Container (50mm x 25mm)
+            $barcodeBlock = '<div style="width:50mm; height:25mm; border:1px solid #000; padding:2px; text-align:center;">
+                                '.$headerHtml.'
+                                '.$barcodeHtml.'
+                                '.$itemDetailsHtml.'
+                            </div>';
+
+            // Write the barcode block to the new page
+            $mpdf->WriteHTML($barcodeBlock);
+        }
+
         // Output the PDF
         $publicPath = 'uploads/purchase_order/';
         $fileName = 'po_' . $sanitizedOrderId . '.pdf';
@@ -177,7 +221,7 @@ class InvoiceControllerPO extends Controller
             ];
             
             $response = $whatsAppUtility->sendWhatsApp('918961043773', $templateParams, '', 'Admin Order Invoice');
-            $response = $whatsAppUtility->sendWhatsApp('919908570858', $templateParams, '', 'Admin Order Invoice');
+            // $response = $whatsAppUtility->sendWhatsApp('919908570858', $templateParams, '', 'Admin Order Invoice');
             // $response = $whatsAppUtility->sendWhatsApp('917981009843', $templateParams, '', 'Admin Order Invoice');
             
             return $fileUrl;
@@ -228,7 +272,7 @@ class InvoiceControllerPO extends Controller
             ];
            
             $response = $whatsAppUtility->sendWhatsApp('918961043773', $templateParams, '', 'Admin Order Invoice');
-            $response = $whatsAppUtility->sendWhatsApp('919908570858', $templateParams, '', 'Admin Order Invoice');
+            // $response = $whatsAppUtility->sendWhatsApp('919908570858', $templateParams, '', 'Admin Order Invoice');
             // $response = $whatsAppUtility->sendWhatsApp('917981009843', $templateParams, '', 'Admin Order Invoice');
 
             return $fileUrl;
