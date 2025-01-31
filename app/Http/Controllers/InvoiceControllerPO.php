@@ -133,7 +133,7 @@ class InvoiceControllerPO extends Controller
                                     <b>Model:</b> '.$item->product->product_name.'
                                 </div>';
 
-            // Wrap in a Container (50mm x 25mm)
+            // Wrap in a Container (50mm x 50mm)
             $barcodeBlock = '<div style="width:50mm; height:50mm; text-align:left;">
                                 '.$headerHtml.'
                                 '.$barcodeHtml.'
