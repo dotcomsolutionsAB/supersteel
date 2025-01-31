@@ -176,7 +176,10 @@ class ViewController extends Controller
                 }
 
                 $product->stock = $product->stock . ' / '.$product->in_transit;
-                $product->pending = $product->pending . ' [ '.$product->re_order_level . ' ] ';
+                $product->pending = $product->pending;
+
+                $product->stock_admin = $product->stock . ' / '.$product->in_transit . ' / '.$product->pending . ' [ '.$product->re_order_level . ' ] ';
+                $product->stock_manager = $product->stock . ' / '.$product->in_transit . ' / '.$product->pending;
 
                 $product->flag = 0;
             }
@@ -298,7 +301,11 @@ class ViewController extends Controller
                 }
 
                 $product->stock = $product->stock . ' / '.$product->in_transit;
-                $product->pending = $product->pending . ' [ '.$product->re_order_level . ' ] ';
+                $product->pending = $product->pending;
+
+                $product->stock_admin = $product->stock . ' / '.$product->in_transit . ' / '.$product->pending . ' [ '.$product->re_order_level . ' ] ';
+                $product->stock_manager = $product->stock . ' / '.$product->in_transit . ' / '.$product->pending;
+
 
                 $product->flag = 0;
             }
