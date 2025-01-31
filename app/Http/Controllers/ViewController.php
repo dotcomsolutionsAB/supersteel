@@ -175,11 +175,13 @@ class ViewController extends Controller
                     $product->price = 0;
                 }
 
-                $product->stock = $product->stock . ' / '.$product->in_transit;
-                $product->pending = $product->pending;
-
-                $product->stock_admin = $product->stock . ' / '.$product->in_transit . ' / '.$product->pending . ' [ '.$product->re_order_level . ' ] ';
-                $product->stock_manager = $product->stock . ' / '.$product->in_transit . ' / '.$product->pending;
+                if ($get_user->role == 'admin') {
+                    $product->stock = $product->stock . ' / '.$product->in_transit;
+                    $product->pending = $product->pending . ' [ '.$product->re_order_level . ' ] ';
+                }else if ($get_user->role == 'manager'){
+                    $product->stock = $product->stock . ' / '.$product->in_transit;
+                    $product->pending = $product->pending;
+                }
 
                 $product->flag = 0;
             }
@@ -300,11 +302,13 @@ class ViewController extends Controller
                     $product->price = 0;
                 }
 
-                $product->stock = $product->stock . ' / '.$product->in_transit;
-                $product->pending = $product->pending;
-
-                $product->stock_admin = $product->stock . ' / '.$product->in_transit . ' / '.$product->pending . ' [ '.$product->re_order_level . ' ] ';
-                $product->stock_manager = $product->stock . ' / '.$product->in_transit . ' / '.$product->pending;
+                if ($get_user->role == 'admin') {
+                    $product->stock = $product->stock . ' / '.$product->in_transit;
+                    $product->pending = $product->pending . ' [ '.$product->re_order_level . ' ] ';
+                }else if ($get_user->role == 'manager'){
+                    $product->stock = $product->stock . ' / '.$product->in_transit;
+                    $product->pending = $product->pending;
+                }
 
 
                 $product->flag = 0;
