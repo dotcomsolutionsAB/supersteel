@@ -120,7 +120,7 @@ class InvoiceControllerPO extends Controller
                                 <img src="'.public_path('/storage/uploads/super_steel_logo.png').'" width="100" height="50" style="display:block;" />
                             
                                 <!-- Qty: (Top Right) -->
-                                <span style="font-size:8px; font-weight:bold; position:absolute; top:0; right:0;">Qty: 10</span>
+                                <span style="font-size:8px; font-weight:bold; position:absolute; top:0; right:0;">Qty: </span>
                             </div>
                             ';
 
