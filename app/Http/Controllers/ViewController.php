@@ -176,6 +176,9 @@ class ViewController extends Controller
                 }
 
                 $product->stock = $product->stock . ' / '.$product->in_transit;
+                $product->pending = $product->pending . ' [ '.$product->re_order_level . ' ] ';
+
+                $product->flag = 0;
             }
 
             return response()->json([
@@ -295,6 +298,9 @@ class ViewController extends Controller
                 }
 
                 $product->stock = $product->stock . ' / '.$product->in_transit;
+                $product->pending = $product->pending . ' [ '.$product->re_order_level . ' ] ';
+
+                $product->flag = 0;
             }
 
             return response()->json([
