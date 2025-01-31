@@ -112,12 +112,12 @@ class InvoiceControllerPO extends Controller
                 'margin-top' => 2,
                 'margin-bottom' => 2,
                 'orientation' => 'P', // Portrait
-                'sheet-size' => [50, 25], // Width x Height in mm
+                'sheet-size' => [50, 50], // Width x Height in mm
             ]);
 
             // Super Steel Logo (Top Left) & Qty (Top Right)
             $headerHtml = '<div style="display:flex; justify-content:space-between; align-items:center;">
-                                <img src="'.public_path('/storage/uploads/super_steel_logo.png').'" width="20" height="10" />
+                                <img src="'.public_path('/storage/uploads/super_steel_logo.png').'" width="40" height="20" />
                                 <span style="font-size:8px; font-weight:bold;">Qty: </span>
                         </div>';
 
@@ -128,13 +128,13 @@ class InvoiceControllerPO extends Controller
                             </div>';
 
             // Item & Model Details (Bottom)
-            $itemDetailsHtml = '<div style="text-align:center; font-size:8px;">
+            $itemDetailsHtml = '<div style="text-align:center; font-size:7px;">
                                     <b>Item:</b> '.$item->product->print_name.'<br>
-                                    <b>Model:</b> '.$item->product_name.'
+                                    <b>Model:</b> '.$item->product->product_name.'
                                 </div>';
 
             // Wrap in a Container (50mm x 25mm)
-            $barcodeBlock = '<div style="width:50mm; height:25mm; border:1px solid #000; padding:2px; text-align:center;">
+            $barcodeBlock = '<div style="width:50mm; height:50mm; text-align:left;">
                                 '.$headerHtml.'
                                 '.$barcodeHtml.'
                                 '.$itemDetailsHtml.'
