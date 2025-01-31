@@ -174,6 +174,8 @@ class ViewController extends Controller
                 if ($price_type == 'zero_price') {
                     $product->price = 0;
                 }
+
+                $product->stock = $product->stock . ' / '.$product->in_transit;
             }
 
             return response()->json([
@@ -289,6 +291,8 @@ class ViewController extends Controller
                 if ($price_type == 'zero_price') {
                     $product->price = 0;
                 }
+
+                $product->stock = $product->stock . ' / '.$product->in_transit;
             }
 
             return response()->json([
