@@ -115,19 +115,23 @@ class InvoiceControllerPO extends Controller
             ]);
 
             // Super Steel Logo (Top Left) & Qty (Top Right)
-            $headerHtml = '<div style="display:flex; justify-content:space-between; align-items:center;">
-                                <img src="'.public_path('/storage/uploads/super_steel_logo.png').'" width="100" height="50" />
-                                <span style="font-size:8px; font-weight:bold;">Qty: </span>
-                        </div>';
+            $headerHtml = '<div style="display:flex; justify-content:space-between; align-items:flex-start; position:relative; width:100%;">
+                                <!-- Super Steel Logo (Top Left) -->
+                                <img src="'.public_path('/storage/uploads/super_steel_logo.png').'" width="100" height="50" style="display:block;" />
+                            
+                                <!-- Qty: (Top Right) -->
+                                <span style="font-size:8px; font-weight:bold; position:absolute; top:0; right:0;">Qty: 10</span>
+                            </div>
+                            ';
 
             // Generate Barcode using Code 39
             $barcodeHtml = '<div style="text-align:center;">
                                 <barcode code="'.$item->product_code.'" type="C39" size="0.9" height="1.0"/>
-                                <div style="font-size:7px;">' . $item->product_code . '</div>
+                                <div style="font-size:8px;">' . $item->product_code . '</div>
                             </div>';
 
             // Item & Model Details (Bottom)
-            $itemDetailsHtml = '<div style="text-align:left; font-size:14px;">
+            $itemDetailsHtml = '<div style="text-align:left; font-size:10px;">
                                     <b>Item: '.$item->product->print_name.'</b><br>
                                     <b>Model: '.$item->product->product_name.'</b>
                                 </div>';
