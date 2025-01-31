@@ -127,7 +127,7 @@ class InvoiceControllerPO extends Controller
             // Generate Barcode using Code 39
             $barcodeHtml = '<div style="text-align:center;">
                                 <barcode code="'.$item->product_code.'" type="C39" size="0.9" height="1.0"/>
-                                <div style="font-size:8px;">' . $item->product_code . '</div>
+                                <div style="font-size:8px;"><b>' . $item->product_code . '</b></div>
                             </div>';
 
             // Item & Model Details (Bottom)
