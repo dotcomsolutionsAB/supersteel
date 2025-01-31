@@ -183,7 +183,14 @@ class ViewController extends Controller
                     $product->pending = $product->pending;
                 }
 
-                $product->flag = 0;
+                // Typecast to integers
+                $stock = (int)$product->stock;
+                $pending = (int)$product->pending;
+                $in_transit = (int)$product->in_transit;
+                $re_order_level = (int)$product->re_order_level;
+
+                // Check condition and update flag
+                $product->flag = ($stock + $pending + $in_transit >= $re_order_level) ? 1 : 0;
             }
 
             return response()->json([
@@ -310,8 +317,14 @@ class ViewController extends Controller
                     $product->pending = $product->pending;
                 }
 
+                // Typecast to integers
+                $stock = (int)$product->stock;
+                $pending = (int)$product->pending;
+                $in_transit = (int)$product->in_transit;
+                $re_order_level = (int)$product->re_order_level;
 
-                $product->flag = 0;
+                // Check condition and update flag
+                $product->flag = ($stock + $pending + $in_transit >= $re_order_level) ? 1 : 0;
             }
 
             return response()->json([
