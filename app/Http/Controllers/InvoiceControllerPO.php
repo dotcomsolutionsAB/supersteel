@@ -43,7 +43,7 @@ class InvoiceControllerPO extends Controller
 
         $manager_id = $user ? $user->manager_id : null;
         
-        $order_items = OrderItemsModel::with('product:product_code,print_name')
+        $order_items = OrderItemsModel::with('product:product_code,print_name,product_name')
                                     ->select('product_code', 'product_name', 'rate', 'quantity', 'total', 'remarks')
                                     ->where('order_id', $orderId)
                                     ->get();
@@ -116,7 +116,7 @@ class InvoiceControllerPO extends Controller
 
             // Super Steel Logo (Top Left) & Qty (Top Right)
             $headerHtml = '<div style="display:flex; justify-content:space-between; align-items:center;">
-                                <img src="'.public_path('/storage/uploads/super_steel_logo.png').'" width="40" height="20" />
+                                <img src="'.public_path('/storage/uploads/super_steel_logo.png').'" width="100" height="50" />
                                 <span style="font-size:8px; font-weight:bold;">Qty: </span>
                         </div>';
 
@@ -127,9 +127,9 @@ class InvoiceControllerPO extends Controller
                             </div>';
 
             // Item & Model Details (Bottom)
-            $itemDetailsHtml = '<div style="text-align:center; font-size:7px;">
-                                    <b>Item:</b> '.$item->product->print_name.'<br>
-                                    <b>Model:</b> '.$item->product->product_name.'
+            $itemDetailsHtml = '<div style="text-align:left; font-size:14px;">
+                                    <b>Item: '.$item->product->print_name.'</b><br>
+                                    <b>Model: '.$item->product->product_name.'</b>
                                 </div>';
 
             // Wrap in a Container (50mm x 50mm)
