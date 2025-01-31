@@ -22,6 +22,8 @@ class ProductModel extends Model
         'price_c',
         'price_d',
         'price_i',
+        'supplier',
+        're_order_level',
         'ppc',
         'stock',
         'in_transit',

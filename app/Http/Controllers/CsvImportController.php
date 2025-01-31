@@ -80,6 +80,8 @@ class CsvImportController extends Controller
                 'price_c' => str_replace([',', '.00'], '', $record_csv['PRICE C']),
                 'price_d' => str_replace([',', '.00'], '', $record_csv['PRICE D']),
                 'price_i' => str_replace([',', '.00'], '', $record_csv['PRICE I']),
+                'supplier' => $record_csv['SUPPLIER'],
+                're_order_level' => $record_csv['RE-ORDER LEVEL'],
                 'ppc' => !empty($record_csv['PCS/CTN']) && $record_csv['PCS/CTN'] !== '-' ? $record_csv['PCS/CTN'] : '1', // Avoid (int) conversion
                 'stock' => $record_csv['STOCK'],
                 'in_transit' => $record_csv['IN TRANSIT'],
