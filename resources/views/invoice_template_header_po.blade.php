@@ -67,7 +67,7 @@
     <table class="customer-info">
         <tr>
             <td class="label">Order ID:</td>
-            <td class="value">{{ $user->order_id }}</td>
+            <td class="value">{{ $order->order_id }}</td>
             <td class="label">Order Date:</td>
             <td class="value">{{ \Carbon\Carbon::parse($order->order_date)->format('d-m-Y') }}</td>
         </tr>
