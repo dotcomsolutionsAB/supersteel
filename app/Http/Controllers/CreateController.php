@@ -296,7 +296,7 @@ class CreateController extends Controller
 
     public function generateOrderId()
     {
-        $date = Carbon::now()->format('dmY'); // Current date in ddmmyyyy format
+        $date = Carbon::now()->format('dmy'); // Current date in ddmmyyyy format
         $prefix = 'SS/S';
 
         // Fetch the last order for the current day
@@ -321,7 +321,7 @@ class CreateController extends Controller
 
     public function generateQuotationId()
     {
-        $date = Carbon::now()->format('dmY'); // Current date in ddmmyyyy format
+        $date = Carbon::now()->format('dmy'); // Current date in ddmmyyyy format
         $prefix = 'SS/Q';
 
         // Fetch the last order for the current day
