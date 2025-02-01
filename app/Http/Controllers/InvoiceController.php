@@ -132,7 +132,7 @@ class InvoiceController extends Controller
         {
             $fileUrlWithTimestamp = $fileUrl . '?t=' . time();
             $templateParams = [
-                'name' => 'ss_new_order_admin_2', // Replace with your WhatsApp template name
+                'name' => 'ss_new_order_admin_3', // Replace with your WhatsApp template name
                 'language' => ['code' => 'en'],
                 'components' => [
                     [
@@ -171,10 +171,6 @@ class InvoiceController extends Controller
                             ],
                             [
                                 'type' => 'text',
-                                'text' => $order->amount,
-                            ],
-                            [
-                                'type' => 'text',
                                 'text' => $created_by_user->name,
                             ],
                         ],
@@ -202,7 +198,7 @@ class InvoiceController extends Controller
             }
 
             $templateParams = [
-                'name' => 'ss_new_order_user', // Replace with your WhatsApp template name
+                'name' => 'ss_new_order_user_3', // Replace with your WhatsApp template name
                 'language' => ['code' => 'en'],
                 'components' => [
                     [
@@ -231,10 +227,6 @@ class InvoiceController extends Controller
                                 'type' => 'text',
                                 'text' => Carbon::now()->format('d-m-Y'),
                             ],
-                            [
-                                'type' => 'text',
-                                'text' => $order->amount,
-                            ],
                         ],
                     ]
                 ],
@@ -248,7 +240,7 @@ class InvoiceController extends Controller
         }else{
             $fileUrlWithTimestamp = $fileUrl . '?t=' . time();
             $templateParams = [
-                'name' => 'ss_edit_order_admin', // Replace with your WhatsApp template name
+                'name' => 'ss_edit_order_admin_3', // Replace with your WhatsApp template name
                 'language' => ['code' => 'en'],
                 'components' => [
                     [
@@ -281,10 +273,6 @@ class InvoiceController extends Controller
                                 'type' => 'text',
                                 'text' => Carbon::parse($order->order_date)->format('d-m-Y'),
                             ],
-                            [
-                                'type' => 'text',
-                                'text' => $order->amount,
-                            ],
                         ],
                     ]
                 ],
@@ -310,7 +298,7 @@ class InvoiceController extends Controller
             }
 
             $templateParams = [
-                'name' => 'ss_edit_order_user', // Replace with your WhatsApp template name
+                'name' => 'ss_edit_order_user_3', // Replace with your WhatsApp template name
                 'language' => ['code' => 'en'],
                 'components' => [
                     [
@@ -338,10 +326,6 @@ class InvoiceController extends Controller
                             [
                                 'type' => 'text',
                                 'text' => Carbon::parse($order->order_date)->format('d-m-Y'),
-                            ],
-                            [
-                                'type' => 'text',
-                                'text' => $order->amount,
                             ],
                         ],
                     ]

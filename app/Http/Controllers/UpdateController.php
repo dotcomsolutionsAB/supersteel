@@ -497,7 +497,7 @@ class UpdateController extends Controller
         $whatsAppUtility = new sendWhatsAppUtility();
 
         $templateParams = [
-            'name' => 'ss_order_cancelled', // Replace with your WhatsApp template name
+            'name' => 'ss_order_cancelled_3', // Replace with your WhatsApp template name
             'language' => ['code' => 'en'],
             'components' => [[
                     'type' => 'body',
@@ -513,10 +513,6 @@ class UpdateController extends Controller
                         [
                             'type' => 'text',
                             'text' => Carbon::parse($order->order_date)->format('d-m-Y'),
-                        ],
-                        [
-                            'type' => 'text',
-                            'text' => $order->amount,
                         ],
                     ],
                 ]
