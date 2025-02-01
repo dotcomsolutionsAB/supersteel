@@ -297,7 +297,7 @@ class CreateController extends Controller
     public function generateOrderId()
     {
         $date = Carbon::now()->format('dmY'); // Current date in ddmmyyyy format
-        $prefix = 'SS/';
+        $prefix = 'SS/S';
 
         // Fetch the last order for the current day
         $lastOrder = OrderModel::where('order_id', 'like', $prefix . '%/' . $date)
@@ -307,10 +307,10 @@ class CreateController extends Controller
         // Extract the last number and increment it
         if ($lastOrder) {
             $lastNumber = (int) substr(explode('/', $lastOrder->order_id)[1], 1, 3);
-            $newNumber = 'S' . str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+            $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
         } else {
             // Start from S001 if no orders exist for the day
-            $newNumber = 'S001';
+            $newNumber = '001';
         }
 
         // Construct the new order ID
@@ -322,7 +322,7 @@ class CreateController extends Controller
     public function generateQuotationId()
     {
         $date = Carbon::now()->format('dmY'); // Current date in ddmmyyyy format
-        $prefix = 'SS/';
+        $prefix = 'SS/Q';
 
         // Fetch the last order for the current day
         $lastOrder = OrderModel::where('order_id', 'like', $prefix . '%/' . $date)
@@ -332,10 +332,10 @@ class CreateController extends Controller
         // Extract the last number and increment it
         if ($lastOrder) {
             $lastNumber = (int) substr(explode('/', $lastOrder->order_id)[1], 1, 3);
-            $newNumber = 'Q' . str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+            $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
         } else {
             // Start from S001 if no orders exist for the day
-            $newNumber = 'Q001';
+            $newNumber = '001';
         }
 
         // Construct the new order ID
@@ -347,7 +347,7 @@ class CreateController extends Controller
     public function generatePurchaseOrderId()
     {
         $date = Carbon::now()->format('my'); // Current month and year in mmyy format (e.g., 0225 for Feb 2025)
-        $prefix = 'SS/';
+        $prefix = 'SS/P';
 
         // Fetch the last purchase order for the current month
         $lastOrder = OrderModel::where('order_id', 'like', $prefix . '%/' . $date)
@@ -357,10 +357,10 @@ class CreateController extends Controller
         // Extract the last number and increment it
         if ($lastOrder) {
             $lastNumber = (int) substr(explode('/', $lastOrder->order_id)[1], 1, 3);
-            $newNumber = 'P' . str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+            $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
         } else {
             // Start from P001 if no orders exist for the month
-            $newNumber = 'P001';
+            $newNumber = '001';
         }
 
         // Construct the new purchase order ID
