@@ -221,7 +221,7 @@ class InvoiceControllerPO extends Controller
             
             $response = $whatsAppUtility->sendWhatsApp('918961043773', $templateParams, '', 'Admin Order Invoice');
             $response = $whatsAppUtility->sendWhatsApp('919908570858', $templateParams, '', 'Admin Order Invoice');
-            // $response = $whatsAppUtility->sendWhatsApp('917981009843', $templateParams, '', 'Admin Order Invoice');
+            $response = $whatsAppUtility->sendWhatsApp('917981009843', $templateParams, '', 'Admin Order Invoice');
             
             return $fileUrl;
         } else {
@@ -268,7 +268,7 @@ class InvoiceControllerPO extends Controller
            
             $response = $whatsAppUtility->sendWhatsApp('918961043773', $templateParams, '', 'Admin Order Invoice');
             $response = $whatsAppUtility->sendWhatsApp('919908570858', $templateParams, '', 'Admin Order Invoice');
-            // $response = $whatsAppUtility->sendWhatsApp('917981009843', $templateParams, '', 'Admin Order Invoice');
+            $response = $whatsAppUtility->sendWhatsApp('917981009843', $templateParams, '', 'Admin Order Invoice');
 
             return $fileUrl;
         }

@@ -296,8 +296,8 @@ class CreateController extends Controller
 
     public function generateOrderId()
     {
-        $date = Carbon::now()->format('dmy'); // Current date in ddmmyy format
-        $prefix = 'SS';
+        $date = Carbon::now()->format('dmY'); // Current date in ddmmyyyy format
+        $prefix = 'SS/S';
 
         // Fetch the last order for the current day
         $lastOrder = OrderModel::where('order_id', 'like', $prefix . '%/' . $date)
@@ -306,43 +306,69 @@ class CreateController extends Controller
 
         // Extract the last number and increment it
         if ($lastOrder) {
-            $lastNumber = (int) substr(explode('/', $lastOrder->order_id)[1], 0, 3);
-            $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+            $lastNumber = (int) substr(explode('/', $lastOrder->order_id)[1], 1, 3);
+            $newNumber = 'S' . str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
         } else {
-            // Start from 001 if no orders exist for the day
-            $newNumber = str_pad(1, 3, '0', STR_PAD_LEFT);
+            // Start from S001 if no orders exist for the day
+            $newNumber = 'S001';
         }
 
         // Construct the new order ID
-        $newOrderId = "{$prefix}/{$newNumber}/{$date}";
+        $newOrderId = "{$prefix}{$newNumber}/{$date}";
 
         return $newOrderId;
     }
 
-    public function generatePurchaseOrderId()
+    public function generateQuotationId()
     {
-        $date = Carbon::now()->format('my'); // Current month and year in mmyy format
-        $prefix = 'SS';
+        $date = Carbon::now()->format('dmY'); // Current date in ddmmyyyy format
+        $prefix = 'SS/Q';
 
-        // Fetch the last order for the current month
+        // Fetch the last order for the current day
         $lastOrder = OrderModel::where('order_id', 'like', $prefix . '%/' . $date)
             ->orderBy('order_id', 'desc')
             ->first();
 
         // Extract the last number and increment it
         if ($lastOrder) {
-            $lastNumber = (int) substr(explode('/', $lastOrder->order_id)[1], 0, 3);
-            $newNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+            $lastNumber = (int) substr(explode('/', $lastOrder->order_id)[1], 1, 3);
+            $newNumber = 'Q' . str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
         } else {
-            // Start from 001 if no orders exist for the month
-            $newNumber = str_pad(1, 3, '0', STR_PAD_LEFT);
+            // Start from S001 if no orders exist for the day
+            $newNumber = 'Q001';
         }
 
         // Construct the new order ID
-        $newOrderId = "{$prefix}/{$newNumber}/{$date}";
+        $newOrderId = "{$prefix}{$newNumber}/{$date}";
 
         return $newOrderId;
     }
+
+    public function generatePurchaseOrderId()
+    {
+        $date = Carbon::now()->format('my'); // Current month and year in mmyy format (e.g., 0225 for Feb 2025)
+        $prefix = 'SS/P';
+
+        // Fetch the last purchase order for the current month
+        $lastOrder = OrderModel::where('order_id', 'like', $prefix . '%/' . $date)
+            ->orderBy('order_id', 'desc')
+            ->first();
+
+        // Extract the last number and increment it
+        if ($lastOrder) {
+            $lastNumber = (int) substr(explode('/', $lastOrder->order_id)[1], 1, 3);
+            $newNumber = 'P' . str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+        } else {
+            // Start from P001 if no orders exist for the month
+            $newNumber = 'P001';
+        }
+
+        // Construct the new purchase order ID
+        $newOrderId = "{$prefix}{$newNumber}/{$date}";
+
+        return $newOrderId;
+    }
+
 
 
     public function orders(Request $request)
@@ -475,7 +501,7 @@ class CreateController extends Controller
         $current_user = User::select('price_type')->where('id', $userId)->first();
         $user_type = $current_user->price_type;
 
-        $get_order_id = $this->generateOrderId();
+        $get_order_id = $this->generateQuotationId();
 
         $get_product = CartModel::select('amount', 'quantity', 'product_code', 'product_name', 'remarks', 'rate')
                                     ->where('user_id', $userId)
