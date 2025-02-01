@@ -176,11 +176,11 @@ class ViewController extends Controller
                 }
 
                 if ($get_user->role == 'admin') {
-                    $product->stock = $product->stock . ' / '.$product->in_transit;
-                    $product->pending = $product->pending . ' [ '.$product->re_order_level . ' ] ';
+                    $product->stock = $product->stock . ' / '. $product->in_transit . ' / ' . $product->pending . ' [ '.$product->re_order_level . ' ] ';
+                    $product->pending = '';
                 }else if ($get_user->role == 'manager'){
-                    $product->stock = $product->stock . ' / '.$product->in_transit;
-                    $product->pending = $product->pending;
+                    $product->stock = $product->stock . ' / '. $product->in_transit . ' / '. $product->pending;
+                    $product->pending = '';
                 }
 
                 // Typecast to integers
