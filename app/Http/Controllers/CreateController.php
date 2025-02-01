@@ -297,7 +297,7 @@ class CreateController extends Controller
     public function generateOrderId()
     {
         $date = Carbon::now()->format('dmY'); // Current date in ddmmyyyy format
-        $prefix = 'SS/S';
+        $prefix = 'SS/';
 
         // Fetch the last order for the current day
         $lastOrder = OrderModel::where('order_id', 'like', $prefix . '%/' . $date)
@@ -322,7 +322,7 @@ class CreateController extends Controller
     public function generateQuotationId()
     {
         $date = Carbon::now()->format('dmY'); // Current date in ddmmyyyy format
-        $prefix = 'SS/Q';
+        $prefix = 'SS/';
 
         // Fetch the last order for the current day
         $lastOrder = OrderModel::where('order_id', 'like', $prefix . '%/' . $date)
@@ -347,7 +347,7 @@ class CreateController extends Controller
     public function generatePurchaseOrderId()
     {
         $date = Carbon::now()->format('my'); // Current month and year in mmyy format (e.g., 0225 for Feb 2025)
-        $prefix = 'SS/P';
+        $prefix = 'SS/';
 
         // Fetch the last purchase order for the current month
         $lastOrder = OrderModel::where('order_id', 'like', $prefix . '%/' . $date)
