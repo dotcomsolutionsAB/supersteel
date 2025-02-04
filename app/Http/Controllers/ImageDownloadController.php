@@ -63,7 +63,6 @@ class ImageDownloadController extends Controller
         return response()->json(['message' => 'Images downloaded and saved successfully']);
     }
 
-
     private function downloadAndConvertImage($url, $folder, $category)
     {
         try {
@@ -76,7 +75,7 @@ class ImageDownloadController extends Controller
 
             // Get file extension and name
             $pathInfo = pathinfo(parse_url($url, PHP_URL_PATH));
-            $originalExtension = strtolower($pathInfo['extension'] ?? 'jpg');
+            $originalExtension = strtolower($pathInfo['extension'] ?? 'jpg'); // Default to JPG if no extension
             $filename = uniqid() . '.jpg'; // Always save as JPG
 
             // Save original file temporarily
@@ -84,7 +83,7 @@ class ImageDownloadController extends Controller
             file_put_contents($tempPath, $imageContent);
 
             // Load image using Intervention Image
-            $manager = new ImageManager();
+            $manager = new ImageManager(['driver' => 'gd']); // Use GD or 'imagick'
             $image = $manager->read($tempPath);
 
             // Convert to JPG
