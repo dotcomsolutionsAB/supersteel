@@ -74,29 +74,31 @@ class ImageDownloadController extends Controller
                 return;
             }
 
-            // Get file extension and name
+            // Extract original filename from the URL
             $pathInfo = pathinfo(parse_url($url, PHP_URL_PATH));
+            $originalFilename = $pathInfo['filename'] ?? uniqid(); // Default if no filename found
             $originalExtension = strtolower($pathInfo['extension'] ?? 'jpg'); // Default to JPG if no extension
-            $filename = uniqid() . '.jpg'; // Always save as JPG
+            $filename = $originalFilename . '.jpg'; // Always save as JPG
 
             // Save original file temporarily
-            $tempPath = storage_path('app/temp_' . uniqid() . '.' . $originalExtension);
+            $tempPath = storage_path('app/temp_' . $originalFilename . '.' . $originalExtension);
             file_put_contents($tempPath, $imageContent);
 
-            // Load image using Intervention Image (Corrected for v3)
+            // Load image using Intervention Image
             $manager = new ImageManager(new Driver()); // Use GD Driver
             $image = $manager->read($tempPath);
 
             // Convert to JPG
-            $jpgPath = storage_path('app/' . uniqid() . '.jpg');
+            $jpgPath = storage_path('app/' . $originalFilename . '.jpg');
 
-            if ($image->getMimeType() === 'image/png') {
+            // ✅ Alternative method: Check extension manually
+            if ($originalExtension === 'png') {
                 // PNG -> JPG (fill transparent parts with white)
                 $canvas = $manager->create($image->width(), $image->height(), 'ffffff');
                 $canvas->place($image);
                 $canvas->save($jpgPath, quality: 90);
             } else {
-                // JPEG -> JPG
+                // JPEG or other formats -> Convert to JPG
                 $image->save($jpgPath, quality: 90);
             }
 
@@ -114,7 +116,6 @@ class ImageDownloadController extends Controller
             $this->logImageImport("FAILED: $url - Error: " . $e->getMessage());
         }
     }
-        
 
     private function logImageImport($message)
     {
