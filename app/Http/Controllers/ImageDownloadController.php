@@ -90,7 +90,7 @@ class ImageDownloadController extends Controller
             // Convert to JPG
             $jpgPath = storage_path('app/' . uniqid() . '.jpg');
 
-            if ($image->mimeType() === 'image/png') {
+            if ($image->getMimeType() === 'image/png') {
                 // PNG -> JPG (fill transparent parts with white)
                 $canvas = $manager->create($image->width(), $image->height(), 'ffffff');
                 $canvas->place($image);
