@@ -76,7 +76,7 @@ class ImageDownloadController extends Controller
 
             // Get file extension and name
             $pathInfo = pathinfo(parse_url($url, PHP_URL_PATH));
-            $originalExtension = strtolower($pathInfo['extension'] ?? 'jpg'); // Default to JPG if no extension
+            $originalExtension = strtolower($pathInfo['extension'] ?? 'jpg');
             $filename = uniqid() . '.jpg'; // Always save as JPG
 
             // Save original file temporarily
@@ -84,19 +84,20 @@ class ImageDownloadController extends Controller
             file_put_contents($tempPath, $imageContent);
 
             // Load image using Intervention Image
-            $image = Image::make($tempPath);
+            $manager = new ImageManager();
+            $image = $manager->read($tempPath);
 
             // Convert to JPG
             $jpgPath = storage_path('app/' . uniqid() . '.jpg');
 
-            if ($image->mime() === 'image/png') {
+            if ($image->extension() === 'png') {
                 // PNG -> JPG (fill transparent parts with white)
-                $canvas = Image::canvas($image->width(), $image->height(), '#ffffff');
-                $canvas->insert($image, 'center');
-                $canvas->save($jpgPath, 90);
+                $canvas = $manager->create($image->width(), $image->height(), 'ffffff');
+                $canvas->place($image);
+                $canvas->save($jpgPath, quality: 90);
             } else {
                 // JPEG -> JPG
-                $image->save($jpgPath, 90);
+                $image->save($jpgPath, quality: 90);
             }
 
             // Move the converted image to the final destination
@@ -113,6 +114,7 @@ class ImageDownloadController extends Controller
             $this->logImageImport("FAILED: $url - Error: " . $e->getMessage());
         }
     }
+
 
     private function logImageImport($message)
     {
