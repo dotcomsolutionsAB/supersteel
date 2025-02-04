@@ -26,6 +26,8 @@ class ImageDownloadController extends Controller
             return response()->json(['error' => 'Failed to fetch images from API'], 500);
         }
 
+        die($response);
+
         // Decode JSON response
         $imageData = json_decode($response->body(), true);
 
