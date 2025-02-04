@@ -14,7 +14,6 @@ class ImageDownloadController extends Controller
     {
         // Get the current date
         $date = Carbon::now()->format('Y-m-d');
-        $date = "2025-01-27";
 
         // API URL
         $apiUrl = "https://script.google.com/macros/s/AKfycbzdK_vo5rrCicjlFkwCSNIiTlx4IelEcBNb2ZhX53zH3_oJOSTk4J4ovfM1b4lPMj1MHg/exec";
@@ -27,7 +26,14 @@ class ImageDownloadController extends Controller
             return response()->json(['error' => 'Failed to fetch images from API'], 500);
         }
 
-        $imageData = $response->json();
+        // Decode JSON response
+        $imageData = json_decode($response->body(), true);
+
+        // Ensure we have an array, otherwise log error
+        if (!is_array($imageData)) {
+            $this->logImageImport("ERROR: API returned invalid JSON response: " . $response->body());
+            return response()->json(['error' => 'Invalid API response format'], 500);
+        }
 
         // Folder paths
         $folders = [
@@ -43,6 +49,11 @@ class ImageDownloadController extends Controller
 
         // Process images
         foreach ($imageData as $category => $imageLinks) {
+            if (!is_array($imageLinks)) {
+                $this->logImageImport("ERROR: Expected array for category $category, got " . gettype($imageLinks));
+                continue;
+            }
+
             foreach ($imageLinks as $imageUrl) {
                 $this->downloadAndConvertImage($imageUrl, $folders[$category], $category);
             }
@@ -50,6 +61,7 @@ class ImageDownloadController extends Controller
 
         return response()->json(['message' => 'Images downloaded and saved successfully']);
     }
+
 
     private function downloadAndConvertImage($url, $folder, $category)
     {
