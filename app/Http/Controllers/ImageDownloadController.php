@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver; // Import the correct driver
 use Carbon\Carbon;
 
 class ImageDownloadController extends Controller
@@ -82,8 +83,8 @@ class ImageDownloadController extends Controller
             $tempPath = storage_path('app/temp_' . uniqid() . '.' . $originalExtension);
             file_put_contents($tempPath, $imageContent);
 
-            // Load image using Intervention Image
-            $manager = new ImageManager(['driver' => 'gd']); // Use GD or 'imagick'
+            // Load image using Intervention Image (Corrected for v3)
+            $manager = new ImageManager(new Driver()); // Use GD Driver
             $image = $manager->read($tempPath);
 
             // Convert to JPG
@@ -113,7 +114,7 @@ class ImageDownloadController extends Controller
             $this->logImageImport("FAILED: $url - Error: " . $e->getMessage());
         }
     }
-
+        
 
     private function logImageImport($message)
     {
