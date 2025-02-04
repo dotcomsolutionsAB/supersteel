@@ -8,6 +8,7 @@ use App\Http\Controllers\UpdateController;
 use App\Http\Controllers\DeleteController;
 use App\Http\Controllers\CsvImportController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\ImageDownloadController;
 use App\Http\Middleware\GetUserRole;
 
 Route::prefix('admin')->middleware(['auth:sanctum', GetUserRole::class . ':admin'])->group(function () {
@@ -133,3 +134,5 @@ Route::get('/fetch_products', [CsvImportController::class, 'importProduct']);
 Route::get('/fetch_users', [CsvImportController::class, 'importUser']);
 Route::get('/fetch_category', [CsvImportController::class, 'importCategory']);
 Route::get('/fetch_sub_category', [CsvImportController::class, 'importSubCategory']);
+
+Route::get('/sync_images', [ImageDownloadController::class, 'fetchAndSaveImages']);
