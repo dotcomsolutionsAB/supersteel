@@ -17,10 +17,7 @@ class ImageDownloadController extends Controller
         $date = '2025-01-27';
 
         // API URL
-        $apiUrl = "https://script.google.com/macros/s/AKfycbzdK_vo5rrCicjlFkwCSNIiTlx4IelEcBNb2ZhX53zH3_oJOSTk4J4ovfM1b4lPMj1MHg/exec";
-
-        // Make the POST request
-        $response = Http::post($apiUrl, ['date' => $date]);
+        $apiUrl = "https://script.google.com/macros/s/AKfycbzdK_vo5rrCicjlFkwCSNIiTlx4IelEcBNb2ZhX53zH3_oJOSTk4J4ovfM1b4lPMj1MHg/exec?date=".$date;
 
         if ($response->failed()) {
             $this->logImageImport("ERROR: Failed to fetch images from API.");
