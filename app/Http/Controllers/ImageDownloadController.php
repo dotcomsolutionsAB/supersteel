@@ -19,6 +19,9 @@ class ImageDownloadController extends Controller
         // API URL
         $apiUrl = "https://script.google.com/macros/s/AKfycbzdK_vo5rrCicjlFkwCSNIiTlx4IelEcBNb2ZhX53zH3_oJOSTk4J4ovfM1b4lPMj1MHg/exec?date=".$date;
 
+        // Make the POST request
+        $response = Http::post($apiUrl);
+
         if ($response->failed()) {
             $this->logImageImport("ERROR: Failed to fetch images from API.");
             return response()->json(['error' => 'Failed to fetch images from API'], 500);
