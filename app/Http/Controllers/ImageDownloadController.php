@@ -15,7 +15,6 @@ class ImageDownloadController extends Controller
     {
         // Get the current date
         $date = Carbon::now()->format('Y-m-d');
-        $date = '2025-01-27';
 
         // API URL
         $apiUrl = "https://script.google.com/macros/s/AKfycbzdK_vo5rrCicjlFkwCSNIiTlx4IelEcBNb2ZhX53zH3_oJOSTk4J4ovfM1b4lPMj1MHg/exec?date=".$date;
@@ -50,21 +49,26 @@ class ImageDownloadController extends Controller
         }
 
         // Process images
-        foreach ($imageData as $category => $imageLinks) {
-            if (!is_array($imageLinks)) {
-                $this->logImageImport("ERROR: Expected array for category $category, got " . gettype($imageLinks));
+        foreach ($imageData as $category => $files) {
+            if (!is_array($files)) {
+                $this->logImageImport("ERROR: Expected array for category $category, got " . gettype($files));
                 continue;
             }
 
-            foreach ($imageLinks as $imageUrl) {
-                $this->downloadAndConvertImage($imageUrl, $folders[$category], $category);
+            foreach ($files as $fileData) {
+                if (!isset($fileData['filename']) || !isset($fileData['url'])) {
+                    $this->logImageImport("ERROR: Missing filename or URL for category $category");
+                    continue;
+                }
+
+                $this->downloadAndConvertImage($fileData['url'], $folders[$category], $fileData['filename'], $category);
             }
         }
 
         return response()->json(['message' => 'Images downloaded and saved successfully']);
     }
 
-    private function downloadAndConvertImage($url, $folder, $category)
+    private function downloadAndConvertImage($url, $folder, $originalFilename, $category)
     {
         try {
             // Get file content
@@ -74,14 +78,13 @@ class ImageDownloadController extends Controller
                 return;
             }
 
-            // Extract original filename from the URL
-            $pathInfo = pathinfo(parse_url($url, PHP_URL_PATH));
-            $originalFilename = $pathInfo['filename'] ?? uniqid(); // Default if no filename found
-            $originalExtension = strtolower($pathInfo['extension'] ?? 'jpg'); // Default to JPG if no extension
-            $filename = $originalFilename . '.jpg'; // Always save as JPG
+            // Extract extension from filename
+            $originalExtension = strtolower(pathinfo($originalFilename, PATHINFO_EXTENSION));
+            $filenameWithoutExt = pathinfo($originalFilename, PATHINFO_FILENAME);
+            $filename = $filenameWithoutExt . '.jpg'; // Always save as JPG
 
             // Save original file temporarily
-            $tempPath = storage_path('app/temp_' . $originalFilename . '.' . $originalExtension);
+            $tempPath = storage_path('app/temp_' . $originalFilename);
             file_put_contents($tempPath, $imageContent);
 
             // Load image using Intervention Image
@@ -89,9 +92,8 @@ class ImageDownloadController extends Controller
             $image = $manager->read($tempPath);
 
             // Convert to JPG
-            $jpgPath = storage_path('app/' . $originalFilename . '.jpg');
+            $jpgPath = storage_path('app/' . $filename);
 
-            // ✅ Alternative method: Check extension manually
             if ($originalExtension === 'png') {
                 // PNG -> JPG (fill transparent parts with white)
                 $canvas = $manager->create($image->width(), $image->height(), 'ffffff');
