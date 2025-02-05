@@ -41,7 +41,7 @@ class ImageDownloadController extends Controller
 
         // Ensure we have an array, otherwise log error
         if (!is_array($imageData)) {
-            $this->logImageImport("ERROR: API returned invalid JSON response: " . $response->body());
+            $this->logImageImport("ERROR: API returned invalid JSON response: " . $response);
             return response()->json(['error' => 'Invalid API response format'], 500);
         }
 
