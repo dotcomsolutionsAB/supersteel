@@ -21,29 +21,20 @@ class ImageDownloadController extends Controller
         $apiUrl = "https://script.google.com/macros/s/AKfycbzdK_vo5rrCicjlFkwCSNIiTlx4IelEcBNb2ZhX53zH3_oJOSTk4J4ovfM1b4lPMj1MHg/exec?date=".$date;
 
         // Make the POST request
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $apiUrl);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 1000); // 120 seconds timeout
-        curl_setopt($ch, CURLOPT_FAILONERROR, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        $response = Http::timeout(1000)->post($apiUrl);
 
-        $response = curl_exec($ch);
 
-        if (curl_errno($ch)) {
-            $errorMsg = curl_error($ch);
-            curl_close($ch);
-            $this->logImageImport("ERROR: cURL request failed with error - $errorMsg");
-            return response()->json(['error' => "cURL request failed: $errorMsg"], 500);
+        if ($response->failed()) {
+            $this->logImageImport("ERROR: Failed to fetch images from API.");
+            return response()->json(['error' => 'Failed to fetch images from API'], 500);
         }
 
-        curl_close($ch);
-        $imageData = json_decode($response, true);
+        // Decode JSON response
+        $imageData = json_decode($response->body(), true);
 
         // Ensure we have an array, otherwise log error
         if (!is_array($imageData)) {
-            $this->logImageImport("ERROR: API returned invalid JSON response: " . $response);
+            $this->logImageImport("ERROR: API returned invalid JSON response: " . $response->body());
             return response()->json(['error' => 'Invalid API response format'], 500);
         }
 
