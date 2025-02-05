@@ -36,8 +36,8 @@ class ImageDownloadController extends Controller
             return response()->json(['error' => "cURL request failed: $errorMsg"], 500);
         }
 
-        // Decode JSON response
-        $imageData = json_decode($response->body(), true);
+        curl_close($ch);
+        $imageData = json_decode($response, true);
 
         // Ensure we have an array, otherwise log error
         if (!is_array($imageData)) {
