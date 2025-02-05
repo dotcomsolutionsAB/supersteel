@@ -23,7 +23,7 @@ class ImageDownloadController extends Controller
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $apiUrl);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 120); // 120 seconds timeout
+        curl_setopt($ch, CURLOPT_TIMEOUT, 1000); // 120 seconds timeout
         curl_setopt($ch, CURLOPT_FAILONERROR, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
