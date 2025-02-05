@@ -29,9 +29,11 @@ class ImageDownloadController extends Controller
 
         $response = curl_exec($ch);
 
-        if ($response->failed()) {
-            $this->logImageImport("ERROR: Failed to fetch images from API.");
-            return response()->json(['error' => 'Failed to fetch images from API'], 500);
+        if (curl_errno($ch)) {
+            $errorMsg = curl_error($ch);
+            curl_close($ch);
+            $this->logImageImport("ERROR: cURL request failed with error - $errorMsg");
+            return response()->json(['error' => "cURL request failed: $errorMsg"], 500);
         }
 
         // Decode JSON response
