@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManager;
-use Intervention\Image\Drivers\Gd\Driver; // Import the correct driver
+use Intervention\Image\Drivers\Gd\Driver;
 use Carbon\Carbon;
 
 class ImageDownloadController extends Controller
@@ -21,8 +21,7 @@ class ImageDownloadController extends Controller
         $apiUrl = "https://script.google.com/macros/s/AKfycbzdK_vo5rrCicjlFkwCSNIiTlx4IelEcBNb2ZhX53zH3_oJOSTk4J4ovfM1b4lPMj1MHg/exec?date=".$date;
 
         // Make the POST request
-        $response = Http::timeout(1000)->post($apiUrl);
-
+        $response = Http::post($apiUrl);
 
         if ($response->failed()) {
             $this->logImageImport("ERROR: Failed to fetch images from API.");
@@ -42,12 +41,15 @@ class ImageDownloadController extends Controller
         $folders = [
             'CBG' => 'public/uploads/products',
             'WBG' => 'public/uploads/products_pdf',
-            'Extra' => 'public/uploads/extra'
+            'Extra' => 'public/uploads/extra',
+            'LEVEL IMAGES' => 'public/uploads/category'
         ];
 
-        // Ensure directories exist
+        // Ensure directories exist without changing permissions
         foreach ($folders as $folder) {
-            Storage::makeDirectory($folder);
+            if (!file_exists(public_path($folder))) {
+                mkdir(public_path($folder), 0775, true);
+            }
         }
 
         // Process images
@@ -93,21 +95,21 @@ class ImageDownloadController extends Controller
             $manager = new ImageManager(new Driver()); // Use GD Driver
             $image = $manager->read($tempPath);
 
-            // Convert to JPG
+            // Convert to JPG without reducing quality
             $jpgPath = storage_path('app/' . $filename);
 
-            if ($originalExtension === 'png') {
-                // PNG -> JPG (fill transparent parts with white)
+            if ($originalExtension === 'png' || $originalExtension === 'webp') {
+                // Convert PNG or WEBP to JPG (fill transparent parts with white for PNG)
                 $canvas = $manager->create($image->width(), $image->height(), 'ffffff');
                 $canvas->place($image);
-                $canvas->save($jpgPath, quality: 90);
+                $canvas->save($jpgPath, 100); // Max quality
             } else {
                 // JPEG or other formats -> Convert to JPG
-                $image->save($jpgPath, quality: 90);
+                $image->save($jpgPath, 100); // Max quality
             }
 
             // Move the converted image to the final destination
-            Storage::put($folder . '/' . $filename, file_get_contents($jpgPath));
+            file_put_contents(public_path($folder . '/' . $filename), file_get_contents($jpgPath));
 
             // Log successful import
             $this->logImageImport("IMPORTED: [$category] $url -> $folder/$filename");
@@ -120,6 +122,7 @@ class ImageDownloadController extends Controller
             $this->logImageImport("FAILED: $url - Error: " . $e->getMessage());
         }
     }
+
 
     private function logImageImport($message)
     {
