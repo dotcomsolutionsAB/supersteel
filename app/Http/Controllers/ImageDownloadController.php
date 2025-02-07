@@ -72,13 +72,23 @@ class ImageDownloadController extends Controller
         return response()->json(['message' => 'Images downloaded and saved successfully']);
     }
 
-    private function downloadAndConvertImage($url, $folder, $originalFilename, $category)
+   private function downloadAndConvertImage($url, $folder, $originalFilename, $category)
     {
         try {
+            // Extract file ID from Google Drive URL
+            preg_match('/\/d\/(.*?)\//', $url, $matches);
+            if (!isset($matches[1])) {
+                $this->logImageImport("FAILED: Invalid Google Drive URL format: $url");
+                return;
+            }
+
+            $fileId = $matches[1];
+            $directDownloadUrl = "https://drive.google.com/uc?export=download&id=$fileId";
+
             // Get file content
-            $imageContent = file_get_contents($url);
+            $imageContent = Http::timeout(180)->get($directDownloadUrl)->body();
             if (!$imageContent) {
-                $this->logImageImport("FAILED: Could not download image from $url");
+                $this->logImageImport("FAILED: Could not download image from $directDownloadUrl");
                 return;
             }
 
@@ -122,6 +132,7 @@ class ImageDownloadController extends Controller
             $this->logImageImport("FAILED: $url - Error: " . $e->getMessage());
         }
     }
+
 
 
     private function logImageImport($message)
