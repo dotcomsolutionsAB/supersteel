@@ -15,7 +15,7 @@ class ImageDownloadController extends Controller
     {
         // Get the current date
         $date = Carbon::now()->format('Y-m-d');
-        $date = "2025-02-01";
+        // $date = "2025-02-01";
 
         // API URL
         $apiUrl = "https://script.google.com/macros/s/AKfycbzdK_vo5rrCicjlFkwCSNIiTlx4IelEcBNb2ZhX53zH3_oJOSTk4J4ovfM1b4lPMj1MHg/exec?date=".$date;
