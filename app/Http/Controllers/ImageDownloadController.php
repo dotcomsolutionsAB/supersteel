@@ -39,10 +39,10 @@ class ImageDownloadController extends Controller
 
         // Folder paths
         $folders = [
-            'CBG' => 'public/uploads/products',
-            'WBG' => 'public/uploads/products_pdf',
-            'Extra' => 'public/uploads/extra',
-            'LEVEL IMAGES' => 'public/uploads/category'
+            'CBG' => 'storage/uploads/products',
+            'WBG' => 'storage/uploads/products_pdf',
+            'Extra' => 'storage/uploads/extra',
+            'LEVEL IMAGES' => 'storage/uploads/category'
         ];
 
         // Ensure directories exist without changing permissions
