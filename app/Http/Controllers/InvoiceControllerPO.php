@@ -43,8 +43,8 @@ class InvoiceControllerPO extends Controller
 
         $manager_id = $user ? $user->manager_id : null;
         
-        $order_items = OrderItemsModel::with('product:product_code,print_name,product_name')
-                                    ->select('product_code', 'product_name', 'rate', 'quantity', 'total', 'remarks')
+        $order_items = OrderItemsModel::with('product:product_code,print_name,product_name, brand')
+                                    ->select('product_code', 'product_name','brand', 'rate', 'quantity', 'total', 'remarks')
                                     ->where('order_id', $orderId)
                                     ->get();
 
@@ -114,15 +114,31 @@ class InvoiceControllerPO extends Controller
                 'sheet-size' => [50, 50], // Width x Height in mm
             ]);
 
+            // Fetch brand and format image name
+            $brandImage = str_replace(' ', '_', strtoupper($item->brand)) . '.png';
+            $brandImagePath = public_path('/storage/uploads/' . $brandImage);
+
+            // Check if the brand image exists, else use default
+            $logoPath = file_exists($brandImagePath) ? $brandImagePath : public_path('/storage/uploads/super_steel_logo.png');
+
             // Super Steel Logo (Top Left) & Qty (Top Right)
             $headerHtml = '<div style="display:flex; justify-content:space-between; align-items:flex-start; position:relative; width:100%;">
-                                <!-- Super Steel Logo (Top Left) -->
-                                <img src="'.public_path('/storage/uploads/super_steel_logo.png').'" width="100" height="50" style="display:block;" />
-                            
+                                <!-- Brand Logo (Top Left) -->
+                                <img src="' . $logoPath . '" width="100" height="50" style="display:block;" />
+
                                 <!-- Qty: (Top Right) -->
                                 <span style="font-size:8px; font-weight:bold; position:absolute; top:0; right:0;">Qty: </span>
-                            </div>
-                            ';
+                            </div>';
+
+            // Super Steel Logo (Top Left) & Qty (Top Right)
+            // $headerHtml = '<div style="display:flex; justify-content:space-between; align-items:flex-start; position:relative; width:100%;">
+            //                     <!-- Super Steel Logo (Top Left) -->
+            //                     <img src="'.public_path('/storage/uploads/super_steel_logo.png').'" width="100" height="50" style="display:block;" />
+                            
+            //                     <!-- Qty: (Top Right) -->
+            //                     <span style="font-size:8px; font-weight:bold; position:absolute; top:0; right:0;">Qty: </span>
+            //                 </div>
+            //                 ';
 
             // Generate Barcode using Code 39
             $barcodeHtml = '<div style="text-align:center;">
