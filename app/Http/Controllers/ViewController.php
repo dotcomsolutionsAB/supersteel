@@ -709,23 +709,39 @@ class ViewController extends Controller
         : response()->json(['Failed to fetch data'], 400); 
     }
 
-    public function orders()
+    public function orders(Request $request)
     {
-        // Fetch all orders with the user relationship, ordered by id descending
-        $get_all_orders = OrderModel::with('user')->orderBy('id', 'desc')->get();
+        $offset = $request->input('offset', 0);
+        $limit = $request->input('limit', 10);
+        $name = $request->input('name');
 
-        // Format the orders by removing specific fields
-        $formatted_order = $get_all_orders->map(function ($order_rec) {
-            $order_rec_arr = $order_rec->toArray();
-            unset($order_rec_arr['created_at'], $order_rec_arr['updated_at']);
-            return $order_rec_arr;
-        });
+        $query = OrderModel::with('user')->orderBy('created_at', 'desc');
 
-        // Return the response
-        return isset($formatted_order) && $formatted_order !== null
-            ? response()->json(['message' => 'Fetch data successfully!', 'data' => $formatted_order], 200)
-            : response()->json(['message' => 'Sorry, failed to fetch data'], 404);
+        if (!empty($name)) {
+            $query->whereHas('user', function ($q) use ($name) {
+                $q->where('name', 'LIKE', "%$name%");
+            });
+        }
+
+        $totalCount = $query->count(); // Get the total filtered count
+
+        $orders = $query->offset($offset)->limit($limit)->get();
+
+        if ($orders->isNotEmpty()) {
+            return response()->json([
+                'message' => 'Fetch data successfully!',
+                'total_count' => $totalCount,
+                'data' => $orders
+            ], 200);
+        } else {
+            return response()->json([
+                'message' => 'No data found!',
+                'total_count' => $totalCount,
+                'data' => []
+            ], 404);
+        }
     }
+
 
     public function orders_user_id(Request $request, $id = null)
     {
