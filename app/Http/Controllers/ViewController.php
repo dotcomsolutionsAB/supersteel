@@ -118,6 +118,7 @@ class ViewController extends Controller
             $query->where('product_name', 'like', "%{$search}%");
         }
 
+        $total_products_count = $query->count();
         // Apply pagination
         $query->skip($offset)->take($limit);
         $get_products = $query->get();
@@ -195,7 +196,8 @@ class ViewController extends Controller
 
             return response()->json([
                 'message' => 'Fetch data successfully!',
-                'data' => $get_products
+                'data' => $get_products,
+                'count' => $total_products_count
             ], 200);
 
         } else {
