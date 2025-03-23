@@ -115,104 +115,6 @@ class CsvImportController extends Controller
         }
     }
 
-
-    // public function importUser()
-    // {
-    //     // URL of the CSV file from Google Sheets
-    //     $get_product_user_url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSoVot_t3TuRNSNBnz_vCeeeKpMXSap3pPvoers6QuVAIp3Gr32EbE56GSZitCrdGTLudR4vvATlPnD/pub?gid=1797389278&single=true&output=csv';
-
-    //     // Fetch the CSV content using file_get_contents
-    //     $csvContent_user = file_get_contents($get_product_user_url);
-
-    //     // Fetch and parse the CSV
-    //     $csv_user = Reader::createFromString($csvContent_user);
-    //     $csv_user->setHeaderOffset(0);
-
-    //     $records_user = (new Statement())->process($csv_user);
-
-    //     // Pre-fetch existing users and managers
-    //     $existingUsers = User::whereIn('mobile', collect($records_user)->pluck('Mobile')->map(function ($mobile) {
-    //         return strlen($mobile) == 10 ? '+91' . $mobile : (strlen($mobile) == 12 ? '+' . $mobile : $mobile);
-    //     }))->orWhereIn('mobile', collect($records_user)->pluck('Secondary Mobile')->map(function ($mobile) {
-    //         return strlen($mobile) == 10 ? '+91' . $mobile : (strlen($mobile) == 12 ? '+' . $mobile : $mobile);
-    //     }))->get()->keyBy('mobile');
-
-    //     $managerNames = collect($records_user)->pluck('Manager')->unique()->filter();
-    //     $existingManagers = User::whereIn('name', $managerNames)->get()->keyBy('name');
-
-    //     $insertData = [];
-    //     $updateData = [];
-
-    //     foreach ($records_user as $record_user) {
-    //         $mobile = strlen($record_user['Mobile']) == 10 ? '+91' . $record_user['Mobile'] : (strlen($record_user['Mobile']) == 12 ? '+' . $record_user['Mobile'] : $record_user['Mobile']);
-    //         $secondaryMobile = isset($record_user['Secondary Mobile']) && $record_user['Secondary Mobile'] !== ''
-    //             ? (strlen($record_user['Secondary Mobile']) == 10 ? '+91' . $record_user['Secondary Mobile'] : (strlen($record_user['Secondary Mobile']) == 12 ? '+' . $record_user['Secondary Mobile'] : $record_user['Secondary Mobile']))
-    //             : null;
-
-    //         if (!$mobile) continue; // Skip invalid primary mobile numbers
-
-    //         $manager_id = isset($existingManagers[$record_user['Manager']]) ? $existingManagers[$record_user['Manager']]->id : null;
-
-    //         $notifications = isset($record_user['Notifications']) && strtolower($record_user['Notifications']) === 'true' ? 1 : 0;
-
-    //         $commonData = [
-    //             'name' => $record_user['Print Name'],
-    //             'manager_id' => $manager_id,
-    //             'alias' => $record_user['Alias'],
-    //             'email' => $record_user['Email'] ?? null,
-    //             'password' => bcrypt($mobile),
-    //             'address_line_1' => $record_user['Address Line 1'],
-    //             'address_line_2' => $record_user['Address Line 2'],
-    //             'address_line_3' => $record_user['Address Line 3'],
-    //             'city' => $record_user['City'],
-    //             'pincode' => $record_user['Pincode'] !== '' ? $record_user['Pincode'] : null,
-    //             'gstin' => $record_user['GSTIN'],
-    //             'state' => $record_user['State'],
-    //             'billing_style' => $record_user['Billing Style'],
-    //             'transport' => $record_user['Transport'],
-    //             'notifications' => $notifications,
-    //         ];
-
-    //         // Update or insert primary mobile user
-    //         $user = $existingUsers[$mobile] ?? null;
-    //         $primaryData = array_merge($commonData, ['price_type' => strtolower($record_user['PRICE CAT'])]);
-
-    //         if ($user) {
-    //             // Prepare for bulk update if any data has changed
-    //             $updateData[$mobile] = array_merge($primaryData, ['id' => $user->id]);
-    //         } else {
-    //             // Prepare for bulk insert
-    //             $insertData[] = array_merge(['mobile' => $mobile], $primaryData);
-    //         }
-
-    //         // Update or insert secondary mobile user
-    //         if ($secondaryMobile) {
-    //             $secondaryUser = $existingUsers[$secondaryMobile] ?? null;
-    //             $secondaryData = array_merge($commonData, ['price_type' => 'zero_price']);
-
-    //             if ($secondaryUser) {
-    //                 $updateData[$secondaryMobile] = array_merge($secondaryData, ['id' => $secondaryUser->id]);
-    //             } else {
-    //                 $insertData[] = array_merge(['mobile' => $secondaryMobile], $secondaryData);
-    //             }
-    //         }
-    //     }
-
-    //     // Bulk insert new users
-    //     if (!empty($insertData)) {
-    //         User::insert($insertData);
-    //     }
-
-    //     // Bulk update existing users
-    //     if (!empty($updateData)) {
-    //         foreach ($updateData as $data) {
-    //             User::where('id', $data['id'])->update($data);
-    //         }
-    //     }
-
-    //     return response()->json(['message' => 'Users imported successfully'], 200);
-    // }
-
     public function importUser()
     {
         $get_product_user_url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSoVot_t3TuRNSNBnz_vCeeeKpMXSap3pPvoers6QuVAIp3Gr32EbE56GSZitCrdGTLudR4vvATlPnD/pub?gid=1797389278&single=true&output=csv';
@@ -304,87 +206,69 @@ class CsvImportController extends Controller
         return response()->json(['message' => 'Users imported successfully'], 200);
     }
 
-
-
-
     public function importCategory()
     {
-        // URL of the CSV file from Google Sheets
         $get_category_csv_url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSoVot_t3TuRNSNBnz_vCeeeKpMXSap3pPvoers6QuVAIp3Gr32EbE56GSZitCrdGTLudR4vvATlPnD/pub?gid=1424133495&single=true&output=csv';
 
-        // Fetch the CSV content using file_get_contents
         $csvContent_category = file_get_contents($get_category_csv_url);
-
-        // Fetch and parse the CSV
         $csv_category = Reader::createFromString($csvContent_category);
-
-        $csv_category->setHeaderOffset(0); // Set the header offset
-        
+        $csv_category->setHeaderOffset(0);
 
         $category_records_csv = (new Statement())->process($csv_category);
 
-        $category_insert_response = null;
-        $category_update_response = null;
+        $updated = 0;
+        $inserted = 0;
 
-        // Iterate through each record and create or update the product
-        foreach ($category_records_csv as $category_records_csv) {
-            $category_csv = CategoryModel::where('name', $category_records_csv['Name'])
-            ->where('cat_1', $category_records_csv['CAT 1'])
-            ->first();
-
-            // $filename = strtolower(str_replace(' ', '_', $category_records_csv['Name']));
-            $filename = $category_records_csv['CAT 1'].$category_records_csv['CAT 2'].$category_records_csv['CAT 3'];
-
-            // Define the product and category image paths
+        foreach ($category_records_csv as $record) {
+            $filename = $record['CAT 1'] . $record['CAT 2'] . $record['CAT 3'];
             $categoryImagePath = "/storage/uploads/category/{$filename}.jpg";
             $productImagePath = "/storage/uploads/products_pdf/{$filename}.jpg";
             $placeholderImagePath = "/storage/uploads/category/placeholder.jpg";
 
-            // Check if the category image exists
+            // Determine final image path
             if (file_exists(public_path($categoryImagePath))) {
                 $imagePath = $categoryImagePath;
-            } 
-            elseif (file_exists(public_path($productImagePath))) {
-                // Check if the product image exists
+            } elseif (file_exists(public_path($productImagePath))) {
                 $imagePath = $productImagePath;
             } else {
-                // Use placeholder if no image is found
                 $imagePath = $placeholderImagePath;
             }
 
-            // Use $imagePath as the final image path
+            // 🔍 Check if a category with all 3 cat values exists
+            $existing = CategoryModel::where('cat_1', $record['CAT 1'])
+                ->where('cat_2', $record['CAT 2'])
+                ->where('cat_3', $record['CAT 3'])
+                ->first();
 
-
-            if ($category_csv) 
-            {
-                // If category exists, update it
-                $category_update_response = $category_csv->update([
-                    'name' => $category_records_csv['Name'],
-                    'cat_1' => $category_records_csv['CAT 1'],
-                    'cat_2' => $category_records_csv['CAT 2'],
-                    'cat_3' => $category_records_csv['CAT 3'],
+            if ($existing) {
+                $existing->update([
+                    'name' => $record['Name'],
                     'category_image' => $imagePath,
                 ]);
-            } 
-            else 
-            {
-                // If category does not exist, create a new one
-                $category_insert_response = CategoryModel::create([
-                    'name' => $category_records_csv['Name'],
-                    'cat_1' => $category_records_csv['CAT 1'],
-                    'cat_2' => $category_records_csv['CAT 2'],
-                    'cat_3' => $category_records_csv['CAT 3'],
+                $updated++;
+            } else {
+                CategoryModel::create([
+                    'name' => $record['Name'],
+                    'cat_1' => $record['CAT 1'],
+                    'cat_2' => $record['CAT 2'],
+                    'cat_3' => $record['CAT 3'],
                     'category_image' => $imagePath,
                 ]);
+                $inserted++;
             }
-        }   
-        if ($category_update_response == 1 || isset($category_insert_response)) {
-            return response()->json(['message' => 'Categories imported successfully'], 200);
         }
-        else {
-            return response()->json(['message' => 'Sorry, failed to import'], 404);
+
+        if ($updated || $inserted) {
+            return response()->json([
+                'message' => 'Categories imported successfully',
+                'updated' => $updated,
+                'inserted' => $inserted
+            ], 200);
+        } else {
+            return response()->json(['message' => 'No categories were imported or updated.'], 404);
         }
     }
+
 
 
 }
