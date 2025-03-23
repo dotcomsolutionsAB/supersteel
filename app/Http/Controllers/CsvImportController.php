@@ -243,7 +243,7 @@ class CsvImportController extends Controller
                 ? (strlen($record_user['Secondary Mobile']) == 10 ? '+91' . $record_user['Secondary Mobile'] : (strlen($record_user['Secondary Mobile']) == 12 ? '+' . $record_user['Secondary Mobile'] : $record_user['Secondary Mobile']))
                 : null;
 
-            if (!$mobile || !$alias) continue; // skip if no alias or invalid mobile
+            //if (!$mobile || !$alias) continue; // skip if no alias or invalid mobile
 
             $manager_id = isset($existingManagers[$record_user['Manager']]) ? $existingManagers[$record_user['Manager']]->id : null;
 
