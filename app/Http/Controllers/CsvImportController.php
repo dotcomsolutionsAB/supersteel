@@ -116,26 +116,118 @@ class CsvImportController extends Controller
     }
 
 
+    // public function importUser()
+    // {
+    //     // URL of the CSV file from Google Sheets
+    //     $get_product_user_url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSoVot_t3TuRNSNBnz_vCeeeKpMXSap3pPvoers6QuVAIp3Gr32EbE56GSZitCrdGTLudR4vvATlPnD/pub?gid=1797389278&single=true&output=csv';
+
+    //     // Fetch the CSV content using file_get_contents
+    //     $csvContent_user = file_get_contents($get_product_user_url);
+
+    //     // Fetch and parse the CSV
+    //     $csv_user = Reader::createFromString($csvContent_user);
+    //     $csv_user->setHeaderOffset(0);
+
+    //     $records_user = (new Statement())->process($csv_user);
+
+    //     // Pre-fetch existing users and managers
+    //     $existingUsers = User::whereIn('mobile', collect($records_user)->pluck('Mobile')->map(function ($mobile) {
+    //         return strlen($mobile) == 10 ? '+91' . $mobile : (strlen($mobile) == 12 ? '+' . $mobile : $mobile);
+    //     }))->orWhereIn('mobile', collect($records_user)->pluck('Secondary Mobile')->map(function ($mobile) {
+    //         return strlen($mobile) == 10 ? '+91' . $mobile : (strlen($mobile) == 12 ? '+' . $mobile : $mobile);
+    //     }))->get()->keyBy('mobile');
+
+    //     $managerNames = collect($records_user)->pluck('Manager')->unique()->filter();
+    //     $existingManagers = User::whereIn('name', $managerNames)->get()->keyBy('name');
+
+    //     $insertData = [];
+    //     $updateData = [];
+
+    //     foreach ($records_user as $record_user) {
+    //         $mobile = strlen($record_user['Mobile']) == 10 ? '+91' . $record_user['Mobile'] : (strlen($record_user['Mobile']) == 12 ? '+' . $record_user['Mobile'] : $record_user['Mobile']);
+    //         $secondaryMobile = isset($record_user['Secondary Mobile']) && $record_user['Secondary Mobile'] !== ''
+    //             ? (strlen($record_user['Secondary Mobile']) == 10 ? '+91' . $record_user['Secondary Mobile'] : (strlen($record_user['Secondary Mobile']) == 12 ? '+' . $record_user['Secondary Mobile'] : $record_user['Secondary Mobile']))
+    //             : null;
+
+    //         if (!$mobile) continue; // Skip invalid primary mobile numbers
+
+    //         $manager_id = isset($existingManagers[$record_user['Manager']]) ? $existingManagers[$record_user['Manager']]->id : null;
+
+    //         $notifications = isset($record_user['Notifications']) && strtolower($record_user['Notifications']) === 'true' ? 1 : 0;
+
+    //         $commonData = [
+    //             'name' => $record_user['Print Name'],
+    //             'manager_id' => $manager_id,
+    //             'alias' => $record_user['Alias'],
+    //             'email' => $record_user['Email'] ?? null,
+    //             'password' => bcrypt($mobile),
+    //             'address_line_1' => $record_user['Address Line 1'],
+    //             'address_line_2' => $record_user['Address Line 2'],
+    //             'address_line_3' => $record_user['Address Line 3'],
+    //             'city' => $record_user['City'],
+    //             'pincode' => $record_user['Pincode'] !== '' ? $record_user['Pincode'] : null,
+    //             'gstin' => $record_user['GSTIN'],
+    //             'state' => $record_user['State'],
+    //             'billing_style' => $record_user['Billing Style'],
+    //             'transport' => $record_user['Transport'],
+    //             'notifications' => $notifications,
+    //         ];
+
+    //         // Update or insert primary mobile user
+    //         $user = $existingUsers[$mobile] ?? null;
+    //         $primaryData = array_merge($commonData, ['price_type' => strtolower($record_user['PRICE CAT'])]);
+
+    //         if ($user) {
+    //             // Prepare for bulk update if any data has changed
+    //             $updateData[$mobile] = array_merge($primaryData, ['id' => $user->id]);
+    //         } else {
+    //             // Prepare for bulk insert
+    //             $insertData[] = array_merge(['mobile' => $mobile], $primaryData);
+    //         }
+
+    //         // Update or insert secondary mobile user
+    //         if ($secondaryMobile) {
+    //             $secondaryUser = $existingUsers[$secondaryMobile] ?? null;
+    //             $secondaryData = array_merge($commonData, ['price_type' => 'zero_price']);
+
+    //             if ($secondaryUser) {
+    //                 $updateData[$secondaryMobile] = array_merge($secondaryData, ['id' => $secondaryUser->id]);
+    //             } else {
+    //                 $insertData[] = array_merge(['mobile' => $secondaryMobile], $secondaryData);
+    //             }
+    //         }
+    //     }
+
+    //     // Bulk insert new users
+    //     if (!empty($insertData)) {
+    //         User::insert($insertData);
+    //     }
+
+    //     // Bulk update existing users
+    //     if (!empty($updateData)) {
+    //         foreach ($updateData as $data) {
+    //             User::where('id', $data['id'])->update($data);
+    //         }
+    //     }
+
+    //     return response()->json(['message' => 'Users imported successfully'], 200);
+    // }
+
     public function importUser()
     {
-        // URL of the CSV file from Google Sheets
         $get_product_user_url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSoVot_t3TuRNSNBnz_vCeeeKpMXSap3pPvoers6QuVAIp3Gr32EbE56GSZitCrdGTLudR4vvATlPnD/pub?gid=1797389278&single=true&output=csv';
 
-        // Fetch the CSV content using file_get_contents
         $csvContent_user = file_get_contents($get_product_user_url);
 
-        // Fetch and parse the CSV
         $csv_user = Reader::createFromString($csvContent_user);
         $csv_user->setHeaderOffset(0);
 
         $records_user = (new Statement())->process($csv_user);
 
-        // Pre-fetch existing users and managers
-        $existingUsers = User::whereIn('mobile', collect($records_user)->pluck('Mobile')->map(function ($mobile) {
-            return strlen($mobile) == 10 ? '+91' . $mobile : (strlen($mobile) == 12 ? '+' . $mobile : $mobile);
-        }))->orWhereIn('mobile', collect($records_user)->pluck('Secondary Mobile')->map(function ($mobile) {
-            return strlen($mobile) == 10 ? '+91' . $mobile : (strlen($mobile) == 12 ? '+' . $mobile : $mobile);
-        }))->get()->keyBy('mobile');
+        // Step 1: Fetch all users and build a map with 'alias|mobile' as key
+        $allUsers = User::all()->keyBy(function ($user) {
+            return strtolower($user->alias . '|' . $user->mobile);
+        });
 
         $managerNames = collect($records_user)->pluck('Manager')->unique()->filter();
         $existingManagers = User::whereIn('name', $managerNames)->get()->keyBy('name');
@@ -144,12 +236,14 @@ class CsvImportController extends Controller
         $updateData = [];
 
         foreach ($records_user as $record_user) {
+            $alias = strtolower($record_user['Alias']);
+
             $mobile = strlen($record_user['Mobile']) == 10 ? '+91' . $record_user['Mobile'] : (strlen($record_user['Mobile']) == 12 ? '+' . $record_user['Mobile'] : $record_user['Mobile']);
             $secondaryMobile = isset($record_user['Secondary Mobile']) && $record_user['Secondary Mobile'] !== ''
                 ? (strlen($record_user['Secondary Mobile']) == 10 ? '+91' . $record_user['Secondary Mobile'] : (strlen($record_user['Secondary Mobile']) == 12 ? '+' . $record_user['Secondary Mobile'] : $record_user['Secondary Mobile']))
                 : null;
 
-            if (!$mobile) continue; // Skip invalid primary mobile numbers
+            if (!$mobile || !$alias) continue; // skip if no alias or invalid mobile
 
             $manager_id = isset($existingManagers[$record_user['Manager']]) ? $existingManagers[$record_user['Manager']]->id : null;
 
@@ -173,37 +267,37 @@ class CsvImportController extends Controller
                 'notifications' => $notifications,
             ];
 
-            // Update or insert primary mobile user
-            $user = $existingUsers[$mobile] ?? null;
+            // 🔍 Check if primary mobile + alias already exists
+            $key = strtolower($alias . '|' . $mobile);
+            $user = $allUsers[$key] ?? null;
             $primaryData = array_merge($commonData, ['price_type' => strtolower($record_user['PRICE CAT'])]);
 
             if ($user) {
-                // Prepare for bulk update if any data has changed
-                $updateData[$mobile] = array_merge($primaryData, ['id' => $user->id]);
+                $updateData[$key] = array_merge($primaryData, ['id' => $user->id]);
             } else {
-                // Prepare for bulk insert
                 $insertData[] = array_merge(['mobile' => $mobile], $primaryData);
             }
 
-            // Update or insert secondary mobile user
+            // 🔍 Check if secondary mobile + alias already exists
             if ($secondaryMobile) {
-                $secondaryUser = $existingUsers[$secondaryMobile] ?? null;
+                $secondaryKey = strtolower($alias . '|' . $secondaryMobile);
+                $secondaryUser = $allUsers[$secondaryKey] ?? null;
                 $secondaryData = array_merge($commonData, ['price_type' => 'zero_price']);
 
                 if ($secondaryUser) {
-                    $updateData[$secondaryMobile] = array_merge($secondaryData, ['id' => $secondaryUser->id]);
+                    $updateData[$secondaryKey] = array_merge($secondaryData, ['id' => $secondaryUser->id]);
                 } else {
                     $insertData[] = array_merge(['mobile' => $secondaryMobile], $secondaryData);
                 }
             }
         }
 
-        // Bulk insert new users
+        // ✅ Insert new users
         if (!empty($insertData)) {
             User::insert($insertData);
         }
 
-        // Bulk update existing users
+        // ✅ Update existing users
         if (!empty($updateData)) {
             foreach ($updateData as $data) {
                 User::where('id', $data['id'])->update($data);
