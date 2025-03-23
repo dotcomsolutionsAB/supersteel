@@ -118,6 +118,8 @@ class ViewController extends Controller
             $query->where('product_name', 'like', "%{$search}%");
         }
 
+        $query->where('is_active', 1);
+
         $total_products_count = $query->count();
         // Apply pagination
         $query->skip($offset)->take($limit);
@@ -276,7 +278,7 @@ class ViewController extends Controller
             'stock',
             'in_transit',
             'pending'
-        )->where('product_code', '!=', "{$code}");
+        )->where('product_code', '!=', "{$code}")->where('is_active', 1);
 
         if ($code !== null) {
             $productQuery->where('machine_part_no', 'like', "%{$code}%");
