@@ -28,6 +28,8 @@ class CsvImportController extends Controller
 
         $records_csv = (new Statement())->process($csv_product);
 
+        ProductModel::query()->update(['is_active' => 0]);
+
         $product_insert_response = null;
         $product_update_response = null;
 
@@ -91,6 +93,7 @@ class CsvImportController extends Controller
                 'new_arrival' => $record_csv['New Arrival'] === 'TRUE' ? 1 : 0,
                 'special_price' => $record_csv['Special Price'] === 'TRUE' ? 1 : 0,
                 'video_link' => $record_csv['YouTube Link'],
+                'is_active' => $record_csv['Active'] === 'TRUE' ? 1 : 0,
             ];            
             
             // Insert or update product

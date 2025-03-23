@@ -33,6 +33,7 @@ class ProductModel extends Model
         'new_arrival',
         'special_price',
         'video_link',
+        'is_active',
     ];
 
     public function transactions()
