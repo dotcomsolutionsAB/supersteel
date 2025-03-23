@@ -218,17 +218,16 @@ class CsvImportController extends Controller
         $get_product_user_url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSoVot_t3TuRNSNBnz_vCeeeKpMXSap3pPvoers6QuVAIp3Gr32EbE56GSZitCrdGTLudR4vvATlPnD/pub?gid=1797389278&single=true&output=csv';
 
         $csvContent_user = file_get_contents($get_product_user_url);
-
         $csv_user = Reader::createFromString($csvContent_user);
         $csv_user->setHeaderOffset(0);
-
         $records_user = (new Statement())->process($csv_user);
 
-        // Step 1: Fetch all users and build a map with 'alias|mobile' as key
-        $allUsers = User::all()->keyBy(function ($user) {
-            return strtolower($user->alias . '|' . $user->mobile);
+        // Pre-fetch users from DB and key them by alias|mobile
+        $allUsers = User::select('id', 'alias', 'mobile')->get()->keyBy(function ($user) {
+            return strtolower(trim($user->alias) . '|' . trim($user->mobile));
         });
 
+        // Get managers
         $managerNames = collect($records_user)->pluck('Manager')->unique()->filter();
         $existingManagers = User::whereIn('name', $managerNames)->get()->keyBy('name');
 
@@ -236,17 +235,17 @@ class CsvImportController extends Controller
         $updateData = [];
 
         foreach ($records_user as $record_user) {
-            $alias = strtolower($record_user['Alias']);
+            $alias = strtolower(trim($record_user['Alias']));
+            if (!$alias) continue;
 
             $mobile = strlen($record_user['Mobile']) == 10 ? '+91' . $record_user['Mobile'] : (strlen($record_user['Mobile']) == 12 ? '+' . $record_user['Mobile'] : $record_user['Mobile']);
             $secondaryMobile = isset($record_user['Secondary Mobile']) && $record_user['Secondary Mobile'] !== ''
                 ? (strlen($record_user['Secondary Mobile']) == 10 ? '+91' . $record_user['Secondary Mobile'] : (strlen($record_user['Secondary Mobile']) == 12 ? '+' . $record_user['Secondary Mobile'] : $record_user['Secondary Mobile']))
                 : null;
 
-            //if (!$mobile || !$alias) continue; // skip if no alias or invalid mobile
+            // if (!$mobile) continue;
 
             $manager_id = isset($existingManagers[$record_user['Manager']]) ? $existingManagers[$record_user['Manager']]->id : null;
-
             $notifications = isset($record_user['Notifications']) && strtolower($record_user['Notifications']) === 'true' ? 1 : 0;
 
             $commonData = [
@@ -267,37 +266,35 @@ class CsvImportController extends Controller
                 'notifications' => $notifications,
             ];
 
-            // 🔍 Check if primary mobile + alias already exists
-            $key = strtolower($alias . '|' . $mobile);
-            $user = $allUsers[$key] ?? null;
+            // PRIMARY MOBILE
+            $primaryKey = strtolower(trim($alias) . '|' . trim($mobile));
             $primaryData = array_merge($commonData, ['price_type' => strtolower($record_user['PRICE CAT'])]);
 
-            if ($user) {
-                $updateData[$key] = array_merge($primaryData, ['id' => $user->id]);
+            if (isset($allUsers[$primaryKey])) {
+                $updateData[$primaryKey] = array_merge($primaryData, ['id' => $allUsers[$primaryKey]->id]);
             } else {
                 $insertData[] = array_merge(['mobile' => $mobile], $primaryData);
             }
 
-            // 🔍 Check if secondary mobile + alias already exists
+            // SECONDARY MOBILE
             if ($secondaryMobile) {
-                $secondaryKey = strtolower($alias . '|' . $secondaryMobile);
-                $secondaryUser = $allUsers[$secondaryKey] ?? null;
+                $secondaryKey = strtolower(trim($alias) . '|' . trim($secondaryMobile));
                 $secondaryData = array_merge($commonData, ['price_type' => 'zero_price']);
 
-                if ($secondaryUser) {
-                    $updateData[$secondaryKey] = array_merge($secondaryData, ['id' => $secondaryUser->id]);
+                if (isset($allUsers[$secondaryKey])) {
+                    $updateData[$secondaryKey] = array_merge($secondaryData, ['id' => $allUsers[$secondaryKey]->id]);
                 } else {
                     $insertData[] = array_merge(['mobile' => $secondaryMobile], $secondaryData);
                 }
             }
         }
 
-        // ✅ Insert new users
+        // INSERT new users
         if (!empty($insertData)) {
             User::insert($insertData);
         }
 
-        // ✅ Update existing users
+        // UPDATE existing users
         if (!empty($updateData)) {
             foreach ($updateData as $data) {
                 User::where('id', $data['id'])->update($data);
@@ -306,6 +303,7 @@ class CsvImportController extends Controller
 
         return response()->json(['message' => 'Users imported successfully'], 200);
     }
+
 
 
 
