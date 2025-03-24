@@ -573,7 +573,7 @@ class ViewController extends Controller
                     'user_id' => $user->id,
                     'name' => $name,
                     'email' => $user->email,
-                    'mobile' => $user->mobile,
+                    'mobile' => $user->mobile ? $user->mobile : $user->id,
                     'address_line_1' => $user->address_line_1,
                     'address_line_2' => $user->address_line_2,
                     'city' => $user->city,
