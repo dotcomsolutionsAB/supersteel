@@ -11,10 +11,10 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\InvoiceControllerPO;
 use App\Http\Controllers\ImageDownloadController;
 use App\Http\Middleware\GetUserRole;
-use App\Models\Product;
+use App\Models\ProductModel;
 
 Route::get('/pricelist_temp', function () {
-    $get_product_details = Product::where('product_code', 1015)->get(); // Adjust based on your data source
+    $get_product_details = ProductModel::where('product_code', 1015)->get(); // Adjust based on your data source
     $customer_name = 'John Doe'; // Or get this dynamically
 
     return view('pricelist', compact('get_product_details', 'customer_name'));
