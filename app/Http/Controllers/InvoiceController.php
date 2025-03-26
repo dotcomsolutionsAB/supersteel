@@ -401,6 +401,7 @@ class InvoiceController extends Controller
         $get_product_details = ProductModel::select('product_name', 'print_name', 'product_code', 'product_image')
                                             ->where('product_code', $code)
                                             ->where('is_active', 1)
+                                            ->orderBy('sn')
                                             ->first();
 
 
@@ -540,7 +541,7 @@ class InvoiceController extends Controller
 
         // Build the query
         $query = ProductModel::select('product_name','print_name', 'product_code', 'brand', DB::raw("$price_column as price"), 'product_image')
-        ->where('product_image', '!=', '')->where('is_active', 1);
+        ->where('product_image', '!=', '')->where('is_active', 1)->orderBy('sn');
 
 
         if ($category) {
