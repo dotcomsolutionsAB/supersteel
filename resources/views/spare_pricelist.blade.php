@@ -5,7 +5,7 @@
     <style>
         /* Container for the header (image on the left, text on the right) */
 
-        /* .header {
+        .header {
             width: 100%;
             padding-top: 15px;
         }
@@ -13,30 +13,6 @@
             width: 100%!important;
             display: block;
             height: auto;
-        } */
-
-        .header-container {
-            position: relative;
-            width: 100%;
-        }
-
-        .header-container img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .customer-name {
-            position: absolute;
-            top: 50%;
-            right: 30px;
-            transform: translateY(-50%);
-            color: black; /* Change to white if needed for better contrast */
-            font-size: 24px;
-            font-weight: bold;
-            background-color: rgba(255, 255, 255, 0.7); /* Optional: for readability */
-            padding: 5px 10px;
-            border-radius: 5px;
         }
 
         /* Center align for the user name */
@@ -101,16 +77,8 @@
         </div>
     </div> -->
 
-    <!-- <div class="header">
-        <img src="{{ asset('storage/uploads/s1.jpg') }}" alt="Logo" width="100%">
-    </div> -->
     <div class="header">
-        <div class="header-container">
-            <img src="{{ asset('storage/uploads/s1.jpg') }}" alt="Logo">
-            <div class="customer-name">
-                Dot Com Solutions
-            </div>
-        </div>
+        <img src="{{ asset('storage/uploads/s1.jpg') }}" alt="Logo" width="100%">
     </div>
 
     <!-- Table for the Items -->
