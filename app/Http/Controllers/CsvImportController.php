@@ -33,6 +33,8 @@ class CsvImportController extends Controller
         $product_insert_response = null;
         $product_update_response = null;
 
+        $sn = 1;
+
         // Iterate through each record and create or update the product
         foreach ($records_csv as $record_csv) {
             $product_csv = ProductModel::where('product_code', $record_csv['PRODUCT CODE'])->first();
@@ -71,6 +73,7 @@ class CsvImportController extends Controller
             $extraImagesCsv = implode(',', $extraImages);
 
             $productData = [
+                'sn' => $sn++,
                 'product_code' => $record_csv['PRODUCT CODE'],
                 'product_name' => $record_csv['PRODUCT NAME'],
                 'print_name' => $record_csv['ITEM PRINT NAME'],
