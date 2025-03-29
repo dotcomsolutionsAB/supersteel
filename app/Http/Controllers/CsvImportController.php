@@ -28,7 +28,7 @@ class CsvImportController extends Controller
 
         $records_csv = (new Statement())->process($csv_product);
 
-        ProductModel::query()->update(['is_active' => 0]);
+        ProductModel::query()->update(['is_active' => 2]);
 
         $product_insert_response = null;
         $product_update_response = null;
