@@ -286,13 +286,13 @@ class ViewController extends Controller
             'stock',
             'in_transit',
             'pending'
-        )->where('product_code', '!=', "{$code}")->orderBy('sn');
+        )->where('product_code', '!=', "{$code}")->where('is_active', 1)->orderBy('sn');
 
-        if ($get_user->role == 'admin') {
-            $productQuery->whereIn('is_active', [0, 1]);
-        }else{
-            $productQuery->whereIn('is_active', 1);
-        }
+        // if ($get_user->role == 'admin') {
+        //     $productQuery->whereIn('is_active', [0, 1]);
+        // }else{
+        //     $productQuery->whereIn('is_active', 1);
+        // }
 
         if ($code !== null) {
             $productQuery->where('machine_part_no', 'like', "%{$code}%");
