@@ -159,7 +159,7 @@ class InvoiceController extends Controller
                             ],
                             [
                                 'type' => 'text',
-                                'text' =>  substr($user->mobile, -10),
+                                'text' =>  $user->mobile ? substr($user->mobile, -10) : '-',
                             ],
                             [
                                 'type' => 'text',
@@ -263,7 +263,7 @@ class InvoiceController extends Controller
                             ],
                             [
                                 'type' => 'text',
-                                'text' =>  substr($user->mobile, -10),
+                                'text' =>  $user->mobile ? substr($user->mobile, -10) : '-',
                             ],
                             [
                                 'type' => 'text',
