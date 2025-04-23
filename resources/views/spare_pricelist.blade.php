@@ -81,6 +81,10 @@
         <img src="{{ asset('storage/uploads/s1.jpg') }}" alt="Logo" width="100%">
     </div>
 
+    <div style="background-color: black; color: white; padding: 10px; text-align: center; margin-bottom: 20px;">
+        Requested by: {{ $user_name }}
+    </div>
+
     <!-- Table for the Items -->
     <table>
         <thead>
