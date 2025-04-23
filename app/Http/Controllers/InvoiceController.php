@@ -461,6 +461,8 @@ class InvoiceController extends Controller
         // create the instance of Mpdf
         $mpdf = new Mpdf();
 
+        \Log::info('Rendering spare_pricelist_user', ['user_name' => $user_name]);
+
         // write the html content
         $mpdf->writeHTML($html);
 
@@ -473,6 +475,10 @@ class InvoiceController extends Controller
             File::makeDirectory($storage_path, 0755, true);
         }
 
+        // $mpdf->Output($filePath, 'F');
+        if (File::exists($filePath)) {
+            File::delete($filePath); // delete old PDF if it exists
+        }
         $mpdf->Output($filePath, 'F');
 
         $fileUrl = asset('storage/' . $publicPath . $fileName);
