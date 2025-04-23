@@ -420,6 +420,7 @@ class CreateController extends Controller
                 'amount' => $product_amount,
                 'type' => 'order',
                 'remarks' => $request->input('remarks'),
+                'is_edited' => '0',
                 'created_by' => $created_by,
             ]);
             //order_table_id

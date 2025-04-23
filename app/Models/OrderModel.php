@@ -22,6 +22,7 @@ class OrderModel extends Model
         'status',
         'type',
         'remarks',
+        'is_edited',
     ];
 
     public function user()

@@ -330,6 +330,7 @@ class UpdateController extends Controller
 
         // Update the order details
         $order->amount = $request->input('amount');
+        $order->is_edited = '1';
         $order->save();
 
         // Remove existing order items for the given order ID

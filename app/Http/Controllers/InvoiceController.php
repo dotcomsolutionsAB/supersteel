@@ -362,7 +362,7 @@ class InvoiceController extends Controller
 
         else{
             $request->validate([
-                'id' => 'required|integer'
+                'id' => 'required|integer|exists:users,id'
             ]);  
 
             $id = $request->input('id');
@@ -415,6 +415,9 @@ class InvoiceController extends Controller
         {
             $mpdf = new Mpdf();
             $html = '
+            <div style="background-color: black; color: white; padding: 10px; text-align: center;">
+                Requested by: ' . $user_name . '
+            </div>
             <div class="title-box" style="background-color: brown; color: white; text-align: center; padding: 20px; font-size: 24px; font-weight: bold; border-radius: 8px 8px 0 0;">
                 ' . $get_product_details->product_name . ' - ' . $get_product_details->product_code . '
             </div>
@@ -504,7 +507,7 @@ class InvoiceController extends Controller
             $user_name = $get_user->name;
         } else {
             $request->validate([
-                'id' => 'required|integer'
+                'id' => 'required|integer|exists:users,id'
             ]);
 
             $id = $request->input('id');
