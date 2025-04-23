@@ -461,7 +461,7 @@ class InvoiceController extends Controller
         // create the instance of Mpdf
         $mpdf = new Mpdf();
 
-        \Log::info('Rendering spare_pricelist_user', ['user_name' => $user_name]);
+        // \Log::info('Rendering spare_pricelist_user', ['user_name' => $user_name]);
 
         // write the html content
         $mpdf->writeHTML($html);
