@@ -608,7 +608,7 @@ class ViewController extends Controller
 
         elseif ($userRole == 'manager') 
         {
-            if($userName == '')
+            if($userName == 'ARORA')
             {
                 $get_user_details = User::select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country', 'app_status', 'last_viewed', 'price_type','alias','user_type')
                                     ->where('manager_id', Auth::id())
