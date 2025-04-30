@@ -515,6 +515,7 @@ class ViewController extends Controller
     public function user()
     {
         $userRole = (Auth::user())->role;
+        $userName = (Auth::user())->name;
 
         if ($userRole == 'admin') 
         {
@@ -607,10 +608,19 @@ class ViewController extends Controller
 
         elseif ($userRole == 'manager') 
         {
-            $get_user_details = User::select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country', 'app_status', 'last_viewed', 'price_type','alias','user_type')
+            if($userName == '')
+            {
+                $get_user_details = User::select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country', 'app_status', 'last_viewed', 'price_type','alias','user_type')
+                                    ->where('manager_id', Auth::id())
+                                    ->orderBy('last_viewed', 'desc')
+                                    ->get();
+            }
+            else{
+                $get_user_details = User::select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country', 'app_status', 'last_viewed', 'price_type','alias','user_type')
                                     // ->where('manager_id', Auth::id())
                                     ->orderBy('last_viewed', 'desc')
                                     ->get();
+            }
 
             // $currentTimestamp = now();
             $response = $get_user_details->map(function ($user) {
