@@ -794,6 +794,9 @@ class ViewController extends Controller
         $offset = $request->input('offset', 0);
         $limit = $request->input('limit', 10);
         $name = $request->input('name');
+        $type = $request->input('type');
+        $order_id = $request->input('order_id');
+        $date = $request->input('date'); // Format: YYYY-MM-DD
 
         $query = OrderModel::with('user')->orderBy('created_at', 'desc');
 
@@ -801,6 +804,22 @@ class ViewController extends Controller
             $query->whereHas('user', function ($q) use ($name) {
                 $q->where('name', 'LIKE', "%$name%");
             });
+        }
+            // Filter by user's price_type
+        if (!empty($type)) {
+            $query->whereHas('user', function ($q) use ($type) {
+                $q->where('price_type', $type);
+            });
+        }
+
+        // Filter by order ID
+        if (!empty($order_id)) {
+            $query->where('id', 'LIKE', "%$order_id%");
+        }
+
+        // Filter by date (created_at)
+        if (!empty($date)) {
+            $query->whereDate('created_at', $date);
         }
 
         $totalCount = $query->count(); // Get the total filtered count
