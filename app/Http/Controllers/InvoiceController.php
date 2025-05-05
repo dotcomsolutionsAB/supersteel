@@ -422,6 +422,7 @@ class InvoiceController extends Controller
         if (count($get_record) == 0)
         {
             $mpdf = new Mpdf();
+            
             $html = '
             <div style="background-color: black; color: white; padding: 10px; text-align: center;">
                 Requested by: ' . $user_name . '
