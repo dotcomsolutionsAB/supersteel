@@ -404,6 +404,12 @@ class InvoiceController extends Controller
                                             ->orderBy('sn')
                                             ->first();
 
+        if (strpos($user_name, "DUMMY") !== false) {
+            foreach ($get_product_details as &$product) {
+                $product['price'] = $product['price'] * 1.6;
+            }
+        }
+
 
         $get_record = $query->select('product_code', 'print_name', 'brand', DB::raw("$price_column as price"), 'product_image')
               ->where('machine_part_no', $code)
