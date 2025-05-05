@@ -800,12 +800,6 @@ class ViewController extends Controller
 
         $query = OrderModel::with('user')->orderBy('created_at', 'desc');
 
-        if (!empty($name)) {
-            $query->whereHas('user', function ($q) use ($name) {
-                $q->where('name', 'LIKE', "%$name%");
-            });
-        }
-
         // Filter by user_id (foreign key)
         if (!empty($user_id)) {
             $query->where('user_id', $user_id);
@@ -844,7 +838,6 @@ class ViewController extends Controller
             ], 404);
         }
     }
-
 
     public function orders_user_id(Request $request, $id = null)
     {
