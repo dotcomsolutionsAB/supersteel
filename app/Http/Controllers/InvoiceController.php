@@ -404,11 +404,7 @@ class InvoiceController extends Controller
                                             ->orderBy('sn')
                                             ->first();
 
-        if (strpos($user_name, "DUMMY") !== false) {
-            foreach ($get_product_details as &$product) {
-                $product['price'] = $product['price'] * 1.6;
-            }
-        }
+        
 
 
         $get_record = $query->select('product_code', 'print_name', 'brand', DB::raw("$price_column as price"), 'product_image')
@@ -416,6 +412,12 @@ class InvoiceController extends Controller
               ->skip(1) // Skip the first record
               ->take(PHP_INT_MAX) // Take all remaining records
               ->get();
+
+        if (strpos($user_name, "DUMMY") !== false) {
+            foreach ($get_record as &$product) {
+                $product['price'] = $product['price'] * 1.6;
+            }
+        }
 
         if (count($get_record) == 0)
         {
