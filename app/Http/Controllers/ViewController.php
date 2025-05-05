@@ -1079,4 +1079,18 @@ class ViewController extends Controller
         ? response()->json(['Fetch records successfully!', 'data' => $formatted_order_record], 200)
         : response()->json(['Failed to get order records!'], 400);
     }
+
+    // get unique price_type
+    public function getUniquePriceTypes()
+    {
+        $priceTypes = User::whereNotNull('price_type')
+            ->distinct()
+            ->pluck('price_type');
+
+        return response()->json([
+            'message' => 'Unique price types fetched successfully.',
+            'data' => $priceTypes
+        ], 200);
+    }
+
 }

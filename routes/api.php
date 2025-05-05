@@ -126,6 +126,8 @@ Route::prefix('user')->middleware(['auth:sanctum', GetUserRole::class . ':user']
     Route::delete('/delete_user/{id}', [DeleteController::class, 'user']);
 });
 
+Route::get('/fetch_price_type', [ViewController::class, 'getUniquePriceTypes']);
+
 Route::get('/delete-account', [DeleteController::class, 'showDeleteAccountForm'])->name('delete.account.form');
 Route::post('/delete-account', [UserController::class, 'deleteAccount'])->name('delete.account');
 
