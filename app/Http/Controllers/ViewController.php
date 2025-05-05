@@ -793,10 +793,10 @@ class ViewController extends Controller
     {
         $offset = $request->input('offset', 0);
         $limit = $request->input('limit', 10);
-        $name = $request->input('name');
-        $type = $request->input('type');
+        $user_id = $request->input('user_id'); // actual user_id
+        $type = $request->input('type');       // orders.type
         $order_id = $request->input('order_id');
-        $date = $request->input('date'); // Format: YYYY-MM-DD
+        $date = $request->input('date');       // orders.order_date
 
         $query = OrderModel::with('user')->orderBy('created_at', 'desc');
 
@@ -805,21 +805,25 @@ class ViewController extends Controller
                 $q->where('name', 'LIKE', "%$name%");
             });
         }
-            // Filter by user's price_type
-        if (!empty($type)) {
-            $query->whereHas('user', function ($q) use ($type) {
-                $q->where('price_type', $type);
-            });
+
+        // Filter by user_id (foreign key)
+        if (!empty($user_id)) {
+            $query->where('user_id', $user_id);
         }
 
-        // Filter by order ID
+        // Filter by order type
+        if (!empty($type)) {
+            $query->where('type', $type);
+        }
+
+        // Filter by order ID (partial match)
         if (!empty($order_id)) {
             $query->where('id', 'LIKE', "%$order_id%");
         }
 
-        // Filter by date (created_at)
+        // Filter by order_date
         if (!empty($date)) {
-            $query->whereDate('created_at', $date);
+            $query->whereDate('order_date', $date);
         }
 
         $totalCount = $query->count(); // Get the total filtered count
