@@ -113,9 +113,32 @@ class ViewController extends Controller
         }
 
 
-        // Apply search filter if provided
+        // Apply product_name search
         if ($search) {
             $query->where('product_name', 'like', "%{$search}%");
+        }
+
+        // Filter by product_code (exact or partial)
+        if ($request->filled('product_code')) {
+            $query->where('product_code', 'like', '%' . $request->input('product_code') . '%');
+        }
+
+        // Filter by supplier(s)
+        if ($request->filled('supplier')) {
+            $suppliers = explode(',', $request->input('supplier'));
+            $query->whereIn('supplier', array_map('trim', $suppliers));
+        }
+
+        // Filter by brand(s)
+        if ($request->filled('brand')) {
+            $brands = explode(',', $request->input('brand'));
+            $query->whereIn('brand', array_map('trim', $brands));
+        }
+
+        // Filter by category(s)
+        if ($request->filled('category')) {
+            $categories = explode(',', $request->input('category'));
+            $query->whereIn('category', array_map('trim', $categories));
         }
 
         if ($get_user->role == 'admin') {
@@ -512,19 +535,50 @@ class ViewController extends Controller
         }
     }
 
-    public function user()
+    public function user(Request $request)
     {
         $userRole = (Auth::user())->role;
         $userName = (Auth::user())->name;
 
+        $requestData = request();
+        $verified = $requestData->input('verified'); // 0 or 1
+        $user_type = $requestData->input('user_type'); // 'primary', 'secondary'
+        $app_status = $requestData->input('app_status'); // 0 or 1
+        $type = $requestData->input('type'); // a, b, c, d, i, zero_price
+        $offset = (int) $requestData->input('offset', 0);
+        $limit = (int) $requestData->input('limit', 20);
+
         if ($userRole == 'admin') 
         {
         
-            $get_user_details = User::with('manager:id,mobile')
-                                ->select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id','is_verified', 'app_status', 'last_viewed', 'price_type', 'alias','user_type')
-                                ->where('role', 'user')
-                                ->orderBy('last_viewed', 'desc')
-                                ->get();
+            // $get_user_details = User::with('manager:id,mobile')
+            //                     ->select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id','is_verified', 'app_status', 'last_viewed', 'price_type', 'alias','user_type')
+            //                     ->where('role', 'user')
+            //                     ->orderBy('last_viewed', 'desc')
+            //                     ->get();
+            $query = User::with('manager:id,mobile')
+            ->select('id','name','email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id','is_verified','app_status','last_viewed','price_type','alias','user_type')
+            ->where('role', 'user');
+
+            // Apply filters
+            if (!is_null($verified)) {
+                $query->where('is_verified', $verified);
+            }
+
+            if (!empty($user_type)) {
+                $query->where('user_type', $user_type);
+            }
+
+            if (!is_null($app_status)) {
+                $query->where('app_status', $app_status);
+            }
+
+            if (!empty($type)) {
+                $query->where('price_type', $type);
+            }
+
+            $query->orderBy('last_viewed', 'desc')->skip($offset)->take($limit);
+            $get_user_details = $query->get();
 
             $response = [];
 
@@ -740,6 +794,9 @@ class ViewController extends Controller
         $offset = $request->input('offset', 0);
         $limit = $request->input('limit', 10);
         $name = $request->input('name');
+        $type = $request->input('type');
+        $order_id = $request->input('order_id');
+        $date = $request->input('date'); // Format: YYYY-MM-DD
 
         $query = OrderModel::with('user')->orderBy('created_at', 'desc');
 
@@ -747,6 +804,22 @@ class ViewController extends Controller
             $query->whereHas('user', function ($q) use ($name) {
                 $q->where('name', 'LIKE', "%$name%");
             });
+        }
+            // Filter by user's price_type
+        if (!empty($type)) {
+            $query->whereHas('user', function ($q) use ($type) {
+                $q->where('price_type', $type);
+            });
+        }
+
+        // Filter by order ID
+        if (!empty($order_id)) {
+            $query->where('id', 'LIKE', "%$order_id%");
+        }
+
+        // Filter by date (created_at)
+        if (!empty($date)) {
+            $query->whereDate('created_at', $date);
         }
 
         $totalCount = $query->count(); // Get the total filtered count
@@ -1025,4 +1098,18 @@ class ViewController extends Controller
         ? response()->json(['Fetch records successfully!', 'data' => $formatted_order_record], 200)
         : response()->json(['Failed to get order records!'], 400);
     }
+
+    // get unique price_type
+    public function getUniquePriceTypes()
+    {
+        $priceTypes = User::whereNotNull('price_type')
+            ->distinct()
+            ->pluck('price_type');
+
+        return response()->json([
+            'message' => 'Unique price types fetched successfully.',
+            'data' => $priceTypes
+        ], 200);
+    }
+
 }

@@ -15,7 +15,7 @@ use App\Http\Middleware\GetUserRole;
 Route::prefix('admin')->middleware(['auth:sanctum', GetUserRole::class . ':admin'])->group(function () {
 
     Route::post('/add_user', [CreateController::class, 'user']);
-    Route::get('/view_user', [ViewController::class, 'user']);
+    Route::post('/view_user', [ViewController::class, 'user']);
     Route::post('/make_verify/{id}', [UpdateController::class, 'verify_user']);
     Route::patch('/make_unverify/{id}', [UpdateController::class, 'unverify_user']);
     Route::post('/update_user', [UpdateController::class, 'user']);
@@ -125,6 +125,8 @@ Route::prefix('user')->middleware(['auth:sanctum', GetUserRole::class . ':user']
     Route::post('/pricelist', [InvoiceController::class, 'price_list']);
     Route::delete('/delete_user/{id}', [DeleteController::class, 'user']);
 });
+
+Route::get('/fetch_price_type', [ViewController::class, 'getUniquePriceTypes']);
 
 Route::get('/delete-account', [DeleteController::class, 'showDeleteAccountForm'])->name('delete.account.form');
 Route::post('/delete-account', [UserController::class, 'deleteAccount'])->name('delete.account');
