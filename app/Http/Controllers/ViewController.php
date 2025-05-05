@@ -535,19 +535,50 @@ class ViewController extends Controller
         }
     }
 
-    public function user()
+    public function user(Request $request)
     {
         $userRole = (Auth::user())->role;
         $userName = (Auth::user())->name;
 
+        $requestData = request();
+        $verified = $requestData->input('verified'); // 0 or 1
+        $user_type = $requestData->input('user_type'); // 'primary', 'secondary'
+        $app_status = $requestData->input('app_status'); // 0 or 1
+        $type = $requestData->input('type'); // a, b, c, d, i, zero_price
+        $offset = (int) $requestData->input('offset', 0);
+        $limit = (int) $requestData->input('limit', 20);
+
         if ($userRole == 'admin') 
         {
         
-            $get_user_details = User::with('manager:id,mobile')
-                                ->select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id','is_verified', 'app_status', 'last_viewed', 'price_type', 'alias','user_type')
-                                ->where('role', 'user')
-                                ->orderBy('last_viewed', 'desc')
-                                ->get();
+            // $get_user_details = User::with('manager:id,mobile')
+            //                     ->select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id','is_verified', 'app_status', 'last_viewed', 'price_type', 'alias','user_type')
+            //                     ->where('role', 'user')
+            //                     ->orderBy('last_viewed', 'desc')
+            //                     ->get();
+            $query = User::with('manager:id,mobile')
+            ->select('id','name','email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id','is_verified','app_status','last_viewed','price_type','alias','user_type')
+            ->where('role', 'user');
+
+            // Apply filters
+            if (!is_null($verified)) {
+                $query->where('is_verified', $verified);
+            }
+
+            if (!empty($user_type)) {
+                $query->where('user_type', $user_type);
+            }
+
+            if (!is_null($app_status)) {
+                $query->where('app_status', $app_status);
+            }
+
+            if (!empty($type)) {
+                $query->where('price_type', $type);
+            }
+
+            $query->orderBy('last_viewed', 'desc')->skip($offset)->take($limit);
+            $get_user_details = $query->get();
 
             $response = [];
 
