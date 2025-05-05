@@ -113,9 +113,32 @@ class ViewController extends Controller
         }
 
 
-        // Apply search filter if provided
+        // Apply product_name search
         if ($search) {
             $query->where('product_name', 'like', "%{$search}%");
+        }
+
+        // Filter by product_code (exact or partial)
+        if ($request->filled('product_code')) {
+            $query->where('product_code', 'like', '%' . $request->input('product_code') . '%');
+        }
+
+        // Filter by supplier(s)
+        if ($request->filled('supplier')) {
+            $suppliers = explode(',', $request->input('supplier'));
+            $query->whereIn('supplier', array_map('trim', $suppliers));
+        }
+
+        // Filter by brand(s)
+        if ($request->filled('brand')) {
+            $brands = explode(',', $request->input('brand'));
+            $query->whereIn('brand', array_map('trim', $brands));
+        }
+
+        // Filter by category(s)
+        if ($request->filled('category')) {
+            $categories = explode(',', $request->input('category'));
+            $query->whereIn('category', array_map('trim', $categories));
         }
 
         if ($get_user->role == 'admin') {
