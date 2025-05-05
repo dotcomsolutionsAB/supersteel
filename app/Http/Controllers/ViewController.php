@@ -551,34 +551,35 @@ class ViewController extends Controller
         if ($userRole == 'admin') 
         {
         
-            // $get_user_details = User::with('manager:id,mobile')
-            //                     ->select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id','is_verified', 'app_status', 'last_viewed', 'price_type', 'alias','user_type')
-            //                     ->where('role', 'user')
-            //                     ->orderBy('last_viewed', 'desc')
-            //                     ->get();
-            $query = User::with('manager:id,mobile')
-            ->select('id','name','email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id','is_verified','app_status','last_viewed','price_type','alias','user_type')
-            ->where('role', 'user');
+            $get_user_details = User::with('manager:id,mobile')
+                                ->select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id','is_verified', 'app_status', 'last_viewed', 'price_type', 'alias','user_type')
+                                ->where('role', 'user')
+                                ->orderBy('last_viewed', 'desc')
+                                ->get();
+            // update
+            // $query = User::with('manager:id,mobile')
+            // ->select('id','name','email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id','is_verified','app_status','last_viewed','price_type','alias','user_type')
+            // ->where('role', 'user');
 
-            // Apply filters
-            if (!is_null($verified)) {
-                $query->where('is_verified', $verified);
-            }
+            // // Apply filters
+            // if (!is_null($verified)) {
+            //     $query->where('is_verified', $verified);
+            // }
 
-            if (!empty($user_type)) {
-                $query->where('user_type', $user_type);
-            }
+            // if (!empty($user_type)) {
+            //     $query->where('user_type', $user_type);
+            // }
 
-            if (!is_null($app_status)) {
-                $query->where('app_status', $app_status);
-            }
+            // if (!is_null($app_status)) {
+            //     $query->where('app_status', $app_status);
+            // }
 
-            if (!empty($type)) {
-                $query->where('price_type', $type);
-            }
+            // if (!empty($type)) {
+            //     $query->where('price_type', $type);
+            // }
 
-            $query->orderBy('last_viewed', 'desc')->skip($offset)->take($limit);
-            $get_user_details = $query->get();
+            // $query->orderBy('last_viewed', 'desc')->skip($offset)->take($limit);
+            // $get_user_details = $query->get();
 
             $response = [];
 
