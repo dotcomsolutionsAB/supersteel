@@ -665,9 +665,13 @@ class ViewController extends Controller
             if($userName == 'ARORA')
             {
                 $get_user_details = User::select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country', 'app_status', 'last_viewed', 'price_type','alias','user_type')
-                                    ->where('manager_id', Auth::id())
-                                    ->orderBy('last_viewed', 'desc')
-                                    ->get();
+                    ->where(function ($query) {
+                        $query->where('manager_id', Auth::id())
+                            ->orWhere('name', 'like', '%DUMMY%');
+                    })
+                    ->orderBy('last_viewed', 'desc')
+                    ->get();
+
             }
             else{
                 $get_user_details = User::select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country', 'app_status', 'last_viewed', 'price_type','alias','user_type')
