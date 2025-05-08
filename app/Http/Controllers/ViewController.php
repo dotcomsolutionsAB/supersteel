@@ -551,34 +551,35 @@ class ViewController extends Controller
         if ($userRole == 'admin') 
         {
         
-            // $get_user_details = User::with('manager:id,mobile')
-            //                     ->select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id','is_verified', 'app_status', 'last_viewed', 'price_type', 'alias','user_type')
-            //                     ->where('role', 'user')
-            //                     ->orderBy('last_viewed', 'desc')
-            //                     ->get();
-            $query = User::with('manager:id,mobile')
-            ->select('id','name','email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id','is_verified','app_status','last_viewed','price_type','alias','user_type')
-            ->where('role', 'user');
+            $get_user_details = User::with('manager:id,mobile')
+                                ->select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id','is_verified', 'app_status', 'last_viewed', 'price_type', 'alias','user_type')
+                                ->where('role', 'user')
+                                ->orderBy('last_viewed', 'desc')
+                                ->get();
+            // update
+            // $query = User::with('manager:id,mobile')
+            // ->select('id','name','email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id','is_verified','app_status','last_viewed','price_type','alias','user_type')
+            // ->where('role', 'user');
 
-            // Apply filters
-            if (!is_null($verified)) {
-                $query->where('is_verified', $verified);
-            }
+            // // Apply filters
+            // if (!is_null($verified)) {
+            //     $query->where('is_verified', $verified);
+            // }
 
-            if (!empty($user_type)) {
-                $query->where('user_type', $user_type);
-            }
+            // if (!empty($user_type)) {
+            //     $query->where('user_type', $user_type);
+            // }
 
-            if (!is_null($app_status)) {
-                $query->where('app_status', $app_status);
-            }
+            // if (!is_null($app_status)) {
+            //     $query->where('app_status', $app_status);
+            // }
 
-            if (!empty($type)) {
-                $query->where('price_type', $type);
-            }
+            // if (!empty($type)) {
+            //     $query->where('price_type', $type);
+            // }
 
-            $query->orderBy('last_viewed', 'desc')->skip($offset)->take($limit);
-            $get_user_details = $query->get();
+            // $query->orderBy('last_viewed', 'desc')->skip($offset)->take($limit);
+            // $get_user_details = $query->get();
 
             $response = [];
 
@@ -797,33 +798,31 @@ class ViewController extends Controller
     {
         $offset = $request->input('offset', 0);
         $limit = $request->input('limit', 10);
-        $name = $request->input('name');
-        $type = $request->input('type');
+        $user_id = $request->input('user_id'); // actual user_id
+        $type = $request->input('type');       // orders.type
         $order_id = $request->input('order_id');
-        $date = $request->input('date'); // Format: YYYY-MM-DD
+        $date = $request->input('date');       // orders.order_date
 
         $query = OrderModel::with('user')->orderBy('created_at', 'desc');
 
-        if (!empty($name)) {
-            $query->whereHas('user', function ($q) use ($name) {
-                $q->where('name', 'LIKE', "%$name%");
-            });
-        }
-            // Filter by user's price_type
-        if (!empty($type)) {
-            $query->whereHas('user', function ($q) use ($type) {
-                $q->where('price_type', $type);
-            });
+        // Filter by user_id (foreign key)
+        if (!empty($user_id)) {
+            $query->where('user_id', $user_id);
         }
 
-        // Filter by order ID
+        // Filter by order type
+        if (!empty($type)) {
+            $query->where('type', $type);
+        }
+
+        // Filter by order ID (partial match)
         if (!empty($order_id)) {
             $query->where('id', 'LIKE', "%$order_id%");
         }
 
-        // Filter by date (created_at)
+        // Filter by order_date
         if (!empty($date)) {
-            $query->whereDate('created_at', $date);
+            $query->whereDate('order_date', $date);
         }
 
         $totalCount = $query->count(); // Get the total filtered count
@@ -844,7 +843,6 @@ class ViewController extends Controller
             ], 404);
         }
     }
-
 
     public function orders_user_id(Request $request, $id = null)
     {
