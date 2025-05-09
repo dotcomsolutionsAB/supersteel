@@ -417,6 +417,8 @@ class InvoiceController extends Controller
             foreach ($get_record as &$product) {
                 $product['price'] = $product['price'] * 1.6;
             }
+
+            $user_name = 'DUMMY';
         }
 
         if (count($get_record) == 0)
@@ -585,7 +587,11 @@ class InvoiceController extends Controller
             foreach ($get_product_details as &$product) {
                 $product['price'] = $product['price'] * 1.6;
             }
+
+            $user_name = 'DUMMY';
+
         }
+
 
         if($get_user->role == 'user') {
             // Generate HTML content for the PDF
