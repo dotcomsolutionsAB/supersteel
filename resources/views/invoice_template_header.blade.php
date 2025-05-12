@@ -67,7 +67,7 @@
     <table class="customer-info">
         <tr>
             <td class="label">Client:</td>
-            <td class="value">{{ $user->name }}</td>
+            <td class="value">{{ Str::contains($user->name, 'DUMMY') ? 'DUMMY' : $user->name }}</td>
             <td class="label">Order ID:</td>
             <td class="value">{{ $order->order_id }}</td>
         </tr>
