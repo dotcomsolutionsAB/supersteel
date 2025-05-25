@@ -273,7 +273,7 @@ class ViewController extends Controller
         $get_products = $query->get();
 
         // Check if products are found
-        if (isset($get_products) && !$get_products->isEmpty()) {
+        if (isset($get_products) && !$get_products->isEmpty() && $request->input('key') == 'bjbfgj765%hghd') {
 
             return response()->json([
                 'message' => 'Fetch data successfully!',
