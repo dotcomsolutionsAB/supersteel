@@ -141,3 +141,5 @@ Route::get('/fetch_category', [CsvImportController::class, 'importCategory']);
 Route::get('/fetch_sub_category', [CsvImportController::class, 'importSubCategory']);
 
 Route::get('/sync_images', [ImageDownloadController::class, 'fetchAndSaveImages']);
+
+Route::get('/view_product_guest', [ViewController::class, 'get_product_guest']);

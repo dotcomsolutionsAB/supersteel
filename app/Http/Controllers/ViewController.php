@@ -238,6 +238,55 @@ class ViewController extends Controller
             ], 400);
         }
     }
+
+    public function get_product_guest(Request $request)
+    {
+
+        // Retrieve offset and limit from the request with default values
+        $offset = $request->input('offset', 0); // Default to 0 if not provided
+        $limit = $request->input('limit', 10);  // Default to 10 if not provided
+
+        // Ensure the offset and limit are integers and non-negative
+        $offset = max(0, (int) $offset);
+        $limit = max(1, (int) $limit);
+        
+		$price_type = 'b';
+
+        // Initialize the default query
+        $query = ProductModel::query();
+
+        // Determine the column to select based on the user's price type
+
+        $price_column = 'price_b';
+
+        // If a valid price type is found, select that column as 'price'
+        if (!empty($price_column)) {
+            $query->select('id', 'product_code', 'product_name', 'print_name', 'brand', 'category', 'type', 'machine_part_no', DB::raw("$price_column as price"),'ppc', 'product_image', 'new_arrival','special_price','video_link','extra_images', 'stock', 'pending', 'in_transit','supplier', 're_order_level');
+        }
+
+        // Order by `sn` column
+        $query->orderBy('sn');
+
+        $total_products_count = $query->count();
+        // Apply pagination
+        $query->skip($offset)->take($limit);
+        $get_products = $query->get();
+
+        // Check if products are found
+        if (isset($get_products) && !$get_products->isEmpty()) {
+
+            return response()->json([
+                'message' => 'Fetch data successfully!',
+                'data' => $get_products,
+                'count' => $total_products_count
+            ], 200);
+
+        } else {
+            return response()->json([
+                'message' => 'Failed to fetch data!',
+            ], 400);
+        }
+    }
 	
     public function get_spares(Request $request, $code = null)
     {
