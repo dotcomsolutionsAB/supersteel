@@ -16,120 +16,136 @@ class CsvImportController extends Controller
     //
     public function importProduct()
     {
-        // URL of the CSV file from Google Sheets
-        $get_product_csv_url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSoVot_t3TuRNSNBnz_vCeeeKpMXSap3pPvoers6QuVAIp3Gr32EbE56GSZitCrdGTLudR4vvATlPnD/pub?gid=559356101&single=true&output=csv';
+        try {
+            // URL of the CSV file from Google Sheets
+            $get_product_csv_url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSoVot_t3TuRNSNBnz_vCeeeKpMXSap3pPvoers6QuVAIp3Gr32EbE56GSZitCrdGTLudR4vvATlPnD/pub?gid=559356101&single=true&output=csv';
 
-        // Fetch the CSV content using file_get_contents
-        $csvContent_product = file_get_contents($get_product_csv_url);
+            // Fetch the CSV content using file_get_contents
+            $csvContent_product = file_get_contents($get_product_csv_url);
 
-        // Fetch and parse the CSV
-        $csv_product = Reader::createFromString($csvContent_product);
-        $csv_product->setHeaderOffset(0); // Set the header offset
+            // Fetch and parse the CSV
+            $csv_product = Reader::createFromString($csvContent_product);
+            $csv_product->setHeaderOffset(0); // Set the header offset
 
-        $records_csv = (new Statement())->process($csv_product);
+            $records_csv = (new Statement())->process($csv_product);
 
-        ProductModel::query()->update(['is_active' => 2]);
+            ProductModel::query()->update(['is_active' => 2]);
 
-        $product_insert_response = null;
-        $product_update_response = null;
+            $product_insert_response = null;
+            $product_update_response = null;
 
-        $sn = 1;
+            $sn = 1;
 
-        // Set all to 0 first
-        CategoryModel::query()->update(['preview' => 0]);
-        $previewCategoryNames = [];
+            // Set all to 0 first
+            CategoryModel::query()->update(['preview' => 0]);
+            $previewCategoryNames = [];
 
-        // Iterate through each record and create or update the product
-        foreach ($records_csv as $record_csv) {
-            $product_csv = ProductModel::where('product_code', $record_csv['PRODUCT CODE'])->first();
+            // Iterate through each record and create or update the product
+            foreach ($records_csv as $record_csv) {
+                $product_csv = ProductModel::where('product_code', $record_csv['PRODUCT CODE'])->first();
 
-            $filename = $record_csv['PRODUCT CODE'];
+                $filename = $record_csv['PRODUCT CODE'];
 
-            // Define the product image paths
-            $productImagePath = "/storage/uploads/products/{$filename}.jpg";
-            $productImagePathPdf = "/storage/uploads/products_pdf/{$filename}.jpg";
-            $product_imagePath_for_not_available = "/storage/uploads/products/placeholder.jpg";
-            
-            // Check if the image exists in the product path
-            if (file_exists(public_path($productImagePath))) {
-                // Image exists, keep the productImagePath as is
-                $productImagePath = $productImagePath;
-            } elseif (file_exists(public_path($productImagePathPdf))) {
-                // Image doesn't exist in the product path, check in the PDF path
-                $productImagePath = $productImagePathPdf;
+                // Define the product image paths
+                $productImagePath = "/storage/uploads/products/{$filename}.jpg";
+                $productImagePathPdf = "/storage/uploads/products_pdf/{$filename}.jpg";
+                $product_imagePath_for_not_available = "/storage/uploads/products/placeholder.jpg";
+                
+                // Check if the image exists in the product path
+                if (file_exists(public_path($productImagePath))) {
+                    // Image exists, keep the productImagePath as is
+                    $productImagePath = $productImagePath;
+                } elseif (file_exists(public_path($productImagePathPdf))) {
+                    // Image doesn't exist in the product path, check in the PDF path
+                    $productImagePath = $productImagePathPdf;
+                } else {
+                    // If neither image exists, use the placeholder
+                    $productImagePath = $product_imagePath_for_not_available;
+                }
+
+                // Handle extra images
+                $extraImages = [];
+                $extraImagePath = public_path("/storage/uploads/extra");
+                $i = 1;
+
+                // Check for extra images in the format PRODUCT_CODE-1, PRODUCT_CODE-2, etc.
+                while (file_exists("{$extraImagePath}/{$filename}-{$i}.jpg")) {
+                    $extraImages[] = "/storage/uploads/extra/{$filename}-{$i}.jpg";
+                    $i++;
+                }
+
+                // Convert extra images array to a comma-separated string
+                $extraImagesCsv = implode(',', $extraImages);
+
+                $productData = [
+                    'sn' => $sn++,
+                    'product_code' => $record_csv['PRODUCT CODE'],
+                    'product_name' => $record_csv['PRODUCT NAME'],
+                    'print_name' => $record_csv['ITEM PRINT NAME'],
+                    'brand' => $record_csv['BRAND'],
+                    'category' => $record_csv['APP CAT'],
+                    'machine_part_no' => $record_csv['PARENT NAME'],
+                    'price_a' => str_replace([',', '.00'], '', $record_csv['PRICE A']),
+                    'price_b' => str_replace([',', '.00'], '', $record_csv['PRICE B']),
+                    'price_c' => str_replace([',', '.00'], '', $record_csv['PRICE C']),
+                    'price_d' => str_replace([',', '.00'], '', $record_csv['PRICE D']),
+                    'price_i' => str_replace([',', '.00'], '', $record_csv['PRICE I']),
+                    'supplier' => $record_csv['SUPPLIER'],
+                    're_order_level' => $record_csv['RE-ORDER LEVEL'],
+                    'ppc' => !empty($record_csv['PCS/CTN']) && $record_csv['PCS/CTN'] !== '-' ? $record_csv['PCS/CTN'] : '1', // Avoid (int) conversion
+                    'stock' => $record_csv['STOCK'],
+                    'in_transit' => $record_csv['IN TRANSIT'],
+                    'pending' => $record_csv['PENDING'],
+                    'product_image' => $productImagePath,
+                    'extra_images' => $extraImagesCsv, // Set the extra images
+                    'new_arrival' => $record_csv['New Arrival'] === 'TRUE' ? 1 : 0,
+                    'special_price' => $record_csv['Special Price'] === 'TRUE' ? 1 : 0,
+                    'video_link' => $record_csv['YouTube Link'],
+                    'preview' => $record_csv['Preview'] === 'TRUE' ? 1 : 0,
+                    'is_active' => $record_csv['Active'] === 'TRUE' ? 1 : 0,
+                ];            
+                
+                // Insert or update product
+                if ($product_csv) {
+                    // If product exists, update it
+                    $product_update_response = $product_csv->update($productData);
+                } else {
+                    // If product does not exist, create a new one
+                    $product_insert_response = ProductModel::create($productData);
+                }
+
+                if ($productData['preview'] == 1 && !empty($productData['category'])) {
+                    $previewCategoryNames[] = $productData['category'];
+                }
+                
+            }
+
+            $previewCategoryNames = array_unique($previewCategoryNames);
+
+            // DEBUG: Log or dump which categories are being used
+            \Log::info('Categories to update as preview:', $previewCategoryNames);
+
+            if (!empty($previewCategoryNames)) {
+                CategoryModel::whereIn('name', $previewCategoryNames)->update(['preview' => 1]);
+            }
+
+            // Return appropriate response
+            if ($product_update_response == 1 || isset($product_insert_response)) {
+                return response()->json(['message' => 'Products imported successfully'], 200);
             } else {
-                // If neither image exists, use the placeholder
-                $productImagePath = $product_imagePath_for_not_available;
+                return response()->json(['message' => 'Sorry, failed to import successfully'], 404);
             }
-
-            // Handle extra images
-            $extraImages = [];
-            $extraImagePath = public_path("/storage/uploads/extra");
-            $i = 1;
-
-            // Check for extra images in the format PRODUCT_CODE-1, PRODUCT_CODE-2, etc.
-            while (file_exists("{$extraImagePath}/{$filename}-{$i}.jpg")) {
-                $extraImages[] = "/storage/uploads/extra/{$filename}-{$i}.jpg";
-                $i++;
-            }
-
-            // Convert extra images array to a comma-separated string
-            $extraImagesCsv = implode(',', $extraImages);
-
-            $productData = [
-                'sn' => $sn++,
-                'product_code' => $record_csv['PRODUCT CODE'],
-                'product_name' => $record_csv['PRODUCT NAME'],
-                'print_name' => $record_csv['ITEM PRINT NAME'],
-                'brand' => $record_csv['BRAND'],
-                'category' => $record_csv['APP CAT'],
-                'machine_part_no' => $record_csv['PARENT NAME'],
-                'price_a' => str_replace([',', '.00'], '', $record_csv['PRICE A']),
-                'price_b' => str_replace([',', '.00'], '', $record_csv['PRICE B']),
-                'price_c' => str_replace([',', '.00'], '', $record_csv['PRICE C']),
-                'price_d' => str_replace([',', '.00'], '', $record_csv['PRICE D']),
-                'price_i' => str_replace([',', '.00'], '', $record_csv['PRICE I']),
-                'supplier' => $record_csv['SUPPLIER'],
-                're_order_level' => $record_csv['RE-ORDER LEVEL'],
-                'ppc' => !empty($record_csv['PCS/CTN']) && $record_csv['PCS/CTN'] !== '-' ? $record_csv['PCS/CTN'] : '1', // Avoid (int) conversion
-                'stock' => $record_csv['STOCK'],
-                'in_transit' => $record_csv['IN TRANSIT'],
-                'pending' => $record_csv['PENDING'],
-                'product_image' => $productImagePath,
-                'extra_images' => $extraImagesCsv, // Set the extra images
-                'new_arrival' => $record_csv['New Arrival'] === 'TRUE' ? 1 : 0,
-                'special_price' => $record_csv['Special Price'] === 'TRUE' ? 1 : 0,
-                'video_link' => $record_csv['YouTube Link'],
-                'preview' => $record_csv['Preview'] === 'TRUE' ? 1 : 0,
-                'is_active' => $record_csv['Active'] === 'TRUE' ? 1 : 0,
-            ];            
             
-            // Insert or update product
-            if ($product_csv) {
-                // If product exists, update it
-                $product_update_response = $product_csv->update($productData);
-            } else {
-                // If product does not exist, create a new one
-                $product_insert_response = ProductModel::create($productData);
-            }
-
-             if ($productData['preview'] == 1 && !empty($productData['category'])) {
-                $previewCategoryNames[] = $productData['category'];
-            }
-
-            
-        }
-
-        $previewCategoryNames = array_unique($previewCategoryNames);
-        if (!empty($previewCategoryNames)) {
-            CategoryModel::whereIn('name', $previewCategoryNames)->update(['preview' => 1]);
-        }
-
-        // Return appropriate response
-        if ($product_update_response == 1 || isset($product_insert_response)) {
-            return response()->json(['message' => 'Products imported successfully'], 200);
-        } else {
-            return response()->json(['message' => 'Sorry, failed to import successfully'], 404);
+        } catch (\Exception $e) {
+            // Log the full error for debugging
+            \Log::error('Product import failed:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'message' => 'An error occurred during import',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
