@@ -125,9 +125,19 @@ class CsvImportController extends Controller
             // DEBUG: Log or dump which categories are being used
             // \Log::info('Categories to update as preview:', $previewCategoryNames);
 
+            // if (!empty($previewCategoryNames)) {
+            //     CategoryModel::whereIn('cat_2', $previewCategoryNames)->update(['preview' => 1]);
+            //     CategoryModel::whereIn('cat_2', '')->update(['preview' => 1]);
+            // }
+
+            // Update categories where cat_2 is in $previewCategoryNames OR
+            // cat_2 is NULL or empty string
             if (!empty($previewCategoryNames)) {
-                CategoryModel::whereIn('cat_2', $previewCategoryNames)->update(['preview' => 1]);
-                CategoryModel::whereIn('cat_2', '')->update(['preview' => 1]);
+                CategoryModel::where(function($query) use ($previewCategoryNames) {
+                    $query->whereIn('cat_2', $previewCategoryNames)
+                        ->orWhereNull('cat_2')
+                        ->orWhere('cat_2', '');
+                })->update(['preview' => 1]);
             }
 
             // Return appropriate response
