@@ -132,7 +132,7 @@ Route::post('/public_category', [ViewController::class, 'publicCategories']);
 Route::get('/fetch_price_type', [ViewController::class, 'getUniquePriceTypes']);
 
 Route::get('/delete-account', [DeleteController::class, 'showDeleteAccountForm'])->name('delete.account.form');
-Route::post('/delete-account', [UserController::class, 'deleteAccount'])->name('delete.account');
+Route::post('/delete-account', [DeleteController::class, 'deleteAccount'])->name('delete.account');
 
 Route::post('/login/{otp?}', [CreateController::class, 'login']);
 Route::post('/register_user', [CreateController::class, 'user']);
