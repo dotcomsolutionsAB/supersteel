@@ -23,7 +23,7 @@ Route::prefix('admin')->middleware(['auth:sanctum', GetUserRole::class . ':admin
     Route::post('/logout', [CreateController::class, 'logout']);
 
     Route::get('/view_product', [ViewController::class, 'product']);
-    Route::post('/public_get_product', [ViewController::class, 'publicProducts']);
+    Route::post('/get_product', [ViewController::class, 'get_product']);
     Route::post('/category', [ViewController::class, 'categories']);
 
     Route::post('/add_order', [CreateController::class, 'orders']);
@@ -126,7 +126,7 @@ Route::prefix('user')->middleware(['auth:sanctum', GetUserRole::class . ':user']
     Route::delete('/delete_user/{id}', [DeleteController::class, 'user']);
 });
 
-Route::post('/get_product', [ViewController::class, 'get_product']);
+Route::post('/public_get_product', [ViewController::class, 'publicProducts']);
 Route::post('/public_category', [ViewController::class, 'publicCategories']);
 
 Route::get('/fetch_price_type', [ViewController::class, 'getUniquePriceTypes']);
