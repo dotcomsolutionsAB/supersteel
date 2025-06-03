@@ -96,7 +96,7 @@ class CsvImportController extends Controller
                 'new_arrival' => $record_csv['New Arrival'] === 'TRUE' ? 1 : 0,
                 'special_price' => $record_csv['Special Price'] === 'TRUE' ? 1 : 0,
                 'video_link' => $record_csv['YouTube Link'],
-                'preview' => $record_csv['Preview'],
+                'preview' => $record_csv['Preview'] === 'TRUE' ? 1 : 0,
                 'is_active' => $record_csv['Active'] === 'TRUE' ? 1 : 0,
             ];            
             
