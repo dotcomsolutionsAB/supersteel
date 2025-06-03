@@ -126,7 +126,7 @@ class CsvImportController extends Controller
             \Log::info('Categories to update as preview:', $previewCategoryNames);
 
             if (!empty($previewCategoryNames)) {
-                CategoryModel::whereIn('name', $previewCategoryNames)->update(['preview' => 1]);
+                CategoryModel::whereIn('cat_2', $previewCategoryNames)->update(['preview' => 1]);
             }
 
             // Return appropriate response
@@ -135,7 +135,7 @@ class CsvImportController extends Controller
             } else {
                 return response()->json(['message' => 'Sorry, failed to import successfully'], 404);
             }
-            
+
         } catch (\Exception $e) {
             // Log the full error for debugging
             \Log::error('Product import failed:', [
