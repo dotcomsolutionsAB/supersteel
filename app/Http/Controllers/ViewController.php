@@ -261,11 +261,6 @@ class ViewController extends Controller
             'new_arrival',
             'special_price',
             'video_link',
-            'stock',
-            'pending',
-            'in_transit',
-            'supplier',
-            're_order_level',
             'preview as product_preview', // explicitly from products
             'is_active'
         )
