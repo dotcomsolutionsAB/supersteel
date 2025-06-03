@@ -271,7 +271,7 @@ class ViewController extends Controller
             'in_transit',
             'supplier',
             're_order_level',
-            'preview',
+            'preview as product_preview',
             'is_active'
         )
         ->join('t_category', 't_products.category', '=', 't_category.name') // adjust if your keys differ
