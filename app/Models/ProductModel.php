@@ -34,7 +34,8 @@ class ProductModel extends Model
         'new_arrival',
         'special_price',
         'video_link',
-        'preview',
+        't_products.preview as product_preview_products',
+        't_category.preview as product_preview_categories',
         'is_active',
     ];
 

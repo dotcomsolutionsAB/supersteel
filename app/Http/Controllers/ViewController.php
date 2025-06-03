@@ -271,10 +271,12 @@ class ViewController extends Controller
             'in_transit',
             'supplier',
             're_order_level',
-            'preview as product_preview',
+            't_products.preview as product_preview',  // explicitly from products
+            't_category.preview as category_preview', // explicitly from category
             'is_active'
         )
         ->join('t_category', 't_products.category', '=', 't_category.name') // adjust if your keys differ
+        ->where('t_products.preview', 1)
         ->where('t_category.preview', 1)
         ->where('is_active', 1); // only active products
 
