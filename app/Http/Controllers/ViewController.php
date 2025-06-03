@@ -246,7 +246,7 @@ class ViewController extends Controller
         $offset = $request->input('offset', 0);
         $search = $request->input('search', null);
 
-        // Base query with join to categories to filter preview = 1
+        // Base query without category join, select only needed columns, excluding price columns
         $query = ProductModel::select(
             't_products.id',
             'product_code',
@@ -256,11 +256,6 @@ class ViewController extends Controller
             'category',
             'type',
             'machine_part_no',
-            'price_a',
-            'price_b',
-            'price_c',
-            'price_d',
-            'price_i',
             'product_image',
             'extra_images',
             'new_arrival',
@@ -271,13 +266,10 @@ class ViewController extends Controller
             'in_transit',
             'supplier',
             're_order_level',
-            't_products.preview as product_preview',  // explicitly from products
-            't_category.preview as category_preview', // explicitly from category
+            'preview as product_preview', // explicitly from products
             'is_active'
         )
-        ->join('t_category', 't_products.category', '=', 't_category.name') // adjust if your keys differ
         ->where('t_products.preview', 1)
-        ->where('t_category.preview', 1)
         ->where('is_active', 1); // only active products
 
         if ($search) {
