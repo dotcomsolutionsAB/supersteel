@@ -127,6 +127,7 @@ class CsvImportController extends Controller
 
             if (!empty($previewCategoryNames)) {
                 CategoryModel::whereIn('cat_2', $previewCategoryNames)->update(['preview' => 1]);
+                CategoryModel::whereIn('cat_2', '')->update(['preview' => 1]);
             }
 
             // Return appropriate response
