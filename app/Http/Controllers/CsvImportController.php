@@ -35,6 +35,10 @@ class CsvImportController extends Controller
 
         $sn = 1;
 
+        // Set all to 0 first
+        CategoryModel::query()->update(['preview' => 0]);
+        $previewCategoryNames = [];
+
         // Iterate through each record and create or update the product
         foreach ($records_csv as $record_csv) {
             $product_csv = ProductModel::where('product_code', $record_csv['PRODUCT CODE'])->first();
@@ -108,7 +112,17 @@ class CsvImportController extends Controller
                 // If product does not exist, create a new one
                 $product_insert_response = ProductModel::create($productData);
             }
+
+             if ($productData['preview'] == 1 && !empty($productData['category'])) {
+                $previewCategoryNames[] = $productData['category'];
+            }
+
             
+        }
+
+        $previewCategoryNames = array_unique($previewCategoryNames);
+        if (!empty($previewCategoryNames)) {
+            CategoryModel::whereIn('name', $previewCategoryNames)->update(['preview' => 1]);
         }
 
         // Return appropriate response
@@ -272,7 +286,5 @@ class CsvImportController extends Controller
             return response()->json(['message' => 'No categories were imported or updated.'], 404);
         }
     }
-
-
 
 }

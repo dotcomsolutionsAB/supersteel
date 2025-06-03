@@ -17,6 +17,7 @@ class CategoryModel extends Model
         'cat_3',
         'name',
         'category_image',
+        'preview'
     ];
 
     // Define the relationship: A category has many products, joined by the 'name' column
