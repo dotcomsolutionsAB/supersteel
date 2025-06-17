@@ -576,7 +576,7 @@ class InvoiceController extends Controller
             });
         }
 
-        die($query);
+        dd($query->toSql(), $query->getBindings());
 
 
         // Limit the results to 200
