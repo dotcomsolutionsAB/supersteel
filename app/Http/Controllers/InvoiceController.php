@@ -568,7 +568,6 @@ class InvoiceController extends Controller
             $query->where('category', $category_id);
         }
 
-        die($search_text);
 
         if ($search_text) {
             $query->where(function ($q) use ($search_text) {
@@ -576,6 +575,9 @@ class InvoiceController extends Controller
                 ->orWhere('product_code', 'LIKE', "%$search_text%");
             });
         }
+
+        die($get_product_details);
+
 
         // Limit the results to 200
         $get_product_details = $query->take(200)->get();
