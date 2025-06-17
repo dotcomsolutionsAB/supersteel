@@ -576,7 +576,7 @@ class InvoiceController extends Controller
             });
         }
 
-        die($get_product_details);
+        die($query);
 
 
         // Limit the results to 200
