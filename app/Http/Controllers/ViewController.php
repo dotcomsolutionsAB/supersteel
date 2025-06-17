@@ -239,6 +239,73 @@ class ViewController extends Controller
         }
     }
 
+    // public view
+    public function publicProducts(Request $request)
+    {
+        $limit = $request->input('limit', 10);
+        $offset = $request->input('offset', 0);
+        $search = $request->input('search', null);
+
+        // Base query without category join, select only needed columns, excluding price columns
+        $query = ProductModel::select(
+            't_products.id',
+            'product_code',
+            'product_name',
+            'print_name',
+            'brand',
+            'category',
+            'type',
+            'machine_part_no',
+            'product_image',
+            'extra_images',
+            'new_arrival',
+            'special_price',
+            'video_link',
+            'preview as product_preview', // explicitly from products
+            'is_active'
+        )
+        ->where('t_products.preview', 1)
+        ->where('is_active', 1); // only active products
+
+        if ($search) {
+            $query->where('product_name', 'LIKE', '%' . $search . '%');
+        }
+
+        $total = $query->count();
+
+        $products = $query->orderBy('sn')
+            ->skip($offset)
+            ->take($limit)
+            ->get();
+
+        if ($products->isEmpty()) {
+            return response()->json([
+                'message' => 'No products found with preview = 1',
+            ], 404);
+        }
+
+        // Process video_link and extra_images as in your original code
+        foreach ($products as $product) {
+            if (!empty($product->video_link)) {
+                parse_str(parse_url($product->video_link, PHP_URL_QUERY), $query_params);
+                if (isset($query_params['v'])) {
+                    $product->video_link = $query_params['v'];
+                } else {
+                    $product->video_link = basename(parse_url($product->video_link, PHP_URL_PATH));
+                }
+            }
+
+            $product->extra_images = !empty($product->extra_images) ? explode(',', $product->extra_images) : [];
+        }
+
+        return response()->json([
+            'message' => 'Products fetched successfully!',
+            'data' => $products,
+            'count' => $products->count(),
+            'total_records' => $total,
+        ], 200);
+    }
+
     public function get_product_guest(Request $request)
     {
 
@@ -581,6 +648,137 @@ class ViewController extends Controller
                     'message' => 'Failed to get data successfully!',
                 ], 404);
             }
+        }
+    }
+
+    public function publicCategories(Request $request)
+    {
+        $parent = $request->input('parent');
+
+        // Base query filtering only categories with preview = 1
+        $baseQuery = CategoryModel::where('preview', 1);
+
+        if (is_null($parent)) {
+            // Top-level categories: cat_2 and cat_3 null or empty, plus preview=1
+            $categories = $baseQuery->where(function($query) {
+                $query->whereNull('cat_2')->orWhere('cat_2', '');
+            })->where(function($query) {
+                $query->whereNull('cat_3')->orWhere('cat_3', '');
+            })->get();
+
+        } elseif ($parent === 'filter') {
+            // All preview=1 categories only
+            $categories = $baseQuery->get();
+
+        } else {
+            if ($baseQuery->where('cat_1', $parent)->exists()) {
+                $categories = $baseQuery->where('cat_1', $parent)
+                    ->where('cat_2', '!=', '')
+                    ->where('cat_3', '')
+                    ->get();
+
+            } elseif ($baseQuery->where('cat_2', $parent)->exists()) {
+                $categories = $baseQuery->where('cat_2', $parent)
+                    ->where('cat_3', '!=', '')
+                    ->get();
+
+            } elseif ($baseQuery->where('cat_3', $parent)->exists()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Parent category is at the lowest level (cat_3), no further children.',
+                    'data' => [],
+                ], 404);
+
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid parent ID!',
+                    'data' => [],
+                ], 404);
+            }
+        }
+
+        // Format response (same as your original)
+        $formattedCategories = $categories->map(function ($category) use ($parent) {
+            $hasChildren = false;
+
+            // Count products linked to category or sub-categories
+            if ($parent == $category->cat_1) {
+                $productsCount = ProductModel::where('category', $category->cat_1)
+                    ->orWhere('category', $category->cat_2)
+                    ->orWhere('category', $category->cat_3)
+                    ->count();
+            } else {
+                $productsCount = ProductModel::where('category', $category->id)
+                    ->count();
+            }
+
+            if (in_array($category->name, ['POWER TOOLS', 'GARDEN TOOLS', 'SPARES', 'ACCESSORIES'])) {
+                $hasChildren = true;
+            }
+
+            return [
+                'category_id' => $category->id,
+                'category_name' => $category->name,
+                'cat_1' => $category->cat_1,
+                'cat_2' => $category->cat_2,
+                'cat_3' => $category->cat_3,
+                'category_image' => $category->category_image,
+                'products_count' => $productsCount,
+                'hadChildren' => $hasChildren,
+            ];
+        });
+
+        if (is_null($parent)) {
+            // Add slides, new arrival and special offer just like original
+            $slides = [
+                asset('/storage/uploads/slider/slide01.jpg'),
+                asset('/storage/uploads/slider/slide02.jpg'),
+                asset('/storage/uploads/slider/slide03.jpg')
+            ];
+            $slides_below = [
+                asset('/storage/uploads/slider/slide04.jpg'),
+                asset('/storage/uploads/slider/slide05.jpg')
+            ];
+            $count = ProductModel::where('new_arrival', '1')->count();
+            $newArrivals = [
+                'category_id' => 'new_arrival',
+                'category_name' => 'New Arrival',
+                'category_image' => '/storage/uploads/category/new_arrival.jpg',
+                'products_count' => $count
+            ];
+            $count = ProductModel::where('special_price', '1')->count();
+            $specialOffers = [
+                'category_id' => 'special_offer',
+                'category_name' => 'Special Offer',
+                'category_image' => '/storage/uploads/category/special_offer.jpg',
+                'products_count' => $count
+            ];
+            $links = [
+                asset('/storage/uploads/catalog/power_tools.pdf'),
+                asset('/storage/uploads/catalog/garden_tools.pdf'),
+                asset('/storage/uploads/catalog/supersteel.pdf'),
+                "+917396895410",
+            ];
+
+            $formattedCategories->push($newArrivals);
+            $formattedCategories->push($specialOffers);
+
+            return response()->json([
+                'message' => 'Fetch data successfully!',
+                'data' => $formattedCategories,
+                'count' => count($formattedCategories),
+                'slides' => $slides,
+                'slides_below' => $slides_below,
+                'links' => $links,
+            ], 200);
+
+        } else {
+            return response()->json([
+                'message' => 'Fetch data successfully!',
+                'data' => $formattedCategories,
+                'count' => count($formattedCategories),
+            ], 200);
         }
     }
 
