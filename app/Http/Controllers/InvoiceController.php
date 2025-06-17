@@ -572,6 +572,7 @@ class InvoiceController extends Controller
         if ($search_text) {
             $query->where(function ($q) use ($search_text) {
                 $q->where('print_name', 'LIKE', "%$search_text%")
+                ->orWhere('product_name', 'LIKE', "%$search_text%")
                 ->orWhere('product_code', 'LIKE', "%$search_text%");
             });
         }
