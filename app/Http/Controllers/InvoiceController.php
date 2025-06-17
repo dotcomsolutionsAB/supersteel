@@ -570,11 +570,15 @@ class InvoiceController extends Controller
 
 
         if ($search_text) {
-            $query->where(function ($q) use ($search_text) {
-                $q->where('print_name', 'LIKE', "%$search_text%")
-                ->orWhere('product_name', 'LIKE', "%$search_text%")
-                ->orWhere('product_code', 'LIKE', "%$search_text%");
+            // Clean the search text (remove spaces, dots, dashes)
+            $cleanedSearch = str_replace([' ', '.', '-'], '', $search_text);
+        
+            $query->where(function ($q) use ($cleanedSearch) {
+                $q->whereRaw("REPLACE(REPLACE(REPLACE(LOWER(print_name), ' ', ''), '.', ''), '-', '') LIKE ?", ["%$cleanedSearch%"])
+                    ->orWhereRaw("REPLACE(REPLACE(REPLACE(LOWER(product_name), ' ', ''), '.', ''), '-', '') LIKE ?", ["%$cleanedSearch%"])
+                    ->orWhereRaw("REPLACE(REPLACE(REPLACE(LOWER(product_code), ' ', ''), '.', ''), '-', '') LIKE ?", ["%$cleanedSearch%"]);
             });
+            
         }
 
         // Limit the results to 200
