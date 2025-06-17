@@ -568,6 +568,8 @@ class InvoiceController extends Controller
             $query->where('category', $category_id);
         }
 
+        die($search_text);
+
         if ($search_text) {
             $query->where(function ($q) use ($search_text) {
                 $q->where('product_name', 'LIKE', "%$search_text%")
