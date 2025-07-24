@@ -94,7 +94,7 @@ class InvoiceControllerPO extends Controller
 				$htmlChunk = view('invoice_template_items_po', compact('item', 'index'))->render();
 				$mpdf->WriteHTML($htmlChunk);
 			}
-			ob_flush();
+			//ob_flush();
 			flush();
 		}
 
