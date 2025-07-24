@@ -115,7 +115,7 @@ class InvoiceControllerPO extends Controller
             ]);
 
             // Fetch brand and format image name
-            $brandImage = str_replace(' ', '_', strtoupper($item->product->brand)) . '.png';
+            $brandImage = str_replace(' ', '_', strtoupper($item->product->brand)) . '.jpg';
             $brandImagePath = public_path('/storage/uploads/' . $brandImage);
 
             // Check if the brand image exists, else use default
