@@ -799,7 +799,7 @@ class ViewController extends Controller
         {
         
             $get_user_details = User::with('manager:id,mobile')
-                                ->withCount('cartItems')
+                                // ->withCount('cartItems')
                                 ->select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id','is_verified', 'app_status', 'last_viewed', 'price_type', 'alias','user_type')
                                 ->where('role', 'user')
                                 ->orderBy('last_viewed', 'desc')
@@ -862,7 +862,7 @@ class ViewController extends Controller
                     'user_type' => $user->user_type,
                     'last_viewed' => $formattedLastViewed,
                     'type' => $priceLabel,
-                    'cart_count' => $user->cart_items_count ?? 0,
+                    // 'cart_count' => $user->cart_items_count ?? 0,
                 ];
             }
         }
@@ -886,8 +886,7 @@ class ViewController extends Controller
 
             }
             else{
-                $get_user_details = User::withCount('cartItems')
-                                    ->select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country', 'app_status', 'last_viewed', 'price_type','alias','user_type')
+                $get_user_details = User::select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country', 'app_status', 'last_viewed', 'price_type','alias','user_type')
                                     // ->where('manager_id', Auth::id())
                                     ->orderBy('last_viewed', 'desc')
                                     ->get();
@@ -946,7 +945,7 @@ class ViewController extends Controller
                     'user_type' => $user->user_type,
                     'last_viewed' => $formattedLastViewed,
                     'type' => $priceLabel,
-                    'cart_count' => $user->cart_items_count ?? 0,
+                    // 'cart_count' => $user->cart_items_count ?? 0,
                 ];
             });
             
