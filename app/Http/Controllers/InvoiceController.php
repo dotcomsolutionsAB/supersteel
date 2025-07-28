@@ -99,7 +99,7 @@ class InvoiceController extends Controller
 				$htmlChunk = view('invoice_template_items', compact('item', 'index'))->render();
 				$mpdf->WriteHTML($htmlChunk);
 			}
-			ob_flush();
+			// ob_flush();
 			flush();
 		}
 
