@@ -803,7 +803,7 @@ class ViewController extends Controller
                                 ->select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id','is_verified', 'app_status', 'last_viewed', 'price_type', 'alias','user_type')
                                 ->where('role', 'user')
                                 ->orderBy('last_viewed', 'desc')
-                                ->get();
+                                ->toSql();
 
             $response = [];
 
