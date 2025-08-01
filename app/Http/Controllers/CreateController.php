@@ -733,7 +733,7 @@ class CreateController extends Controller
         else
         {
             $request->validate([
-                'product_code' => 'required|integer',
+                'product_code' => 'required',
                 'product_name' => 'required|string',
                 'rate' => 'required|numeric',
                 'quantity' => 'required|integer',
