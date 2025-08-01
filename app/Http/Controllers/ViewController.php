@@ -799,34 +799,11 @@ class ViewController extends Controller
         {
         
             $get_user_details = User::with('manager:id,mobile')
+                                // ->withCount('cartItems')
                                 ->select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id','is_verified', 'app_status', 'last_viewed', 'price_type', 'alias','user_type')
                                 ->where('role', 'user')
                                 ->orderBy('last_viewed', 'desc')
                                 ->get();
-            // update
-            // $query = User::with('manager:id,mobile')
-            // ->select('id','name','email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country','manager_id','is_verified','app_status','last_viewed','price_type','alias','user_type')
-            // ->where('role', 'user');
-
-            // // Apply filters
-            // if (!is_null($verified)) {
-            //     $query->where('is_verified', $verified);
-            // }
-
-            // if (!empty($user_type)) {
-            //     $query->where('user_type', $user_type);
-            // }
-
-            // if (!is_null($app_status)) {
-            //     $query->where('app_status', $app_status);
-            // }
-
-            // if (!empty($type)) {
-            //     $query->where('price_type', $type);
-            // }
-
-            // $query->orderBy('last_viewed', 'desc')->skip($offset)->take($limit);
-            // $get_user_details = $query->get();
 
             $response = [];
 
@@ -838,25 +815,6 @@ class ViewController extends Controller
 
                 // Convert and format the datetime
                 $formattedLastViewed = Carbon::parse($lastViewed)->format('d-m-Y h:i A');
-
-                // Calculate the time difference for last_viewed
-                // $currentTimestamp = now();
-                // $lastViewedTimestamp = Carbon::parse($user->last_viewed);
-                // $differenceInSeconds = $currentTimestamp->diffInSeconds($lastViewedTimestamp);
-                // $last_viewed = '';
-
-                // if ($differenceInSeconds < 60) {
-                //     $last_viewed = (int) $differenceInSeconds . ' seconds ago';
-                // } elseif ($differenceInSeconds < 3600) {
-                //     $minutes = (int) floor($differenceInSeconds / 60);
-                //     $last_viewed = $minutes . ' minutes ago';
-                // } elseif ($differenceInSeconds < 86400) {
-                //     $hours = (int) floor($differenceInSeconds / 3600);
-                //     $last_viewed = $hours . ' hours ago';
-                // } else {
-                //     $days = (int) floor($differenceInSeconds / 86400);
-                //     $last_viewed = $days . ' days ago';
-                // }
 
                 $type = $user->price_type;
                 $priceLabel = '';
@@ -904,6 +862,7 @@ class ViewController extends Controller
                     'user_type' => $user->user_type,
                     'last_viewed' => $formattedLastViewed,
                     'type' => $priceLabel,
+                    // 'cart_count' => $user->cart_items_count ?? 0,
                 ];
             }
         }
@@ -912,7 +871,8 @@ class ViewController extends Controller
         {
             if($userName == 'ARORA')
             {
-                $get_user_details = User::select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country', 'app_status', 'last_viewed', 'price_type','alias','user_type')
+                $get_user_details = User::withCount('cartItems')
+                ->select('id','name', 'email','mobile','role','address_line_1','address_line_2','city','pincode','gstin','state','country', 'app_status', 'last_viewed', 'price_type','alias','user_type')
                     ->where(function ($query) {
                         $query->where('manager_id', Auth::id())
                             ->orWhere(function ($q) {
@@ -930,7 +890,7 @@ class ViewController extends Controller
                                     // ->where('manager_id', Auth::id())
                                     ->orderBy('last_viewed', 'desc')
                                     ->get();
-            }
+                }
 
             // $currentTimestamp = now();
             $response = $get_user_details->map(function ($user) {
@@ -940,24 +900,6 @@ class ViewController extends Controller
 
                 // Convert and format the datetime
                 $formattedLastViewed = Carbon::parse($lastViewed)->format('d-m-Y h:i A');
-                // Calculate the time difference for last_viewed
-                
-                // $lastViewedTimestamp = Carbon::parse($user->last_viewed);
-                // $differenceInSeconds = $currentTimestamp->diffInSeconds($lastViewedTimestamp);
-                // $last_viewed = '';
-    
-                // if ($differenceInSeconds < 60) {
-                //     $last_viewed = (int) $differenceInSeconds . ' seconds ago';
-                // } elseif ($differenceInSeconds < 3600) {
-                //     $minutes = (int) floor($differenceInSeconds / 60);
-                //     $last_viewed = $minutes . ' minutes ago';
-                // } elseif ($differenceInSeconds < 86400) {
-                //     $hours = (int) floor($differenceInSeconds / 3600);
-                //     $last_viewed = $hours . ' hours ago';
-                // } else {
-                //     $days = (int) floor($differenceInSeconds / 86400);
-                //     $last_viewed = $days . ' days ago';
-                // }
 
                 $name = $user->name.' - '.$user->alias;
 
@@ -1003,6 +945,7 @@ class ViewController extends Controller
                     'user_type' => $user->user_type,
                     'last_viewed' => $formattedLastViewed,
                     'type' => $priceLabel,
+                    // 'cart_count' => $user->cart_items_count ?? 0,
                 ];
             });
             

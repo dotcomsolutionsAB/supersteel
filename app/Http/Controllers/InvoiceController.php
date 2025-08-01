@@ -99,7 +99,7 @@ class InvoiceController extends Controller
 				$htmlChunk = view('invoice_template_items', compact('item', 'index'))->render();
 				$mpdf->WriteHTML($htmlChunk);
 			}
-			ob_flush();
+			// ob_flush();
 			flush();
 		}
 
@@ -569,17 +569,32 @@ class InvoiceController extends Controller
         }
 
 
-        if ($search_text) {
-            // Clean the search text (remove spaces, dots, dashes)
-            $cleanedSearch = str_replace([' ', '.', '-'], '', $search_text);
+        // if ($search_text) {
+        //     // Clean the search text (remove spaces, dots, dashes)
+        //     $cleanedSearch = str_replace([' ', '.', '-'], '', $search_text);
         
-            $query->where(function ($q) use ($cleanedSearch) {
-                $q->whereRaw("REPLACE(REPLACE(REPLACE(LOWER(print_name), ' ', ''), '.', ''), '-', '') LIKE ?", ["%$cleanedSearch%"])
-                    ->orWhereRaw("REPLACE(REPLACE(REPLACE(LOWER(product_name), ' ', ''), '.', ''), '-', '') LIKE ?", ["%$cleanedSearch%"])
-                    ->orWhereRaw("REPLACE(REPLACE(REPLACE(LOWER(product_code), ' ', ''), '.', ''), '-', '') LIKE ?", ["%$cleanedSearch%"]);
-            });
+        //     $query->where(function ($q) use ($cleanedSearch) {
+        //         $q->whereRaw("REPLACE(REPLACE(REPLACE(LOWER(print_name), ' ', ''), '.', ''), '-', '') LIKE ?", ["%$cleanedSearch%"])
+        //             ->orWhereRaw("REPLACE(REPLACE(REPLACE(LOWER(product_name), ' ', ''), '.', ''), '-', '') LIKE ?", ["%$cleanedSearch%"])
+        //             ->orWhereRaw("REPLACE(REPLACE(REPLACE(LOWER(product_code), ' ', ''), '.', ''), '-', '') LIKE ?", ["%$cleanedSearch%"]);
+        //     });
             
+        // }
+
+        if ($search_text) {
+            $searchWords = preg_split('/[\s\.\-]+/', strtolower($search_text)); // Split by space, dot, dash
+
+            $query->where(function ($q) use ($searchWords) {
+                foreach ($searchWords as $word) {
+                    $q->where(function ($subQ) use ($word) {
+                        $subQ->whereRaw("LOWER(print_name) LIKE ?", ["%$word%"])
+                            ->orWhereRaw("LOWER(product_name) LIKE ?", ["%$word%"])
+                            ->orWhereRaw("LOWER(product_code) LIKE ?", ["%$word%"]);
+                    });
+                }
+            });
         }
+
 
         // Limit the results to 200
         $get_product_details = $query->take(200)->get();
