@@ -393,6 +393,9 @@ class InvoiceController extends Controller
             case 'i':
                 $price_column = 'price_i';
                 break;
+            case 'j':
+                $price_column = 'price_j';
+                break;
             default:
                 $price_column = 'price_a';
                 break;
@@ -551,6 +554,9 @@ class InvoiceController extends Controller
                 break;
             case 'i':
                 $price_column = 'price_i';
+                break;
+            case 'j':
+                $price_column = 'price_j';
                 break;
             default:
                 $price_column = 'price_a';

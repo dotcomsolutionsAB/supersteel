@@ -31,7 +31,7 @@ class ViewController extends Controller
     //
     public function product()
     {
-        $get_product_details = ProductModel::select('product_code', 'product_name', 'print_name', 'brand', 'c1', 'c2', 'c3', 'c4', 'c5', 'type', 'machine_part_no', 'price_a','price_b','price_c', 'price_d', 'price_i', 'product_image')->get();
+        $get_product_details = ProductModel::select('product_code', 'product_name', 'print_name', 'brand', 'c1', 'c2', 'c3', 'c4', 'c5', 'type', 'machine_part_no', 'price_a','price_b','price_c', 'price_d', 'price_i', 'price_j', 'product_image')->get();
         
 
         return isset($get_product_details) && $get_product_details !== null
@@ -100,6 +100,9 @@ class ViewController extends Controller
             case 'i':
                 $price_column = 'price_i';
 				break;
+            case 'j':
+                $price_column = 'price_j';
+                break;
             // Add more cases as needed
             default:
             // In case of no matching price type, select all price columns
@@ -403,6 +406,9 @@ class ViewController extends Controller
                 break;
             case 'i':
                 $price_column = 'price_i';
+                break;
+            case 'j':
+                $price_column = 'price_j';
                 break;
             // Add more cases as needed
             default:

@@ -23,6 +23,7 @@ class ProductModel extends Model
         'price_c',
         'price_d',
         'price_i',
+        'price_j',
         'supplier',
         're_order_level',
         'ppc',
