@@ -841,6 +841,9 @@ class ViewController extends Controller
                     case 'i':
                         $priceLabel = 'Price - I';
                         break;
+                    case 'j':
+                        $priceLabel = 'Price - J';
+                        break;
                     case 'zero_price':
                         $priceLabel = 'Zero Price';
                         break;
