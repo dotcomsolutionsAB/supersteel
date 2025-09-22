@@ -201,7 +201,7 @@ class CsvImportController extends Controller
                 'manager_id' => $manager_id,
                 'alias' => $record_user['Alias'],
                 'email' => $record_user['Email'] ?? null,
-                'password' => bcrypt($mobile),
+                'password' => $mobile,
                 'address_line_1' => $record_user['Address Line 1'],
                 'address_line_2' => $record_user['Address Line 2'],
                 'address_line_3' => $record_user['Address Line 3'],
