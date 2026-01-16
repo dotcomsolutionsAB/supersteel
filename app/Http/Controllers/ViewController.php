@@ -31,7 +31,7 @@ class ViewController extends Controller
     //
     public function product()
     {
-        $get_product_details = ProductModel::select('product_code', 'product_name', 'print_name', 'brand', 'c1', 'c2', 'c3', 'c4', 'c5', 'type', 'machine_part_no', 'price_a','price_b','price_c', 'price_d', 'price_i', 'price_j', 'product_image')->get();
+        $get_product_details = ProductModel::select('product_code', 'product_name', 'print_name', 'brand', 'c1', 'c2', 'c3', 'c4', 'c5', 'type', 'machine_part_no', 'price_a','price_b','price_c', 'price_d', 'price_i', 'price_j', 'price_k', 'product_image')->get();
         
 
         return isset($get_product_details) && $get_product_details !== null
@@ -105,6 +105,9 @@ class ViewController extends Controller
 				break;
             case 'j':
                 $price_column = 'price_j';
+                break;
+            case 'k':
+                $price_column = 'price_k';
                 break;
             // Add more cases as needed
             default:
@@ -336,14 +339,14 @@ class ViewController extends Controller
         $offset = max(0, (int) $offset);
         $limit = max(1, (int) $limit);
         
-		$price_type = 'b';
+		$price_type = 'j';
 
         // Initialize the default query
         $query = ProductModel::query();
 
         // Determine the column to select based on the user's price type
 
-        $price_column = 'price_b';
+        $price_column = 'price_j';
 
         // If a valid price type is found, select that column as 'price'
         if (!empty($price_column)) {
@@ -425,6 +428,9 @@ class ViewController extends Controller
                 break;
             case 'j':
                 $price_column = 'price_j';
+                break;
+            case 'k':
+                $price_column = 'price_k';
                 break;
             // Add more cases as needed
             default:
