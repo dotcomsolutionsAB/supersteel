@@ -48,6 +48,10 @@ class ViewController extends Controller
         $offset = $request->input('offset', 0); // Default to 0 if not provided
         $limit = $request->input('limit', 10);  // Default to 10 if not provided
 
+        $search = $request->input('search', null);
+        $category = $request->input('category', null);
+        $subCategory = $request->input('sub_category', null);
+
         $get_user = Auth::User();
 
         if ($get_user->role == 'user') {
@@ -68,7 +72,6 @@ class ViewController extends Controller
         $limit = max(1, (int) $limit);
 
         // Retrieve filter parameters if provided
-        $search = $request->input('search', null);
 		
 		$user_price_type = User::select('price_type')
                                 ->where('id', $user_id)
@@ -117,8 +120,21 @@ class ViewController extends Controller
 
 
         // Apply product_name search
+        // if ($search) {
+        //     $query->where('product_name', 'like', "%{$search}%");
+        // }
+
         if ($search) {
-            $query->where('product_name', 'like', "%{$search}%");
+            $tokens = preg_split('/[\s\.\-\,]+/', mb_strtolower($search)); // Split search query into tokens
+            $query->where(function ($q) use ($tokens) {
+                foreach ($tokens as $token) {
+                    $q->where(function ($subQ) use ($token) {
+                        // Search for each token in both product_name and product_code
+                        $subQ->orWhereRaw('LOWER(product_name) LIKE ?', ["%{$token}%"])
+                            ->orWhereRaw('LOWER(product_code) LIKE ?', ["%{$token}%"]);
+                    });
+                }
+            });
         }
 
         // Filter by product_code (exact or partial)
